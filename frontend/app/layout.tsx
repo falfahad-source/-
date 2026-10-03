@@ -1,3 +1,5 @@
+import "./globals.css";
+
 export const metadata = {
   title: "آفاق — AFAQ",
   description: "منصة استكشاف معرفي مصدرها موثّق حول آيات القرآن الكريم",
@@ -7,13 +9,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl">
       <head>
-        {/* KFGQPC Hafs font: the Quran text is encoded for it (e.g. the ۝ ayah-end sign).
-            The .ttf is not in git; copy it to public/fonts/ (see README). Falls back if absent. */}
-        <style>{`@font-face { font-family: "KFGQPC Hafs"; src: url("/fonts/kfgqpc_hafs_v30.ttf") format("truetype"); font-display: swap; }`}</style>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Reem+Kufi:wght@500;700&display=swap" />
       </head>
-      <body style={{ fontFamily: "Tahoma, Arial, sans-serif", margin: 0 }}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
