@@ -21,6 +21,25 @@ type Answer = {
   sources: { title: string; url: string }[];
 };
 
+type SearchResult = {
+  query: string;
+  total: number;
+  results: { surah_number: number; surah_name: string; ayah_number: number; text: string; page_number: number | null }[];
+};
+
+// Surah names come from KFGQPC in Uthmani script (e.g. the ۡ sukun in النَّمۡلِ),
+// which the UI font lacks, so they are rendered in the Hafs font like the verses.
+function SurahName({ name }: { name: string }) {
+  return <span style={{ fontFamily: '"KFGQPC Hafs", serif' }}>{name}</span>;
+}
+
+// Arabic number agreement: 1 آية واحدة، 2 آيتان، 3–10 آيات، 11+ آية.
+function ayahCount(n: number): string {
+  if (n === 1) return "آية واحدة";
+  if (n === 2) return "آيتان";
+  return n % 100 >= 3 && n % 100 <= 10 ? `${n} آيات` : `${n} آية`;
+}
+
 // Tafsir text is stored verbatim from Quranpedia, which includes markup
 // (<span class="book-ayah">, <br />). Show it as plain text: parsing into a
 // detached document and reading textContent never executes or injects anything.
@@ -34,11 +53,16 @@ export default function Home() {
   const [ayah, setAyah] = useState(1);
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [search, setSearch] = useState<SearchResult | null>(null);
+  const [searching, setSearching] = useState(false);
 
-  async function load() {
+  async function load(s: number = surah, a: number = ayah) {
     setError(null);
     setAnswer(null);
-    const res = await fetch(`${API_BASE}/verse/${surah}/${ayah}`);
+    setSurah(s);
+    setAyah(a);
+    const res = await fetch(`${API_BASE}/verse/${s}/${a}`);
     if (!res.ok) {
       setError((await res.json()).detail || "تعذّر جلب الآية.");
       return;
@@ -46,26 +70,96 @@ export default function Home() {
     setAnswer(await res.json());
   }
 
+  async function runSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSearch(null);
+    setSearching(true);
+    try {
+      const res = await fetch(`${API_BASE}/search?${new URLSearchParams({ q: query, limit: "50" })}`);
+      if (!res.ok) {
+        setError((await res.json()).detail || "تعذّر البحث.");
+        return;
+      }
+      setSearch(await res.json());
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  function choose(s: number, a: number) {
+    load(s, a);
+    // keep the results so the user can pick another ayah; jump to the answer
+    setTimeout(() => document.getElementById("answer")?.scrollIntoView({ behavior: "smooth" }), 0);
+  }
+
   return (
     <main style={{ maxWidth: 820, margin: "0 auto", padding: 24 }}>
       <h1>آفاق</h1>
       <p style={{ color: "#555" }}>استكشاف مصدرُه موثّق حول آيات القرآن الكريم — تفسير، علوم، ومقارنات مُصنَّفة بوضوح.</p>
 
-      <div style={{ display: "flex", gap: 8, margin: "16px 0" }}>
-        <input type="number" value={surah} min={1} max={114} onChange={(e) => setSurah(Number(e.target.value))} placeholder="رقم السورة" />
-        <input type="number" value={ayah} min={1} onChange={(e) => setAyah(Number(e.target.value))} placeholder="رقم الآية" />
-        <button onClick={load}>استكشاف</button>
-      </div>
+      <form onSubmit={runSearch} style={{ display: "flex", gap: 8, margin: "16px 0 8px" }}>
+        <input
+          type="search" value={query} onChange={(e) => setQuery(e.target.value)}
+          placeholder="اكتب جزءًا من الآية، مثل: الله لا إله إلا هو الحي القيوم"
+          aria-label="البحث في نص الآيات" style={{ flex: 1, padding: 6 }}
+        />
+        <button type="submit" disabled={searching}>{searching ? "جارٍ البحث..." : "بحث"}</button>
+      </form>
+
+      <details style={{ margin: "0 0 16px", color: "#555" }}>
+        <summary>أو اختر بالرقم</summary>
+        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+          <input type="number" value={surah} min={1} max={114} onChange={(e) => setSurah(Number(e.target.value))} placeholder="رقم السورة" aria-label="رقم السورة" />
+          <input type="number" value={ayah} min={1} onChange={(e) => setAyah(Number(e.target.value))} placeholder="رقم الآية" aria-label="رقم الآية" />
+          <button onClick={() => load()}>استكشاف</button>
+        </div>
+      </details>
+
+      {search && (
+        <section aria-label="نتائج البحث">
+          <p>
+            {search.total === 0
+              ? "لا توجد آيات تحتوي هذا النص."
+              : search.total > search.results.length
+                ? `وُجدت ${ayahCount(search.total)}، تُعرض أول ${search.results.length} منها. اختر الآية التي تريد تفسيرها:`
+                : `وُجدت ${ayahCount(search.total)}. اختر الآية التي تريد تفسيرها:`}
+          </p>
+          <ol style={{ listStyle: "none", padding: 0, maxHeight: 420, overflowY: "auto" }}>
+            {search.results.map((r) => {
+              const selected = answer?.surah_number === r.surah_number && answer?.ayah_number === r.ayah_number;
+              return (
+                <li key={`${r.surah_number}:${r.ayah_number}`}>
+                  <button
+                    onClick={() => choose(r.surah_number, r.ayah_number)}
+                    aria-pressed={selected}
+                    style={{
+                      display: "block", width: "100%", textAlign: "right", cursor: "pointer", marginBottom: 6,
+                      padding: 8, borderRadius: 6, border: selected ? "2px solid #2a6" : "1px solid #ccc",
+                      background: selected ? "#eefaf2" : "#fff",
+                    }}
+                  >
+                    <strong>سورة <SurahName name={r.surah_name} /> — الآية {r.ayah_number}</strong>
+                    <span style={{ display: "block", fontFamily: '"KFGQPC Hafs", serif', fontSize: 22, lineHeight: 1.9 }}>
+                      {r.text}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      )}
 
       {error && <p style={{ color: "crimson" }}>{error}</p>}
 
       {answer && (
-        <article>
+        <article id="answer">
           <section>
             <h2>أ. النص القرآني</h2>
             <p style={{ fontFamily: '"KFGQPC Hafs", serif', fontSize: 30, lineHeight: 2 }}>{answer.quranic_text}</p>
             <p style={{ color: "#555" }}>
-              سورة {answer.surah_name} — الآية {answer.ayah_number}
+              سورة <SurahName name={answer.surah_name} /> — الآية {answer.ayah_number}
               {answer.page_number != null && ` — الصفحة ${answer.page_number}`}
               {answer.juz_number != null && ` — الجزء ${answer.juz_number}`}
             </p>

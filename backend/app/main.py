@@ -1,8 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from .db import SessionLocal
 from .rag.answer_builder import build_answer
+from .search import search_verses
 
 app = FastAPI(
     title="آفاق (AFAQ) API",
@@ -34,5 +35,17 @@ def get_verse_answer(surah_number: int, ayah_number: int):
                 detail="لم يتم العثور على هذه الآية في المصادر المعتمدة المستوعبة حتى الآن.",
             )
         return answer
+    finally:
+        db.close()
+
+
+@app.get("/search")
+def search(q: str = Query(..., max_length=500), limit: int = Query(50, ge=1, le=200)):
+    """Verses containing the typed fragment (diacritics and spelling variants ignored)."""
+    db = SessionLocal()
+    try:
+        return search_verses(db, q, limit)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
     finally:
         db.close()
