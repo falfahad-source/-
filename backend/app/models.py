@@ -56,6 +56,10 @@ class Verse(Base):
     arabic_text = Column(Text, nullable=False)             # stored verbatim from source, never LLM-generated
     reading = Column(String, nullable=False, default="hafs")  # riwayah
     source_id = Column(Integer, ForeignKey("sources.id"), nullable=False)
+    # Mushaf layout and plain spelling, when the source provides them (KFGQPC does).
+    page_number = Column(Integer, nullable=True)
+    juz_number = Column(Integer, nullable=True)
+    text_imlaei = Column(Text, nullable=True)  # imla'i spelling, verbatim from source; for search only
 
     source = relationship("Source", back_populates="verses")
     tafsir_entries = relationship("TafsirEntry", back_populates="verse")

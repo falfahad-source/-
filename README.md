@@ -82,12 +82,28 @@ cp .env.example .env            # أضف OPENAI/ANTHROPIC key إن رغبت في
 docker compose up -d db
 cd backend && pip install -r requirements.txt -r requirements-dev.txt
 alembic upgrade head             # (يُضاف لاحقًا) أو python -m app.db إنشاء الجداول مباشرة للتطوير
-python -m app.ingestion.ingest_quran --surah 1          # يتصل فعليًا بـ api.quranpedia.net
+python -m app.ingestion.ingest_kfgqpc                   # نص القرآن كاملًا (6236 آية) من ملف مجمع الملك فهد — انظر أدناه
 python -m app.ingestion.ingest_tafsir --surah 1            # التفاسير الأساسية فقط (السعدي، الطبري، ابن كثير، الميسر...)
 python -m app.ingestion.ingest_tafsir --surah 1 --books 3,2012   # أو كتب محددة بأرقامها
 pytest                           # اختبارات بمحاكاة الشبكة، تعمل بلا اتصال
 uvicorn app.main:app --reload
 ```
+
+## نص القرآن: ملف مجمع الملك فهد (kfgqpc_hafs_v30)
+مصدر نص القرآن المعتمد هو إصدار البيانات الرسمي من مجمع الملك فهد لطباعة المصحف الشريف
+(`https://qurancomplex.gov.sa/quran-hafs/` — الحزمة `kfgqpc_hafs_v30`)، بدل Quranpedia API.
+الملفات **غير موجودة في git** (ترخيص إعادة التوزيع غير مذكور في الحزمة)، فضعها يدويًا:
+```bash
+cp kfgqpc_hafs_v30-data/kfgqpc_hafs_v30.json  backend/data/
+cp kfgqpc_hafs_v30-font/kfgqpc_hafs_v30.ttf   frontend/public/fonts/   # خط عرض الآيات
+```
+- يُخزَّن `aya_text_unicode` حرفيًا (مع علامة نهاية الآية ورقمها)، ومعه رقم الصفحة والجزء والنص الإملائي.
+- يُتحقَّق من الملف كاملًا قبل الكتابة (6236 آية، 114 سورة، ترقيم متصل)، ويُسجَّل SHA-256 للملف في جدول `sources`.
+- إن كانت الآيات مستوعبة سابقًا من Quranpedia: `python -m app.ingestion.ingest_kfgqpc --replace` يحدّثها في مكانها
+  فتبقى روابط التفسير سليمة.
+- أُضيفت أعمدة جديدة لجدول `verses` (`page_number`, `juz_number`, `text_imlaei`)؛ لا توجد Alembic بعد،
+  فقاعدة بيانات تطوير قديمة تحتاج إعادة إنشاء (`docker compose down -v`) أو إضافة الأعمدة يدويًا.
+- `ingest_quran.py` (Quranpedia) باقٍ كبديل، و`ingest_tafsir.py` ما زال يجلب التفسير من Quranpedia.
 
 ## لماذا لا أدّعي أن هذا "مكتمل"
 المستند يمنع صراحة الادعاء بالإنجاز دون اختبار فعلي ("Do not claim completion without testing").

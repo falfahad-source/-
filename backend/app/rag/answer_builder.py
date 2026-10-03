@@ -18,6 +18,11 @@ from ..trust import NO_VERIFIED_SOURCE_MESSAGE_AR, TrustCategory
 @dataclass
 class StructuredAnswer:
     quranic_text: str
+    surah_number: int
+    ayah_number: int
+    surah_name: str
+    page_number: int | None = None
+    juz_number: int | None = None
     concepts: list[str] = field(default_factory=list)
     verified_tafsir: list[dict] = field(default_factory=list)
     scientific_knowledge: list[dict] = field(default_factory=list)
@@ -86,6 +91,11 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
 
     return StructuredAnswer(
         quranic_text=verse.arabic_text,
+        surah_number=verse.surah_number,
+        ayah_number=verse.ayah_number,
+        surah_name=verse.surah_name,
+        page_number=verse.page_number,
+        juz_number=verse.juz_number,
         concepts=[],  # populated once Concept linking is implemented (Phase 2)
         verified_tafsir=verified_tafsir,
         scientific_knowledge=[],  # populated once ScientificEvidence linking is implemented (Phase 2)

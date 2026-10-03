@@ -5,3 +5,7 @@ node_modules/
 .next/
 *.sqlite3
 .venv/
+
+# Third-party data/font releases (KFGQPC): not redistributed in git
+backend/data/*.json
+frontend/public/fonts/*.ttf

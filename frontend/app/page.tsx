@@ -6,6 +6,11 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
 
 type Answer = {
   quranic_text: string;
+  surah_number: number;
+  ayah_number: number;
+  surah_name: string;
+  page_number: number | null;
+  juz_number: number | null;
   verified_tafsir: { scholar: string | null; text: string; source: string }[];
   possible_connections: { label: string; explanation: string; source: string }[];
   not_established: string[];
@@ -54,7 +59,12 @@ export default function Home() {
         <article>
           <section>
             <h2>أ. النص القرآني</h2>
-            <p style={{ fontSize: 22 }}>{answer.quranic_text}</p>
+            <p style={{ fontFamily: '"KFGQPC Hafs", serif', fontSize: 30, lineHeight: 2 }}>{answer.quranic_text}</p>
+            <p style={{ color: "#555" }}>
+              سورة {answer.surah_name} — الآية {answer.ayah_number}
+              {answer.page_number != null && ` — الصفحة ${answer.page_number}`}
+              {answer.juz_number != null && ` — الجزء ${answer.juz_number}`}
+            </p>
           </section>
 
           <section>
