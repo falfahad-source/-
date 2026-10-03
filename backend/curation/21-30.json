@@ -54,20 +54,20 @@
       "claim": "تقول نظرية الانفجار العظيم إن الكون بدأ قبل نحو 13.7 مليار سنة، وتمدد بسرعة من حالة شديدة الكثافة والحرارة.",
       "url": "https://svs.gsfc.nasa.gov/10128",
       "quote": "expanding rapidly from a very dense and incredibly hot state",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     },
     {
       "concept": "water_life",
       "source": "nasa",
       "domain": "علم الأحياء الفلكي",
-      "claim": "الماء من الشروط الأساسية لكل حياة نعرفها على الأرض؛ ولذلك يبحث العلماء عن الحياة خارج الأرض بتتبّع الماء.",
+      "claim": "وجد العلماء أن كل الكائنات الحية تحتاج إلى الماء؛ ولذلك يُبحث عن الحياة خارج الأرض في الأماكن التي فيها ماء.",
       "url": "https://astrobiology.nasa.gov/education/alp/water-so-important-for-life/",
-      "quote": "Water is one of the essential requirements for all life as we know it on Earth",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote": "Scientists have found that all living things need water.",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     }
   ],
   "connections": [

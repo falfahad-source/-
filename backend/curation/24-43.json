@@ -54,20 +54,20 @@
       "claim": "تيارات الحمل الصاعدة القوية تكوّن السحب الركامية المزنية، وهي السحب السندانية التي تصاحب العواصف الشديدة.",
       "url": "https://www.nesdis.noaa.gov/our-environment/severe-weather/thunderstorms",
       "quote": "form cumulonimbus clouds",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     },
     {
       "concept": "hail",
       "source": "noaa",
       "domain": "علم الأرصاد",
-      "claim": "البَرَد هطول من جليد صلب يتكوّن داخل التيارات الصاعدة في السحب الرعدية.",
-      "url": "https://www.nssl.noaa.gov/education/svrwx101/hail/",
-      "quote": "solid ice that forms inside thunderstorm updrafts",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "claim": "في التيارات الصاعدة يُدفع الهواء الدافئ الرطب إلى أعلى فيبرد ويتكاثف قطرات ماء، قد تسقط في النهاية مطرًا أو ثلجًا أو بَرَدًا، والعواصف الرعدية الشديدة قد تُسقط بَرَدًا كبيرًا.",
+      "url": "https://www.nesdis.noaa.gov/our-environment/severe-weather/thunderstorms",
+      "quote": "which can eventually fall as rain, snow or hail",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     }
   ],
   "connections": [

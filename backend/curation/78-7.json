@@ -41,9 +41,9 @@
       "claim": "تحت سلاسل الجبال الكبرى كالألب قد تمتد قاعدة القشرة الأرضية إلى عمق 100 كيلومتر، بينما لا تتجاوز تحت المحيطات نحو 5 كيلومترات.",
       "url": "https://pubs.usgs.gov/gip/dynamic/inside.html",
       "quote": "the base of the crust can be as deep as 100 km",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     }
   ],
   "connections": [

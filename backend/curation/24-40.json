@@ -95,23 +95,23 @@
       "concept": "ocean_zones",
       "source": "noaa",
       "domain": "علم المحيطات",
-      "claim": "من 0 إلى 200 م منطقة الضوء: تخترقها أشعة الشمس. من 200 إلى 1000 م منطقة الشفق: يتناقص الضوء بسرعة حتى يكاد ينعدم. بعد 1000 م المنطقة المعتمة: لا يصل ضوء الشمس.",
-      "provenance_note": "منقول من وثيقة فكرة المشروع منسوبًا إلى NOAA؛ اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "claim": "الـ200 متر العليا من المحيط هي المنطقة المضيئة. وبين 200 و1000 متر منطقة «الشفق» حيث تتلاشى شدة الضوء بسرعة مع العمق. وما دون 1000 متر المنطقة المعتمة التي لا تصلها أشعة الشمس.",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
       "url": "https://oceanservice.noaa.gov/facts/light_travel.html",
       "quote": "The upper 200 meters of the ocean is called the euphotic",
-      "verified_at": null,
-      "quote_origin": "search_excerpt"
+      "verified_at": "2026-10-03",
+      "quote_origin": "page"
     },
     {
       "concept": "light_attenuation",
       "source": "noaa",
       "domain": "علم المحيطات",
-      "claim": "يصبح الضوء محدودًا جدًا بين 200 و1000 متر، وينعدم كليًا بعد ذلك.",
-      "provenance_note": "منقول من وثيقة فكرة المشروع منسوبًا إلى NOAA؛ اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "claim": "قد يُرصد الضوء حتى عمق 1000 متر في المحيط، لكن نادرًا ما يوجد ضوء يُعتد به بعد 200 متر.",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
       "url": "https://oceanservice.noaa.gov/facts/light_travel.html",
       "quote": "there is rarely any significant light beyond 200 meters",
-      "verified_at": null,
-      "quote_origin": "search_excerpt"
+      "verified_at": "2026-10-03",
+      "quote_origin": "page"
     }
   ],
   "connections": [

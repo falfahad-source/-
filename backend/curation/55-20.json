@@ -51,12 +51,12 @@
       "concept": "estuary",
       "source": "noaa",
       "domain": "علم المحيطات",
-      "claim": "مصب النهر (الخور) مسطح مائي شبه مغلق يختلط فيه ماء البحر المالح بالماء العذب القادم من الأنهار.",
+      "claim": "مصبات الأنهار موطن لكائنات تكيّفت مع الماء قليل الملوحة، وهو مزيج من الماء العذب المنحدر من اليابسة وماء البحر المالح.",
       "url": "https://oceanservice.noaa.gov/facts/estuary.html",
-      "quote": "mixes with fresh water from rivers or streams",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote": "a mixture of fresh water draining from the land and salty seawater",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     },
     {
       "concept": "salt_wedge",
@@ -65,9 +65,9 @@
       "claim": "لأن الماء العذب أقل كثافة من الماء المالح فإنه يطفو فوقه، فتتكوّن حدود حادة بين الكتلتين: عذب في الأعلى وإسفين مالح في الأسفل.",
       "url": "https://oceanservice.noaa.gov/education/tutorial_estuaries/est05_circulation.html",
       "quote": "fresh water is less dense than saltwater",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     }
   ],
   "connections": [
@@ -75,7 +75,7 @@
       "phrase": "barzakh",
       "concept": "salt_wedge",
       "source": "noaa",
-      "explanation": "البرزخ عند أهل الغريب حاجز. والحدّ الفاصل بين الماء العذب الأخف والمالح الأثقل في المصبات موضوع علمي يمكن مقارنته به."
+      "explanation": "البرزخ عند أهل الغريب حاجز. والحدّ الفاصل بين الماء العذب الأخف والمالح الأثقل في المصبات موضوع علمي يمكن مقارنته به، ويذكر المصدر أن بعض الاختلاط يحدث عند الحد بين الكتلتين لكنه قليل عمومًا."
     },
     {
       "phrase": "la_yabghiyan",

@@ -186,6 +186,10 @@ def quote_found(quote: str, text: str) -> bool:
     return " ".join(quote.translate(_QUOTES).split()).casefold() in text.casefold()
 
 
+def verified_note(day: str) -> str:
+    return f"طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ {day}."
+
+
 def verify_document(doc: dict, fetch: Callable[[str], str], today: str | None = None) -> list[tuple[str, str]]:
     """Check each unverified claim's quote against its page; set verified_at on a
     match. Returns (claim concept, outcome) pairs. Never un-verifies a claim."""
@@ -206,6 +210,7 @@ def verify_document(doc: dict, fetch: Callable[[str], str], today: str | None = 
         if quote_found(c["quote"], text):
             c["verified_at"] = today
             c["quote_origin"] = "page"
+            c["provenance_note"] = verified_note(today)
             report.append((c["concept"], "verified"))
         else:
             report.append((c["concept"], "quote NOT found on page"))
@@ -217,6 +222,10 @@ def _fetch(url: str) -> str:
 
     resp = requests.get(url, timeout=30, headers={"User-Agent": "AFAQ-curation-verifier/1.0"})
     resp.raise_for_status()
+    # requests falls back to ISO-8859-1 when the header names no charset, which
+    # garbles UTF-8 pages (’ -> â€™) and breaks quote matching; honour the bytes.
+    if "charset" not in resp.headers.get("content-type", "").lower():
+        return resp.content.decode(resp.apparent_encoding or "utf-8", errors="replace")
     return resp.text
 
 

@@ -49,23 +49,23 @@
       "concept": "ozone_layer",
       "source": "noaa",
       "domain": "علوم الغلاف الجوي",
-      "claim": "تمتص طبقة الأوزون في الستراتوسفير معظم الأشعة فوق البنفسجية الضارة القادمة من الشمس، فتحمي الحياة على سطح الأرض.",
+      "claim": "طبقة من الأوزون لو جُمعت غازًا نقيًا عند سطح الأرض لكان سمكها نحو 3 مليمترات فقط، وهي تحمي الحياة على سطح الأرض من الأشعة فوق البنفسجية الضارة المنبعثة من الشمس.",
       "url": "https://csl.noaa.gov/assessments/ozone/2018/twentyquestions/",
-      "quote": "protects life on Earth",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote": "only 3 millimeters thick protects life on Earth's surface from harmful UV radiation",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     },
     {
       "concept": "meteors_burn",
       "source": "nasa",
       "domain": "علوم الفضاء",
-      "claim": "يسقط على الأرض يوميًا قرابة 48.5 طنًا من مواد النيازك، يتبخر معظمها تقريبًا في الغلاف الجوي.",
+      "claim": "حين تدخل النيازك الصغيرة الغلاف الجوي بسرعة عالية تحترق فتُسمّى شهبًا، ومعظم حطام المذنبات يحترق في الغلاف الجوي قبل أن يبلغ الأرض.",
       "url": "https://science.nasa.gov/solar-system/meteors-meteorites/facts/",
-      "quote": "vaporized in Earth's atmosphere",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote": "burns up in the atmosphere before reaching the ground",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     }
   ],
   "connections": [

@@ -21,7 +21,11 @@ from app.rag.answer_builder import build_answer
 from app.rag.layers import era_of
 from app.trust import TrustCategory
 
-DOC = json.loads((CURATION_DIR / "24-40.json").read_text(encoding="utf-8"))
+REAL_DOC = json.loads((CURATION_DIR / "24-40.json").read_text(encoding="utf-8"))
+# the tests below exercise the rules from an unverified starting point
+DOC = copy.deepcopy(REAL_DOC)
+for _c in DOC["claims"]:
+    _c.update(verified_at=None, quote_origin="search_excerpt")
 WORDS = ["أَوْ", "كَظُلُمَاتٍ", "فِي", "بَحْرٍ", "لُجِّيٍّ", "يَغْشَاهُ", "مَوْجٌ", "مِنْ", "فَوْقِهِ", "مَوْجٌ", "مِنْ",
          "فَوْقِهِ", "سَحَابٌ", "ظُلُمَاتٌ", "بَعْضُهَا", "فَوْقَ", "بَعْضٍ", "إِذَا", "أَخْرَجَ", "يَدَهُ", "لَمْ", "يَكَدْ",
          "يَرَاهَا"]
@@ -167,6 +171,7 @@ def test_every_curation_file_is_valid_and_uses_allowed_sources():
             assert c["url"] and allowed_url(c["url"]), (f.name, c["url"])
             assert c["quote"], f.name
             assert not c.get("verified_at") or c.get("quote_origin") == "page", f.name
+            assert c.get("quote_origin") in {"page", "page_reading", "search_excerpt"}, f.name
 
 
 def test_claim_url_outside_allowlist_is_rejected(db):
@@ -195,6 +200,7 @@ def test_verify_marks_only_quotes_found_on_the_page():
     report = dict(verify_document(doc, lambda url: page, today="2026-10-03"))
     assert report == {"ocean_zones": "verified", "light_attenuation": "quote NOT found on page"}
     assert doc["claims"][0]["verified_at"] == "2026-10-03" and doc["claims"][0]["quote_origin"] == "page"
+    assert "طوبق" in doc["claims"][0]["provenance_note"]
     assert doc["claims"][1]["verified_at"] is None
 
 
@@ -208,3 +214,11 @@ def test_verify_reports_fetch_failures_and_keeps_claims_unverified():
     report = verify_document(doc, blocked)
     assert all(outcome.startswith("fetch failed") for _, outcome in report)
     assert all(c["verified_at"] is None for c in doc["claims"])
+
+
+def test_real_curation_file_loads_verified_claims_as_facts(db):
+    load_document(db, REAL_DOC)
+    a = build_answer(db, 24, 40)
+    claims = [c for s in a.scientific_knowledge for c in s["claims"]]
+    assert claims and all(c["trust_category"] == "SCIENTIFIC_FACT" and c["verified_at"] for c in claims)
+    assert not any("لم تُطابَق" in m for m in a.not_established)

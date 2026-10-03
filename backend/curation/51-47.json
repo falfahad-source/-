@@ -46,12 +46,12 @@
       "concept": "cosmic_expansion",
       "source": "nasa",
       "domain": "علم الفلك",
-      "claim": "أعلن إدوين هابل عام 1929 أن معظم المجرات تبدو متباعدة عنا، وكلما بعدت المجرة زادت سرعة ابتعادها، وهو ما يُفهم منه أن الكون يتمدد.",
+      "claim": "أعلن إدوين هابل عام 1929 أن جميع المجرات تقريبًا تبدو متباعدة عنا، ووجد أن الكون يتمدد وأن المجرات تتباعد بعضها عن بعض.",
       "url": "https://starchild.gsfc.nasa.gov/docs/StarChild/questions/redshift.html",
       "quote": "almost all galaxies appeared to be moving away from us",
-      "quote_origin": "search_excerpt",
-      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
-      "verified_at": null
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
     }
   ],
   "connections": [
