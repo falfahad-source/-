@@ -19,7 +19,7 @@ import datetime as dt
 
 from sqlalchemy.orm import Session
 
-from ..config import QURANPEDIA_API_BASE
+from ..config import EXCLUDED_DEFAULT_TAFSIR_BOOKS, QURANPEDIA_API_BASE
 from ..db import SessionLocal, init_db
 from ..models import Source, TafsirEntry, Verse
 from ..trust import TrustCategory, require_provenance
@@ -52,7 +52,7 @@ def select_books(listing: list[dict], book_ids: set[int] | None) -> list[dict]:
     ~120 books per ayah would exhaust the API's 10,000/day quota on one long surah."""
     if book_ids:
         return [b for b in listing if b["id"] in book_ids]
-    return [b for b in listing if b.get("fundamental")]
+    return [b for b in listing if b.get("fundamental") and b["id"] not in EXCLUDED_DEFAULT_TAFSIR_BOOKS]
 
 
 def ingest_surah_tafsir(

@@ -13,6 +13,7 @@ Quranpedia.net and the dump version.
 Usage:
     python -m app.ingestion.ingest_tafsir_dump                 # the `fundamental` books
     python -m app.ingestion.ingest_tafsir_dump --books 3,2012  # specific book ids
+    python -m app.ingestion.ingest_tafsir_dump --remove 331    # delete a book's stored entries
 
 Downloads are cached in backend/data/quranpedia/ (not in git). Verses must be
 imported first (ingest_kfgqpc); ayahs are matched by surah/ayah number.
@@ -27,8 +28,9 @@ from pathlib import Path
 import requests
 from sqlalchemy.orm import Session
 
+from ..config import EXCLUDED_DEFAULT_TAFSIR_BOOKS
 from ..db import SessionLocal, init_db
-from ..models import TafsirEntry, Verse
+from ..models import Source, TafsirEntry, Verse
 from ..trust import require_provenance
 from .ingest_tafsir import get_or_create_book_source
 
@@ -56,11 +58,12 @@ def load_gz_json(path: Path) -> dict:
 
 
 def fundamental_book_ids(index: dict) -> list[int]:
-    """Books Quranpedia flags `fundamental` on any ayah, from tafsir.json.gz."""
+    """Books Quranpedia flags `fundamental` on any ayah, from tafsir.json.gz,
+    minus EXCLUDED_DEFAULT_TAFSIR_BOOKS."""
     ids: dict[int, None] = {}
     for entry in index["data"]:
         for book in entry["tafsir"]:
-            if book.get("fundamental"):
+            if book.get("fundamental") and book["id"] not in EXCLUDED_DEFAULT_TAFSIR_BOOKS:
                 ids.setdefault(book["id"], None)
     return list(ids)
 
@@ -107,11 +110,34 @@ def import_book(db: Session, dump: dict) -> int:
     return inserted
 
 
+def remove_book(db: Session, book_id: int) -> int:
+    """Delete a book's tafsir entries and its Source row; returns entries deleted."""
+    source = db.query(Source).filter_by(citation_identifier=f"quranpedia:book:{book_id}").first()
+    if source is None:
+        return 0
+    n = db.query(TafsirEntry).filter_by(source_id=source.id).delete()
+    db.delete(source)
+    db.commit()
+    return n
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Import tafsir books from Quranpedia dumps.")
     parser.add_argument("--books", type=str, default=None,
                         help="Comma-separated book ids (e.g. 3,2012). Default: fundamental books.")
+    parser.add_argument("--remove", type=str, default=None,
+                        help="Comma-separated book ids whose stored tafsir entries should be deleted.")
     args = parser.parse_args()
+
+    if args.remove:
+        init_db()
+        db = SessionLocal()
+        try:
+            for book_id in (int(b) for b in args.remove.split(",")):
+                print(f"book {book_id}: removed {remove_book(db, book_id)} entries")
+        finally:
+            db.close()
+        return
 
     if args.books:
         book_ids = [int(b) for b in args.books.split(",")]

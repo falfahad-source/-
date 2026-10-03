@@ -106,3 +106,26 @@ def test_download_caches_and_round_trips_gzip(tmp_path):
     assert session.get.call_count == 1  # second call served from cache
     assert load_gz_json(path) == {"ok": True}
     assert not list(tmp_path.glob("*.part"))
+
+
+def test_duplicate_ibn_kathir_edition_is_excluded_by_default():
+    index = {"data": [{"surah": 1, "ayah": 1, "tafsir": [
+        {"id": 136, "fundamental": 1}, {"id": 331, "fundamental": 1}, {"id": 3, "fundamental": 1}]}]}
+    assert fundamental_book_ids(index) == [136, 3]
+
+
+def test_api_path_also_excludes_it_unless_requested():
+    from app.ingestion.ingest_tafsir import select_books
+    listing = [{"id": 136, "fundamental": 1}, {"id": 331, "fundamental": 1}]
+    assert [b["id"] for b in select_books(listing, None)] == [136]
+    assert [b["id"] for b in select_books(listing, {331})] == [331]
+
+
+def test_remove_book_deletes_entries_and_source(db_session):
+    from app.ingestion.ingest_tafsir_dump import remove_book
+    _seed_verses(db_session)
+    import_book(db_session, _dump())
+    assert remove_book(db_session, 3) == 2
+    assert db_session.query(TafsirEntry).count() == 0
+    assert db_session.query(Source).filter_by(citation_identifier="quranpedia:book:3").count() == 0
+    assert remove_book(db_session, 3) == 0  # already gone

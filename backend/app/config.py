@@ -22,3 +22,13 @@ SCIENTIFIC_SOURCE_ALLOWLIST: list[str] = [
 # Minimum confidence required before a Relationship may be labeled POSSIBLE_CONNECTION
 # in an answer (still always shown with the explicit disclaimer regardless of score).
 MIN_CONNECTION_CONFIDENCE = 0.0
+
+# Quranpedia tafsir books left out of the default (`fundamental`) selection.
+# They can still be requested explicitly with --books.
+EXCLUDED_DEFAULT_TAFSIR_BOOKS: dict[int, str] = {
+    # Quranpedia lists two editions of Ibn Kathir's تفسير القرآن العظيم as fundamental.
+    # Keep 136 (دار طيبة، تحقيق سامي سلامة — the standard critical edition, text starts
+    # at its ayah); drop 331 (دار الكتب العلمية), whose page-based chunks spill over
+    # from neighbouring ayahs (e.g. its 2:255 entry opens with the end of 2:254).
+    331: "duplicate Ibn Kathir edition; 136 is kept",
+}
