@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { LayerHead, SurahName, TrustBadge } from "./common";
+import { LayerHead, ReviewPill, SurahName, TrustBadge } from "./common";
 import type { Answer, GraphNode, OpenVerse } from "./types";
 
 type Placed = GraphNode & { x: number; y: number; r: number };
@@ -121,7 +121,7 @@ function NodeDetail({ a, node, open }: { a: Answer; node: GraphNode; open: OpenV
               <div className="link" key={c.concept}>
                 <div className="layer-head" style={{ margin: 0 }}><h3>{c.concept_name_ar}</h3><TrustBadge trust="POSSIBLE_CONNECTION" /></div>
                 <p>{c.explanation}</p>
-                <span className="pill">{c.review_status === "draft" ? "مسودة — بحاجة لمراجعة الباحث" : "روجعت"}</span>
+                <ReviewPill status={c.review_status} by={c.reviewed_by} at={c.reviewed_at} />
               </div>
             ))}
           </div>

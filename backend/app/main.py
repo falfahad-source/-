@@ -1,22 +1,35 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
-from .db import SessionLocal
+from .db import SessionLocal, init_db
 from .rag.answer_builder import build_answer
+from .review_api import router as review_router
 from .search import search_verses
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # bring an existing database up to the current schema (new tables, new nullable columns)
+    init_db()
+    yield
+
 
 app = FastAPI(
     title="آفاق (AFAQ) API",
     description="Source-grounded knowledge exploration around Quranic verses.",
     version="0.1.0-scaffold",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
-    allow_methods=["GET"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Authorization", "Content-Type"],
 )
+app.include_router(review_router)
 
 
 @app.get("/health")

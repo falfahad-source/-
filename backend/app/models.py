@@ -141,6 +141,8 @@ class Relationship(Base):
     explanation = Column(Text, nullable=False)
     # "draft" until a researcher reviews the comparison; shown on the card either way.
     review_status = Column(String, nullable=True, default="draft")
+    reviewed_by = Column(String, nullable=True)   # from the curation file's exported review
+    reviewed_at = Column(String, nullable=True)
 
     evidence_source = relationship("Source")
 
@@ -309,3 +311,23 @@ class CuratedTopic(Base):
     topic_id = Column(Integer, ForeignKey("topics.id"), nullable=False)
 
     topic = relationship("Topic")
+
+
+class ConnectionReview(Base):
+    """A researcher's decision on a phrase -> concept comparison.
+
+    Keyed by the comparison's stable key ("24:40:zulumat->ocean_zones") because
+    reloading curation recreates Relationship rows. A review applies only while
+    the comparison's text is the text the reviewer saw (or approved): editing the
+    curation file afterwards sends the comparison back to "draft".
+    """
+    __tablename__ = "connection_reviews"
+
+    id = Column(Integer, primary_key=True)
+    connection_key = Column(String, nullable=False, index=True)
+    reviewer = Column(String, nullable=False)
+    decision = Column(String, nullable=False)          # approved | changes_requested | rejected
+    comment = Column(Text, nullable=True)
+    reviewed_text = Column(Text, nullable=False)       # the explanation as the reviewer saw it
+    approved_text = Column(Text, nullable=True)        # what was approved (the reviewer's edit, if any)
+    created_at = Column(DateTime, nullable=False)

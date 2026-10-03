@@ -157,6 +157,7 @@ export default function Home() {
         نص المصحف: مجمع الملك فهد لطباعة المصحف الشريف (رواية حفص، الإصدار 3.0). التفاسير والغريب والإعراب والموضوعات:
         {" "}<a href="https://quranpedia.net" target="_blank" rel="noopener noreferrer">الموسوعة القرآنية Quranpedia.net</a>.
         التحليل الصرفي: Quranic Arabic Corpus (corpus.quran.com). آفاق لا يطلب من الذكاء الاصطناعي تفسير القرآن، بل يستعمله للتنقل في المعرفة الموثقة حوله.
+        {" "}<a href="/review">مراجعة المقارنات (للباحثين)</a>.
       </footer>
     </div>
   );

@@ -1,4 +1,4 @@
-import { ayahCount, LayerHead, SurahName, TrustBadge } from "./common";
+import { ayahCount, LayerHead, ReviewPill, SurahName, TrustBadge } from "./common";
 import type { Answer, OpenVerse } from "./types";
 
 export default function ScienceLayer({ a, open }: { a: Answer; open: OpenVerse }) {
@@ -55,7 +55,7 @@ export default function ScienceLayer({ a, open }: { a: Answer; open: OpenVerse }
                 </div>
                 <TrustBadge trust="POSSIBLE_CONNECTION" />
                 <p>{c.explanation}</p>
-                <span className="pill">{c.review_status === "draft" ? "مسودة — بحاجة لمراجعة الباحث" : "روجعت"}</span>
+                <ReviewPill status={c.review_status} by={c.reviewed_by} at={c.reviewed_at} />
               </div>
             ))}
           </div>

@@ -182,3 +182,26 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .ijaz li { border: 1px solid var(--rule); border-inline-start: 3px solid var(--t-connection); border-radius: 10px; padding: 8px 12px; background: var(--sheet); }
 .ijaz a { text-decoration: none; color: var(--ink); }
 .ijaz a:hover strong { text-decoration: underline; }
+
+.pill-ok { color: var(--t-quran); border-style: solid; border-color: currentColor; }
+
+/* review page */
+.review-top { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 8px 0 14px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.review-card { display: grid; gap: 10px; }
+.review-card .verse { font-family: var(--f-quran); font-size: 1.35rem; line-height: 2.1; margin: 0; color: var(--ink); }
+.review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.review-card textarea { width: 100%; font: inherit; font-family: var(--f-read); line-height: 1.9; padding: 8px 10px;
+  border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); color: var(--text); resize: vertical; }
+.review-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn-ok { background: var(--t-quran); color: var(--sheet); border: 0; border-radius: 10px; padding: 6px 14px; font-weight: 600; }
+.btn-warn { background: transparent; color: var(--t-connection); border: 1px solid currentColor; border-radius: 10px; padding: 6px 14px; font-weight: 600; }
+.btn-bad { background: transparent; color: var(--t-unverified); border: 1px solid currentColor; border-radius: 10px; padding: 6px 14px; font-weight: 600; }
+.status { font-size: .8rem; font-weight: 600; padding: 1px 10px; border-radius: 999px; border: 1px solid currentColor; }
+.status-draft { color: var(--muted); }
+.status-approved { color: var(--t-quran); }
+.status-changes_requested { color: var(--t-connection); }
+.status-rejected { color: var(--t-unverified); }
+.history { margin: 0; padding-inline-start: 18px; font-size: .85rem; color: var(--muted); }
+.login { display: grid; gap: 8px; max-width: 420px; }
+.login input { font: inherit; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); color: var(--text); }

@@ -4,6 +4,7 @@ import json
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app.curation import CURATION_DIR, CurationError, load_document
 from app.models import (
@@ -33,7 +34,8 @@ WORDS = ["أَوْ", "كَظُلُمَاتٍ", "فِي", "بَحْرٍ", "لُج
 
 @pytest.fixture()
 def db():
-    engine = create_engine("sqlite:///:memory:")
+    # one shared connection, so API tests running on another thread see the same data
+    engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(engine)
     s = sessionmaker(bind=engine)()
     q = Source(title="KFGQPC", publisher="KFGQPC", source_type="quran_dataset", url="u",

@@ -178,6 +178,7 @@ def load_document(db: Session, doc: dict) -> dict[str, int]:
             trust_category=TrustCategory.POSSIBLE_CONNECTION,
             confidence=0.0,  # not scored; the trust category is what the UI shows
             explanation=r["explanation"], review_status=r.get("review_status", "draft"),
+            reviewed_by=r.get("reviewed_by"), reviewed_at=r.get("reviewed_at"),
         ))
     db.commit()
     return {"phrases": len(doc.get("phrases", [])), "concepts": len(concepts),

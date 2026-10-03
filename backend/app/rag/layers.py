@@ -24,6 +24,7 @@ from ..models import (
     WordAnalysis,
     WordMeaning,
 )
+from ..reviews import effective as effective_review
 from ..search import normalize_arabic
 from ..trust import TrustCategory
 
@@ -150,6 +151,9 @@ def concepts_layer(db: Session, verse: Verse, meanings: list[dict], words: list[
         for r in rels:
             if r.trust_category != TrustCategory.POSSIBLE_CONNECTION:
                 continue  # never present anything else as a comparison
+            review = effective_review(db, r)
+            if review.status == "rejected":
+                continue  # a researcher rejected this comparison
             key = r.target_entity.removeprefix("concept:")
             concept = db.query(Concept).filter_by(key=key).first()
             register_source(r.evidence_source)
@@ -158,7 +162,8 @@ def concepts_layer(db: Session, verse: Verse, meanings: list[dict], words: list[
                 "phrase": p.key, "phrase_label": p.label, "concept": key,
                 "concept_name_ar": concept.name_ar if concept else key,
                 "concept_name_en": concept.name_en if concept else None,
-                "explanation": r.explanation, "review_status": r.review_status or "draft",
+                "explanation": review.explanation, "review_status": review.status,
+                "reviewed_by": review.reviewer, "reviewed_at": review.reviewed_at,
                 "source": r.evidence_source.title, "trust_category": r.trust_category.value,
                 "target": r.target_entity, "relationship_type": r.relationship_type, "confidence": r.confidence,
             }

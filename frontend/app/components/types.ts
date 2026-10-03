@@ -15,8 +15,10 @@ export type Irab = Era & { book: string; author: string | null; text: string; is
 
 export type Connection = {
   label: string; phrase: string; phrase_label: string; concept: string; concept_name_ar: string;
-  concept_name_en: string | null; explanation: string; review_status: string; source: string; trust_category: Trust;
+  concept_name_en: string | null; explanation: string; review_status: ReviewStatus; source: string; trust_category: Trust;
+  reviewed_by?: string | null; reviewed_at?: string | null;
 };
+export type ReviewStatus = "draft" | "approved" | "changes_requested" | "rejected";
 export type Phrase = { key: string; label: string; words: [number, number]; text: string; meanings: Meaning[]; connections: Connection[] };
 export type Claim = {
   claim: string; trust_category: Trust; source: string; url: string | null; quote: string | null;

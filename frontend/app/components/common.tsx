@@ -1,4 +1,4 @@
-import type { Trust } from "./types";
+import type { ReviewStatus, Trust } from "./types";
 
 const TRUST_LABEL: Record<Trust, string> = {
   QURANIC_TEXT: "نص قرآني",
@@ -45,4 +45,11 @@ export function LayerHead({ step, title, trust, children }: {
       {children && <p className="lead">{children}</p>}
     </>
   );
+}
+
+// Review state of a curated comparison (see /review).
+export function ReviewPill({ status, by, at }: { status: ReviewStatus; by?: string | null; at?: string | null }) {
+  if (status === "approved") return <span className="pill pill-ok">اعتمدها الباحث{by ? `: ${by}` : ""}{at ? ` — ${at}` : ""}</span>;
+  if (status === "changes_requested") return <span className="pill">قيد المراجعة — طُلب تعديلها</span>;
+  return <span className="pill">مسودة — بحاجة لمراجعة الباحث</span>;
 }
