@@ -24,6 +24,7 @@ type Answer = {
 type SearchResult = {
   query: string;
   total: number;
+  offset: number;
   results: { surah_number: number; surah_name: string; ayah_number: number; text: string; page_number: number | null }[];
 };
 
@@ -70,18 +71,39 @@ export default function Home() {
     setAnswer(await res.json());
   }
 
+  const PAGE_SIZE = 50;
+
+  async function fetchSearchPage(q: string, offset: number): Promise<SearchResult | null> {
+    const params = new URLSearchParams({ q, limit: String(PAGE_SIZE), offset: String(offset) });
+    const res = await fetch(`${API_BASE}/search?${params}`);
+    if (!res.ok) {
+      setError((await res.json()).detail || "تعذّر البحث.");
+      return null;
+    }
+    return res.json();
+  }
+
   async function runSearch(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setSearch(null);
     setSearching(true);
     try {
-      const res = await fetch(`${API_BASE}/search?${new URLSearchParams({ q: query, limit: "50" })}`);
-      if (!res.ok) {
-        setError((await res.json()).detail || "تعذّر البحث.");
-        return;
-      }
-      setSearch(await res.json());
+      setSearch(await fetchSearchPage(query, 0));
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  // Appends the next page. Uses the query the shown results came from, so editing
+  // the box without pressing بحث never mixes results of two different searches.
+  async function loadMore() {
+    if (!search) return;
+    setError(null);
+    setSearching(true);
+    try {
+      const next = await fetchSearchPage(search.query, search.results.length);
+      if (next) setSearch({ ...next, results: [...search.results, ...next.results] });
     } finally {
       setSearching(false);
     }
@@ -122,10 +144,10 @@ export default function Home() {
             {search.total === 0
               ? "لا توجد آيات تحتوي هذا النص."
               : search.total > search.results.length
-                ? `وُجدت ${ayahCount(search.total)}، تُعرض أول ${search.results.length} منها. اختر الآية التي تريد تفسيرها:`
+                ? `وُجدت ${ayahCount(search.total)}، يُعرض منها ${search.results.length}. اختر الآية التي تريد تفسيرها:`
                 : `وُجدت ${ayahCount(search.total)}. اختر الآية التي تريد تفسيرها:`}
           </p>
-          <ol style={{ listStyle: "none", padding: 0, maxHeight: 420, overflowY: "auto" }}>
+          <ol style={{ listStyle: "none", padding: 0 }}>
             {search.results.map((r) => {
               const selected = answer?.surah_number === r.surah_number && answer?.ayah_number === r.ayah_number;
               return (
@@ -148,6 +170,13 @@ export default function Home() {
               );
             })}
           </ol>
+          {search.results.length < search.total && (
+            <button onClick={loadMore} disabled={searching} style={{ display: "block", margin: "0 auto 16px", padding: "6px 16px" }}>
+              {searching
+                ? "جارٍ التحميل..."
+                : `عرض المزيد (المتبقي ${search.total - search.results.length})`}
+            </button>
+          )}
         </section>
       )}
 

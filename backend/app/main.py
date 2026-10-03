@@ -40,11 +40,16 @@ def get_verse_answer(surah_number: int, ayah_number: int):
 
 
 @app.get("/search")
-def search(q: str = Query(..., max_length=500), limit: int = Query(50, ge=1, le=200)):
-    """Verses containing the typed fragment (diacritics and spelling variants ignored)."""
+def search(
+    q: str = Query(..., max_length=500),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """Verses containing the typed fragment (diacritics and spelling variants ignored).
+    Page with `offset` (e.g. a "show more" button sends offset = results shown so far)."""
     db = SessionLocal()
     try:
-        return search_verses(db, q, limit)
+        return search_verses(db, q, limit, offset)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
     finally:

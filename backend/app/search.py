@@ -75,9 +75,10 @@ def _get_index(db: Session) -> list[_IndexedVerse]:
     return _index
 
 
-def search_verses(db: Session, query: str, limit: int = 50) -> dict:
-    """Returns {"query", "normalized_query", "total", "results": [...]}, results in
-    mushaf order and capped at `limit`; `total` is the full match count."""
+def search_verses(db: Session, query: str, limit: int = 50, offset: int = 0) -> dict:
+    """Returns {"query", "normalized_query", "total", "offset", "results": [...]}:
+    the matches in mushaf order from `offset`, at most `limit` of them; `total` is
+    the full match count, so a caller pages with offset += len(results)."""
     needle = normalize_arabic(query)
     if len(needle.replace(" ", "")) < MIN_QUERY_LETTERS:
         raise ValueError("اكتب حرفين عربيين على الأقل للبحث.")
@@ -86,11 +87,12 @@ def search_verses(db: Session, query: str, limit: int = 50) -> dict:
         "query": query,
         "normalized_query": needle,
         "total": len(matches),
+        "offset": offset,
         "results": [
             {
                 "surah_number": v.surah_number, "surah_name": v.surah_name,
                 "ayah_number": v.ayah_number, "text": v.arabic_text, "page_number": v.page_number,
             }
-            for v in matches[:limit]
+            for v in matches[offset:offset + limit]
         ],
     }

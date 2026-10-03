@@ -109,3 +109,21 @@ def test_real_mushaf_known_counts():
     assert search_verses(db, "فبأي آلاء ربكما تكذبان")["total"] == 31  # all in surah al-Rahman
     assert _hits(db, "الله لا إله إلا هو الحي القيوم") == [(2, 255), (3, 2)]
     assert _hits(db, "قل هو الله احد") == [(112, 1)]
+
+
+def test_offset_pages_through_all_matches_without_gaps_or_repeats(db_session):
+    first = search_verses(db_session, "الرحمن", limit=1)
+    second = search_verses(db_session, "الرحمن", limit=1, offset=1)
+    past_end = search_verses(db_session, "الرحمن", limit=1, offset=2)
+    pages = [(r["surah_number"], r["ayah_number"]) for page in (first, second) for r in page["results"]]
+    assert pages == [(1, 1), (27, 30)]
+    assert second["offset"] == 1 and second["total"] == 2
+    assert past_end["results"] == [] and past_end["total"] == 2
+
+
+def test_search_endpoint_offset(db_session, monkeypatch):
+    monkeypatch.setattr(main, "SessionLocal", db_session.session_factory)
+    client = TestClient(main.app)
+    res = client.get("/search", params={"q": "بسم الله", "limit": 1, "offset": 1}).json()
+    assert [(r["surah_number"], r["ayah_number"]) for r in res["results"]] == [(27, 30)]
+    assert client.get("/search", params={"q": "بسم الله", "offset": -1}).status_code == 422
