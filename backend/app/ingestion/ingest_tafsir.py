@@ -1,4 +1,7 @@
-"""Ingest tafsir text for a surah from every tafsir book Quranpedia lists for it.
+"""Ingest tafsir text for a surah from the tafsir books Quranpedia lists per ayah.
+
+Book availability is listed per ayah (/ayah/{s}/{a}/tafsir); by default only the
+books Quranpedia flags as `fundamental` are ingested (see select_books).
 
 This is the stand-in tafsir pipeline for Phase 1 while the Dorar.net access
 mechanism is still being confirmed (see docs/SOURCE_FINDINGS.md). Each tafsir
@@ -7,6 +10,7 @@ between books is preserved rather than merged (spec: "Disagreement" section).
 
 Usage:
     python -m app.ingestion.ingest_tafsir --surah 1
+    python -m app.ingestion.ingest_tafsir --surah 1 --books 3,2012
 """
 from __future__ import annotations
 
@@ -43,18 +47,24 @@ def get_or_create_book_source(db: Session, book: dict) -> Source:
     return source
 
 
-def ingest_surah_tafsir(db: Session, client: QuranpediaClient, surah_id: int) -> int:
-    books = client.list_surah_tafsir_books(surah_id)
-    verses = {v.ayah_number: v for v in db.query(Verse).filter_by(surah_number=surah_id, reading="hafs")}
+def select_books(listing: list[dict], book_ids: set[int] | None) -> list[dict]:
+    """Explicit book ids win; otherwise only the `fundamental` books. Fetching all
+    ~120 books per ayah would exhaust the API's 10,000/day quota on one long surah."""
+    if book_ids:
+        return [b for b in listing if b["id"] in book_ids]
+    return [b for b in listing if b.get("fundamental")]
+
+
+def ingest_surah_tafsir(
+    db: Session, client: QuranpediaClient, surah_id: int, book_ids: set[int] | None = None
+) -> int:
+    verses = db.query(Verse).filter_by(surah_number=surah_id, reading="hafs").order_by(Verse.ayah_number)
     inserted = 0
-    for book in books:
-        source = get_or_create_book_source(db, book)
-        require_provenance(source.id, "TafsirEntry")
-        for ayah_number, verse in verses.items():
-            content = client.get_tafsir_for_ayah(surah_id, ayah_number, book["id"])
-            parts = content.get("content") or []
-            if not parts:
-                continue  # no tafsir text for this ayah in this book — do not invent one
+    for verse in verses:
+        ayah_number = verse.ayah_number
+        for book in select_books(client.list_ayah_tafsir_books(surah_id, ayah_number), book_ids):
+            source = get_or_create_book_source(db, book)
+            require_provenance(source.id, "TafsirEntry")
             exists = (
                 db.query(TafsirEntry)
                 .filter_by(verse_id=verse.id, source_id=source.id)
@@ -62,7 +72,12 @@ def ingest_surah_tafsir(db: Session, client: QuranpediaClient, surah_id: int) ->
             )
             if exists:
                 continue
+            content = client.get_tafsir_for_ayah(surah_id, ayah_number, book["id"])
+            parts = content.get("content") or []
+            if not parts:
+                continue  # no tafsir text for this ayah in this book — do not invent one
             text = "\n".join(p.get("text", "") for p in parts)
+            page = parts[0].get("page")
             db.add(
                 TafsirEntry(
                     verse_id=verse.id,
@@ -71,7 +86,7 @@ def ingest_surah_tafsir(db: Session, client: QuranpediaClient, surah_id: int) ->
                     category="verse_tafsir",
                     original_text=text,  # verbatim from the book, never invented
                     normalized_summary=None,
-                    source_location=parts[0].get("page") if parts else None,
+                    source_location=str(page) if page is not None else None,
                     disagreement_group=f"surah{surah_id}:ayah{ayah_number}",
                 )
             )
@@ -83,13 +98,18 @@ def ingest_surah_tafsir(db: Session, client: QuranpediaClient, surah_id: int) ->
 def main() -> None:
     parser = argparse.ArgumentParser(description="Ingest tafsir text from Quranpedia tafsir books.")
     parser.add_argument("--surah", type=int, required=True)
+    parser.add_argument(
+        "--books", type=str, default=None,
+        help="Comma-separated Quranpedia book ids (e.g. 3,2012). Default: fundamental tafsirs only.",
+    )
     args = parser.parse_args()
+    book_ids = {int(b) for b in args.books.split(",")} if args.books else None
 
     init_db()
     db = SessionLocal()
     client = QuranpediaClient()
     try:
-        n = ingest_surah_tafsir(db, client, args.surah)
+        n = ingest_surah_tafsir(db, client, args.surah, book_ids)
         print(f"Inserted {n} new tafsir entries for surah {args.surah}.")
     finally:
         db.close()

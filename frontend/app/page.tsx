@@ -12,6 +12,14 @@ type Answer = {
   sources: { title: string; url: string }[];
 };
 
+// Tafsir text is stored verbatim from Quranpedia, which includes markup
+// (<span class="book-ayah">, <br />). Show it as plain text: parsing into a
+// detached document and reading textContent never executes or injects anything.
+function toPlainText(html: string): string {
+  const withBreaks = html.replace(/<br\s*\/?>/gi, "\n");
+  return new DOMParser().parseFromString(withBreaks, "text/html").body.textContent ?? "";
+}
+
 export default function Home() {
   const [surah, setSurah] = useState(1);
   const [ayah, setAyah] = useState(1);
@@ -54,7 +62,7 @@ export default function Home() {
             {answer.verified_tafsir.length === 0 && <p>لا يوجد تفسير موثّق مستوعب بعد لهذه الآية.</p>}
             {answer.verified_tafsir.map((t, i) => (
               <blockquote key={i}>
-                <p>{t.text}</p>
+                <p style={{ whiteSpace: "pre-line" }}>{toPlainText(t.text)}</p>
                 <footer>— {t.scholar || "غير معروف"}، {t.source}</footer>
               </blockquote>
             ))}

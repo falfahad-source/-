@@ -83,7 +83,8 @@ docker compose up -d db
 cd backend && pip install -r requirements.txt -r requirements-dev.txt
 alembic upgrade head             # (يُضاف لاحقًا) أو python -m app.db إنشاء الجداول مباشرة للتطوير
 python -m app.ingestion.ingest_quran --surah 1          # يتصل فعليًا بـ api.quranpedia.net
-python -m app.ingestion.ingest_tafsir --surah 1
+python -m app.ingestion.ingest_tafsir --surah 1            # التفاسير الأساسية فقط (السعدي، الطبري، ابن كثير، الميسر...)
+python -m app.ingestion.ingest_tafsir --surah 1 --books 3,2012   # أو كتب محددة بأرقامها
 pytest                           # اختبارات بمحاكاة الشبكة، تعمل بلا اتصال
 uvicorn app.main:app --reload
 ```

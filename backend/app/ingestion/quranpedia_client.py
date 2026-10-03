@@ -73,7 +73,14 @@ class QuranpediaClient:
 
     # ---- Tafsir -----------------------------------------------------------
     def list_surah_tafsir_books(self, surah_id: int) -> list[dict]:
+        """Books dedicated to this one surah (e.g. a standalone tafsir of al-Fatiha).
+        These usually carry no per-ayah text; use list_ayah_tafsir_books for that."""
         return self._get(f"/surah/tafsirs/{surah_id}")  # type: ignore[return-value]
+
+    def list_ayah_tafsir_books(self, surah_id: int, ayah_number: int) -> list[dict]:
+        """Tafsir books with text for this ayah. Each item has id, name, author and
+        `fundamental` (1 for the core tafsirs: al-Tabari, Ibn Kathir, al-Sa'di, ...)."""
+        return self._get(f"/ayah/{surah_id}/{ayah_number}/tafsir")  # type: ignore[return-value]
 
     def get_tafsir_for_ayah(self, surah_id: int, ayah_number: int, book_id: int) -> dict:
         return self._get(f"/ayah/{surah_id}/{ayah_number}/book/{book_id}")  # type: ignore[return-value]
