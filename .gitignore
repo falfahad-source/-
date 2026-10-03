@@ -10,3 +10,5 @@ node_modules/
 backend/data/*.json
 backend/data/quranpedia/
 frontend/public/fonts/*.ttf
+frontend/demo/data.json
+frontend/demo/*.html

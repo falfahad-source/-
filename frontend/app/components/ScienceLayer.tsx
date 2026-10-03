@@ -17,16 +17,13 @@ export default function ScienceLayer({ a, open }: { a: Answer; open: OpenVerse }
       ) : (
         <div className="grid2">
           {science.map((s) => (
-            <article key={s.concept} className={`claim ${s.claims[0]?.trust_category ?? "UNVERIFIED_CLAIM"}`}>
+            <article key={s.concept} className={`claim ${s.claims[0]?.trust_category ?? "no-source"}`}>
               <div className="layer-head" style={{ margin: 0 }}>
                 <h3>{s.name_ar}</h3>
                 {s.name_en && <span className="note" dir="ltr">{s.name_en}</span>}
               </div>
               {s.claims.length === 0 ? (
-                <>
-                  <TrustBadge trust="UNVERIFIED_CLAIM" />
-                  <p className="empty">لا يوجد مصدر علمي مرتبط بهذا المفهوم بعد.</p>
-                </>
+                <p className="empty">لا يوجد مصدر علمي مرتبط بهذا المفهوم بعد، فلا تُعرض عنه معلومة.</p>
               ) : s.claims.map((c, i) => (
                 <div key={i} style={{ display: "grid", gap: 4 }}>
                   <TrustBadge trust={c.trust_category} />

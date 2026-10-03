@@ -11,6 +11,8 @@ import type { Answer, SearchResult } from "./components/types";
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
 const PAGE_SIZE = 50;
 const START: [number, number] = [24, 40]; // the concept document's use case
+// Static demo build (no server): deep links use the hash, and the review page is unavailable.
+const DEMO = process.env.NEXT_PUBLIC_DEMO === "1";
 
 export default function Home() {
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -33,12 +35,16 @@ export default function Home() {
     setAnswer(data);
     setNum([s, a]);
     setPhrase(data.concepts[0]?.key ?? null);
-    try { history.replaceState(null, "", `?v=${s}:${a}`); } catch { /* not allowed in some frames */ }
+    try {
+      if (DEMO) location.hash = `v${s}-${a}`;
+      else history.replaceState(null, "", `?v=${s}:${a}`);
+    } catch { /* not allowed in some frames */ }
     if (scroll) document.getElementById("journey")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   useEffect(() => {
-    const m = /^(\d{1,3}):(\d{1,3})$/.exec(new URLSearchParams(location.search).get("v") ?? "");
+    const m = /^(\d{1,3}):(\d{1,3})$/.exec(new URLSearchParams(location.search).get("v") ?? "")
+      ?? /^#v(\d{1,3})-(\d{1,3})$/.exec(location.hash);
     load(m ? +m[1] : START[0], m ? +m[2] : START[1], false);
     fetch(`${API_BASE}/explore`).then((r) => (r.ok ? r.json() : { verses: [] })).then((d) => setExplore(d.verses)).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,7 +163,8 @@ export default function Home() {
         نص المصحف: مجمع الملك فهد لطباعة المصحف الشريف (رواية حفص، الإصدار 3.0). التفاسير والغريب والإعراب والموضوعات:
         {" "}<a href="https://quranpedia.net" target="_blank" rel="noopener noreferrer">الموسوعة القرآنية Quranpedia.net</a>.
         التحليل الصرفي: Quranic Arabic Corpus (corpus.quran.com). آفاق لا يطلب من الذكاء الاصطناعي تفسير القرآن، بل يستعمله للتنقل في المعرفة الموثقة حوله.
-        {" "}<a href="/review">مراجعة المقارنات (للباحثين)</a>.
+        {DEMO ? " هذه نسخة تجريبية: الطبقات الكاملة متاحة للآيات النموذجية، ومراجعة الباحثين تعمل على الخادم فقط."
+          : <>{" "}<a href="/review">مراجعة المقارنات (للباحثين)</a>.</>}
       </footer>
     </div>
   );
