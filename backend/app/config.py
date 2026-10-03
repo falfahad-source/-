@@ -32,3 +32,11 @@ EXCLUDED_DEFAULT_TAFSIR_BOOKS: dict[int, str] = {
     # from neighbouring ayahs (e.g. its 2:255 entry opens with the end of 2:254).
     331: "duplicate Ibn Kathir edition; 136 is kept",
 }
+
+# Tafsir books whose author has no death year in Quranpedia's index but which are
+# contemporary works, so the era timeline can place them instead of "unknown".
+CONTEMPORARY_TAFSIR_BOOKS: dict[int, str] = {
+    2012: "التفسير الميسر — مجمع الملك فهد (نُشر 1419هـ)",
+    2003: "المختصر في تفسير القرآن الكريم — مركز تفسير للدراسات القرآنية",
+    305: "الصحيح المسبور من التفسير بالمأثور — حكمت بشير ياسين",
+}

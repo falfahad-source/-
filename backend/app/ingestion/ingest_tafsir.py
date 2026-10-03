@@ -28,7 +28,9 @@ from .quranpedia_client import QuranpediaClient
 
 def get_or_create_book_source(db: Session, book: dict) -> Source:
     url = f"{QURANPEDIA_API_BASE}/book/{book['id']}"
-    existing = db.query(Source).filter_by(url=url, source_type="tafsir_book").first()
+    # Keyed on the book id alone: a book's source_type may be refined later
+    # (e.g. "e3rab_book"), and it must still resolve to the same row.
+    existing = db.query(Source).filter_by(citation_identifier=f"quranpedia:book:{book['id']}").first()
     if existing:
         return existing
     source = Source(

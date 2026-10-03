@@ -14,9 +14,12 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, futu
 
 
 def init_db() -> None:
-    """Create all tables. Development convenience only — use Alembic migrations
-    for anything touching real data."""
+    """Create missing tables and add missing nullable columns. Development
+    convenience only — use Alembic migrations for anything touching real data."""
+    from .schema_upgrade import add_missing_columns
+
     Base.metadata.create_all(engine)
+    add_missing_columns(engine)
 
 
 def get_session():

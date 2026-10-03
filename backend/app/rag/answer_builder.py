@@ -1,5 +1,7 @@
 """Builds the structured A-G answer format required by AFAQ_MASTER_SPEC.md
-("Answer format" section), strictly from database records.
+("Answer format" section), strictly from database records, together with the
+layers of the AFAQ journey (see app.rag.layers): linguistic analysis, tafsir
+across eras, concepts/topics, scientific knowledge and the concept map.
 
 The LLM (if/when wired in) is only allowed to touch section D's phrasing and a
 short natural-language bridge in section E — it never originates sections A, B,
@@ -13,6 +15,14 @@ from sqlalchemy.orm import Session
 
 from ..models import HadithEntry, Relationship, TafsirEntry, Verse
 from ..trust import NO_VERIFIED_SOURCE_MESSAGE_AR, TrustCategory
+from .layers import (
+    TRUST_LEGEND,
+    concept_graph,
+    concepts_layer,
+    linguistic_layer,
+    tafsir_timeline,
+    topics_layer,
+)
 
 
 @dataclass
@@ -23,8 +33,12 @@ class StructuredAnswer:
     surah_name: str
     page_number: int | None = None
     juz_number: int | None = None
-    concepts: list[str] = field(default_factory=list)
-    verified_tafsir: list[dict] = field(default_factory=list)
+    concepts: list[dict] = field(default_factory=list)          # key phrases with meanings + comparisons
+    verified_tafsir: list[dict] = field(default_factory=list)    # ordered by author's era
+    linguistic: dict = field(default_factory=dict)
+    topics: list[dict] = field(default_factory=list)
+    graph: dict = field(default_factory=dict)
+    trust_legend: list[dict] = field(default_factory=lambda: TRUST_LEGEND)
     scientific_knowledge: list[dict] = field(default_factory=list)
     possible_connections: list[dict] = field(default_factory=list)
     hadith_matches: list[dict] = field(default_factory=list)
@@ -54,14 +68,14 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
     register_source(verse.source)
 
     tafsir_entries = db.query(TafsirEntry).filter_by(verse_id=verse.id).all()
-    verified_tafsir = []
     for t in tafsir_entries:
         register_source(t.source)
-        verified_tafsir.append({
-            "scholar": t.scholar, "category": t.category,
-            "text": t.original_text, "source": t.source.title,
-            "disagreement_group": t.disagreement_group,
-        })
+    verified_tafsir = tafsir_timeline(tafsir_entries)
+    linguistic = linguistic_layer(db, verse, tafsir_entries)
+    topics = topics_layer(db, verse)
+    phrases, scientific_knowledge, phrase_connections = concepts_layer(
+        db, verse, linguistic["meanings"], linguistic["words"], register_source)
+    graph = concept_graph(verse, phrases, scientific_knowledge, topics)
 
     # Relationships whose source_entity references this verse.
     entity_key = f"verse:{surah_number}:{ayah_number}"
@@ -81,6 +95,8 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
             "explanation": r.explanation,
             "source": r.evidence_source.title,
         })
+
+    possible_connections.extend(phrase_connections)
 
     # Hadith found by a keyword search for this verse: a text match only, so
     # labeled like section E and never merged into tafsir. Grade always shown.
@@ -108,6 +124,17 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
         )
     if not possible_connections:
         not_established.append("لا توجد مقارنة علمية موثّقة مرتبطة بهذه الآية في قاعدة البيانات حتى الآن.")
+    if not phrases:
+        not_established.append("لم تُعدّ خريطة مفاهيم ومعرفة علمية لهذه الآية بعد.")
+    unverified = [c for s in scientific_knowledge for c in s["claims"]
+                  if c["trust_category"] == TrustCategory.UNVERIFIED_CLAIM.value]
+    if unverified:
+        not_established.append(
+            f"{len(unverified)} من المعطيات العلمية المعروضة لم تُطابَق بعد مع مصدرها الأصلي، فهي مصنفة «ادعاء غير موثق».")
+    linked = {c["concept"] for c in phrase_connections}
+    without = [s["name_ar"] for s in scientific_knowledge if not s["claims"] and s["concept"] in linked]
+    if without:
+        not_established.append("لا يوجد مصدر علمي مرتبط بعد بهذه المفاهيم: " + "، ".join(without) + ".")
 
     return StructuredAnswer(
         quranic_text=verse.arabic_text,
@@ -116,9 +143,12 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
         surah_name=verse.surah_name,
         page_number=verse.page_number,
         juz_number=verse.juz_number,
-        concepts=[],  # populated once Concept linking is implemented (Phase 2)
+        concepts=phrases,
         verified_tafsir=verified_tafsir,
-        scientific_knowledge=[],  # populated once ScientificEvidence linking is implemented (Phase 2)
+        linguistic=linguistic,
+        topics=topics,
+        graph=graph,
+        scientific_knowledge=scientific_knowledge,
         possible_connections=possible_connections,
         hadith_matches=hadith_matches,
         not_established=not_established,

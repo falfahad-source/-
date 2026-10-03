@@ -129,3 +129,14 @@ def test_remove_book_deletes_entries_and_source(db_session):
     assert db_session.query(TafsirEntry).count() == 0
     assert db_session.query(Source).filter_by(citation_identifier="quranpedia:book:3").count() == 0
     assert remove_book(db_session, 3) == 0  # already gone
+
+
+def test_book_source_is_found_after_its_type_changes(db_session):
+    """Regression: re-importing an i'rab book (source_type changed to e3rab_book)
+    created a second Source and duplicated every entry."""
+    from app.ingestion.ingest_tafsir import get_or_create_book_source
+    first = get_or_create_book_source(db_session, {"id": 309, "name": "التبيان", "author": "العكبري"})
+    first.source_type = "e3rab_book"
+    db_session.commit()
+    again = get_or_create_book_source(db_session, {"id": 309, "name": "التبيان", "author": "العكبري"})
+    assert again.id == first.id
