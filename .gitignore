@@ -8,4 +8,5 @@ node_modules/
 
 # Third-party data/font releases (KFGQPC): not redistributed in git
 backend/data/*.json
+backend/data/quranpedia/
 frontend/public/fonts/*.ttf

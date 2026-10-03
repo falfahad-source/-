@@ -83,8 +83,8 @@ docker compose up -d db
 cd backend && pip install -r requirements.txt -r requirements-dev.txt
 alembic upgrade head             # (يُضاف لاحقًا) أو python -m app.db إنشاء الجداول مباشرة للتطوير
 python -m app.ingestion.ingest_kfgqpc                   # نص القرآن كاملًا (6236 آية) من ملف مجمع الملك فهد — انظر أدناه
-python -m app.ingestion.ingest_tafsir --surah 1            # التفاسير الأساسية فقط (السعدي، الطبري، ابن كثير، الميسر...)
-python -m app.ingestion.ingest_tafsir --surah 1 --books 3,2012   # أو كتب محددة بأرقامها
+python -m app.ingestion.ingest_tafsir_dump               # التفسير للقرآن كاملًا من ملفات Quranpedia الرسمية (التفاسير الأساسية)
+python -m app.ingestion.ingest_tafsir_dump --books 3,2012  # أو كتب محددة بأرقامها
 pytest                           # اختبارات بمحاكاة الشبكة، تعمل بلا اتصال
 uvicorn app.main:app --reload
 ```
@@ -104,6 +104,18 @@ cp kfgqpc_hafs_v30-font/kfgqpc_hafs_v30.ttf   frontend/public/fonts/   # خط ع
 - أُضيفت أعمدة جديدة لجدول `verses` (`page_number`, `juz_number`, `text_imlaei`)؛ لا توجد Alembic بعد،
   فقاعدة بيانات تطوير قديمة تحتاج إعادة إنشاء (`docker compose down -v`) أو إضافة الأعمدة يدويًا.
 - `ingest_quran.py` (Quranpedia) باقٍ كبديل، و`ingest_tafsir.py` ما زال يجلب التفسير من Quranpedia.
+
+## التفسير: ملفات Quranpedia الرسمية (dumps)
+سياسة Quranpedia تمنع الزحف الجماعي على الـ API (الحد 10,000 طلب/يوم) وتوجّه إلى
+`https://api.quranpedia.net/dumps`: ملف لكل كتاب تفسير (`tafsir-book-{id}.json.gz`) يضم نصه لكل الآيات.
+- `ingest_tafsir_dump` ينزّل كل كتاب مرة واحدة (تخزين مؤقت في `backend/data/quranpedia/`، خارج git)،
+  ويحفظ النص حرفيًا مع رقم الصفحة، ويسجّل تاريخ نسخة الملف في `sources.version`.
+- افتراضيًا: الكتب العشرة التي يصنّفها Quranpedia «أساسية» (السعدي، الطبري، ابن كثير ×2، الجزائري، المختصر،
+  الميسر، أضواء البيان، الرفاعي، الصحيح المسبور) — نحو 50 ألف مدخل تغطي الآيات الـ 6236، في أقل من دقيقة.
+- الرخصة (`dumps/LICENSE.md`): الاستعمال داخل التطبيقات مجاني؛ إعادة نشر البيانات كقاعدة بيانات قابلة للتنزيل
+  تستلزم ذكر Quranpedia.net ورقم النسخة. المحتوى يُصحَّح باستمرار؛ التحديث عبر `/v1/changes?since=<version>`.
+- `ingest_tafsir --surah N` (عبر الـ API) باقٍ لجلب سورة واحدة؛ المساران يشتركان في نفس سجل المصدر لكل كتاب
+  فلا يتكرر التفسير.
 
 ## الأحاديث: الموسوعة الحديثية من الدرر السنية (Dorar.net)
 واجهة `https://dorar.net/dorar_api.json?skey=<كلمات>` تبحث في **الأحاديث** بالكلمات، وليست مصدر تفسير.
