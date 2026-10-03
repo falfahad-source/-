@@ -1,4 +1,4 @@
-version: "3.9"
+name: afaq
 
 services:
   db:
@@ -34,6 +34,9 @@ services:
       - backend
     volumes:
       - ./frontend:/app
+      # keep the image's node_modules/.next instead of the host's (bind mount would hide them)
+      - /app/node_modules
+      - /app/.next
 
 volumes:
   afaq_db_data:

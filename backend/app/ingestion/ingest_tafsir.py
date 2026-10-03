@@ -33,8 +33,8 @@ def get_or_create_book_source(db: Session, book: dict) -> Source:
         author=book.get("author"),
         source_type="tafsir_book",
         url=url,
-        version=dt.date.today().isoformat(),
-        retrieval_date=dt.datetime.utcnow(),
+        version=dt.datetime.now(dt.timezone.utc).date().isoformat(),
+        retrieval_date=dt.datetime.now(dt.timezone.utc).replace(tzinfo=None),  # naive UTC, matches column
         trust_category=TrustCategory.TAFSIR_VERIFIED,
         citation_identifier=f"quranpedia:book:{book['id']}",
     )

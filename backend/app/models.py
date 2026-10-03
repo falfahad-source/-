@@ -8,8 +8,17 @@ from __future__ import annotations
 import datetime as dt
 
 from sqlalchemy import (
-    Column, Integer, String, Text, ForeignKey, DateTime, Float, Enum as SAEnum,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
     UniqueConstraint,
+)
+from sqlalchemy import (
+    Enum as SAEnum,
 )
 from sqlalchemy.orm import declarative_base, relationship
 

@@ -37,8 +37,8 @@ def get_or_create_source(db: Session, mushaf_id: int) -> Source:
         author=None,
         source_type="quran_api",
         url=url,
-        version=dt.date.today().isoformat(),
-        retrieval_date=dt.datetime.utcnow(),
+        version=dt.datetime.now(dt.timezone.utc).date().isoformat(),
+        retrieval_date=dt.datetime.now(dt.timezone.utc).replace(tzinfo=None),  # naive UTC, matches column
         trust_category=TrustCategory.QURANIC_TEXT,
         citation_identifier=f"quranpedia:mushaf:{mushaf_id}",
     )

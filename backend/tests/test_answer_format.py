@@ -1,10 +1,10 @@
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import pytest
 
-from app.models import Base, Source, Verse, TafsirEntry, Relationship
-from app.trust import TrustCategory
+from app.models import Base, Relationship, Source, Verse
 from app.rag.answer_builder import build_answer
+from app.trust import TrustCategory
 
 
 @pytest.fixture()

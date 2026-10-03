@@ -9,9 +9,9 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.models import Base, Verse
 from app.ingestion.ingest_quran import ingest_surah
 from app.ingestion.quranpedia_client import QuranpediaAyah
+from app.models import Base, Verse
 
 
 @pytest.fixture()

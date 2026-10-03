@@ -1,6 +1,11 @@
 import pytest
 
-from app.trust import TrustCategory, TrustViolation, assert_valid_recategorization, require_provenance
+from app.trust import (
+    TrustCategory,
+    TrustViolation,
+    assert_valid_recategorization,
+    require_provenance,
+)
 
 
 def test_unverified_cannot_become_scientific_fact():
