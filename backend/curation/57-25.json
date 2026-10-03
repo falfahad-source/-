@@ -1,0 +1,58 @@
+{
+  "verse": [
+    57,
+    25
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية «وأنزلنا الحديد» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "hadid",
+      "label": "وأنزلنا الحديد",
+      "words": [
+        12,
+        13
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "stellar_iron",
+      "name_ar": "تكوّن الحديد في النجوم",
+      "name_en": "Stellar nucleosynthesis"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "stellar_iron",
+      "source": "nasa",
+      "domain": "الفيزياء الفلكية",
+      "claim": "يستطيع الاندماج النووي داخل النجوم أن يصنع ذرات الجدول الدوري حتى الحديد (العنصر 26)، وأغلب العناصر التي حولنا كالأكسجين والكربون والحديد تكوّنت داخل النجوم منذ زمن بعيد.",
+      "url": "https://science.nasa.gov/astrobiology/learning-resources/alp/are-we-really-made-of-star-stuff/",
+      "quote": "can make all of the atoms on the periodic table up to iron (element number 26)",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "hadid",
+      "concept": "stellar_iron",
+      "source": "nasa",
+      "explanation": "«أنزل» في استعمال القرآن يأتي بمعنى الخلق والتهيئة أيضًا، كما في قوله «وأنزل لكم من الأنعام». وتكوّن الحديد في النجوم لا في الأرض موضوع فلكي يقارنه بعض المعاصرين بلفظ الإنزال؛ والمقارنة قراءة معاصرة لا يحسمها اللفظ."
+    }
+  ],
+  "related_topics": []
+}

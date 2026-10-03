@@ -1,0 +1,63 @@
+{
+  "verse": [
+    10,
+    5
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية «الشمس ضياء والقمر نورا» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "diya_nur",
+      "label": "الشمس ضياء والقمر نورا",
+      "words": [
+        4,
+        7
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "moonlight",
+      "name_ar": "ضوء القمر المنعكس",
+      "name_en": "Moonlight"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "moonlight",
+      "source": "nasa",
+      "domain": "علم الفلك",
+      "claim": "القمر لا يصدر ضوءًا من ذاته؛ و«ضوء القمر» في الحقيقة هو ضوء الشمس منعكسًا عنه.",
+      "url": "https://science.nasa.gov/moon/moonlight/",
+      "quote": "\"Moonlight\" is actually reflected sunlight.",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "diya_nur",
+      "concept": "moonlight",
+      "source": "nasa",
+      "explanation": "فرّقت الآية بين وصف الشمس بالضياء والقمر بالنور، وفي موضوعات Quranpedia «الشمس ضياء [نجم] والقمر نور [كوكب]». وكون الشمس مصدر الضوء والقمر عاكسًا له موضوع فلكي يمكن مقارنته بهذا التفريق."
+    }
+  ],
+  "related_topics": [
+    "الشمس ضياء [نجم] والقمر نور [كوكب]",
+    "القمر نور والشمس ضياء",
+    "القمر نور والشمس سراج",
+    "ضياؤها"
+  ]
+}

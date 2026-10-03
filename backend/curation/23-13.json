@@ -1,0 +1,60 @@
+{
+  "verse": [
+    23,
+    13
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية «في قرار مكين» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "qarar_makin",
+      "label": "في قرار مكين",
+      "words": [
+        4,
+        6
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "amniotic_protection",
+      "name_ar": "حماية الجنين في الرحم",
+      "name_en": "Protection in the womb"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "amniotic_protection",
+      "source": "nih",
+      "domain": "علم الأجنة",
+      "claim": "يحيط السائل الأمنيوسي بالجنين في الرحم، فيحفظ حوله حرارة ثابتة ويحميه من الإصابات الخارجية بامتصاص الصدمات والحركات المفاجئة.",
+      "url": "https://medlineplus.gov/ency/article/002220.htm",
+      "quote": "cushioning sudden blows or movements",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "qarar_makin",
+      "concept": "amniotic_protection",
+      "source": "nih",
+      "explanation": "فسّر أهل الغريب «قرار مكين» بأنه الرحم، مستقر متمكن تستقر فيه النطفة. وما يذكره الطب من حماية الجنين في الرحم يمكن مقارنته بوصف القرار المكين."
+    }
+  ],
+  "related_topics": [
+    "إحدى مراحل خلق الإنسان"
+  ]
+}

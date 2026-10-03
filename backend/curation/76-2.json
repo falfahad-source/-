@@ -1,0 +1,66 @@
+{
+  "verse": [
+    76,
+    2
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية «نطفة أمشاج» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "amshaj",
+      "label": "نطفة أمشاج",
+      "words": [
+        5,
+        6
+      ]
+    },
+    {
+      "key": "sami_basir",
+      "label": "فجعلناه سميعا بصيرا",
+      "words": [
+        8,
+        10
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "fertilization",
+      "name_ar": "الإخصاب واتحاد الخليتين",
+      "name_en": "Fertilization"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "fertilization",
+      "source": "nih",
+      "domain": "علم الأجنة",
+      "claim": "تلتقي نطفة واحدة ببويضة الأم في قناة فالوب، وعندما تدخلها يحدث الإخصاب، وتسمى الخلية الناتجة من اتحادهما «اللاقحة».",
+      "url": "https://medlineplus.gov/ency/article/002398.htm",
+      "quote": "The combined sperm and egg is called a zygote.",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "amshaj",
+      "concept": "fertilization",
+      "source": "nih",
+      "explanation": "فسّر أهل الغريب «أمشاج» بأنها أخلاط يختلط فيها ماء الرجل بماء المرأة. واتحاد خليتي الأب والأم في خلية واحدة عند الإخصاب موضوع علمي يمكن مقارنته بهذا المعنى."
+    }
+  ],
+  "related_topics": []
+}

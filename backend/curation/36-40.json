@@ -1,0 +1,63 @@
+{
+  "verse": [
+    36,
+    40
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية «كل في فلك يسبحون» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "falak",
+      "label": "وكل في فلك يسبحون",
+      "words": [
+        12,
+        15
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "sun_orbit",
+      "name_ar": "مدار الشمس حول مركز المجرة",
+      "name_en": "The Sun's galactic orbit"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "sun_orbit",
+      "source": "nasa",
+      "domain": "علم الفلك",
+      "claim": "تدور الشمس حول مركز مجرة درب التبانة مرة كل نحو 230 مليون سنة أرضية، حاملةً معها الكواكب والكويكبات والمذنبات.",
+      "url": "https://science.nasa.gov/sun/facts/",
+      "quote": "the Sun orbits the center of the Milky Way about every 230 million Earth years",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "falak",
+      "concept": "sun_orbit",
+      "source": "nasa",
+      "explanation": "فسّر أهل الغريب «في فلك يسبحون» بأنهم يجرون في مدار لا يحيدون عنه. وجريان الشمس نفسها في مدار حول مركز المجرة، لا سكونها، موضوع فلكي يمكن مقارنته بهذا الوصف."
+    }
+  ],
+  "related_topics": [
+    "سباحتهما في الفلك",
+    "الفَلَك [مجال سماوي تسبح فيه النجوم والكواكب]",
+    "ضبط مساراتها بإحكام",
+    "حركتهما وفق سنة كونية"
+  ]
+}

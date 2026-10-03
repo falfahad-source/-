@@ -1,0 +1,63 @@
+{
+  "verse": [
+    23,
+    18
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية «فأسكناه في الأرض» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "askannahu",
+      "label": "فأسكناه في الأرض",
+      "words": [
+        6,
+        8
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "groundwater",
+      "name_ar": "المياه الجوفية",
+      "name_en": "Groundwater"
+    }
+  ],
+  "sources": [
+    {
+      "key": "usgs",
+      "title": "USGS — هيئة المسح الجيولوجي الأمريكية",
+      "publisher": "USGS",
+      "url": "https://www.usgs.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "groundwater",
+      "source": "usgs",
+      "domain": "علم المياه",
+      "claim": "الماء الذي يملأ الفراغات والشقوق تحت سطح الأرض يسمى الماء الجوفي، ويتجدد من ماء المطر وذوبان الثلج.",
+      "url": "https://pubs.usgs.gov/of/1993/ofr93-643/",
+      "quote": "Ground water is recharged from rain water and snowmelt",
+      "quote_origin": "page",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-03.",
+      "verified_at": "2026-10-03"
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "askannahu",
+      "concept": "groundwater",
+      "source": "usgs",
+      "explanation": "الآية تذكر إنزال الماء من السماء ثم إسكانه في الأرض. وتغذية المياه الجوفية من المطر وتخزينها في مسام الصخور وشقوقها موضوع علمي يمكن مقارنته بذلك."
+    }
+  ],
+  "related_topics": [
+    "إسكانه في الأرض",
+    "إنزاله من السحاب",
+    "إنزاله من االسماء",
+    "مرسل الرياح ومنزل الغيث"
+  ]
+}
