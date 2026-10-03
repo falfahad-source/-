@@ -13,6 +13,10 @@ type Answer = {
   juz_number: number | null;
   verified_tafsir: { scholar: string | null; text: string; source: string }[];
   possible_connections: { label: string; explanation: string; source: string }[];
+  hadith_matches: {
+    label: string; search_query: string; text: string; narrator: string | null; muhaddith: string | null;
+    book: string | null; reference: string | null; grade: string | null; source: string;
+  }[];
   not_established: string[];
   sources: { title: string; url: string }[];
 };
@@ -90,6 +94,27 @@ export default function Home() {
               </div>
             ))}
           </section>
+
+          {answer.hadith_matches.length > 0 && (
+            <section>
+              <h2>أحاديث مرتبطة بالبحث النصي</h2>
+              {/* Keyword matches, not tafsir; results include weak and fabricated narrations,
+                  so the scholar's grade is shown on every card, never hidden. */}
+              <p style={{ color: "#b00" }}>
+                {answer.hadith_matches[0].label} كلمات البحث: «{answer.hadith_matches[0].search_query}». تحقق من حكم كل حديث.
+              </p>
+              {answer.hadith_matches.map((h, i) => (
+                <div key={i} style={{ border: "1px solid #ccc", padding: 8, borderRadius: 6, marginBottom: 8 }}>
+                  <p>{h.text}</p>
+                  <p style={{ margin: 0 }}><strong>حكم المحدث:</strong> {h.grade || "غير مذكور"}</p>
+                  <small>
+                    الراوي: {h.narrator || "غير مذكور"} — المحدث: {h.muhaddith || "غير مذكور"} — المصدر: {h.book || "غير مذكور"}
+                    {h.reference && ` (${h.reference})`}
+                  </small>
+                </div>
+              ))}
+            </section>
+          )}
 
           <section>
             <h2>و. ما لا تثبته المصادر</h2>

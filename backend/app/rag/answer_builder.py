@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 
 from sqlalchemy.orm import Session
 
-from ..models import Relationship, TafsirEntry, Verse
+from ..models import HadithEntry, Relationship, TafsirEntry, Verse
 from ..trust import NO_VERIFIED_SOURCE_MESSAGE_AR, TrustCategory
 
 
@@ -27,6 +27,7 @@ class StructuredAnswer:
     verified_tafsir: list[dict] = field(default_factory=list)
     scientific_knowledge: list[dict] = field(default_factory=list)
     possible_connections: list[dict] = field(default_factory=list)
+    hadith_matches: list[dict] = field(default_factory=list)
     not_established: list[str] = field(default_factory=list)
     sources: list[dict] = field(default_factory=list)
 
@@ -81,6 +82,25 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
             "source": r.evidence_source.title,
         })
 
+    # Hadith found by a keyword search for this verse: a text match only, so
+    # labeled like section E and never merged into tafsir. Grade always shown.
+    hadith_matches = []
+    hadith_rows = (
+        db.query(HadithEntry)
+        .filter_by(verse_id=verse.id, trust_category=TrustCategory.POSSIBLE_CONNECTION)
+        .order_by(HadithEntry.search_query, HadithEntry.result_rank)
+        .all()
+    )
+    for h in hadith_rows:
+        register_source(h.source)
+        hadith_matches.append({
+            "label": "نتيجة بحث نصي في الموسوعة الحديثية — ليست تفسيرًا للآية.",
+            "search_query": h.search_query,
+            "text": h.text, "narrator": h.narrator, "muhaddith": h.muhaddith,
+            "book": h.book, "reference": h.reference, "grade": h.grade,
+            "source": h.source.title,
+        })
+
     not_established: list[str] = []
     if not verified_tafsir:
         not_established.append(
@@ -100,6 +120,7 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
         verified_tafsir=verified_tafsir,
         scientific_knowledge=[],  # populated once ScientificEvidence linking is implemented (Phase 2)
         possible_connections=possible_connections,
+        hadith_matches=hadith_matches,
         not_established=not_established,
         sources=list(sources_seen.values()),
     )

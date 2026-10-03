@@ -131,3 +131,34 @@ class Claim(Base):
     evidence = Column(Text, nullable=True)
     confidence = Column(Float, nullable=True)
     status = Column(SAEnum(TrustCategory), nullable=False, default=TrustCategory.UNVERIFIED_CLAIM)
+
+
+class HadithEntry(Base):
+    """A hadith returned by a Dorar.net keyword search run for a verse.
+
+    The link to the verse is only a text match on the search query, so it is
+    always presented as a POSSIBLE_CONNECTION, never as tafsir. The scholar's
+    grade (hukm) is stored verbatim and must be shown with the text: results
+    include weak and fabricated narrations.
+    """
+    __tablename__ = "hadith_entries"
+    __table_args__ = (
+        UniqueConstraint("verse_id", "search_query", "result_rank", name="uq_hadith_verse_query_rank"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    verse_id = Column(Integer, ForeignKey("verses.id"), nullable=False)
+    source_id = Column(Integer, ForeignKey("sources.id"), nullable=False)
+    search_query = Column(String, nullable=False)       # the exact skey sent to the API
+    result_rank = Column(Integer, nullable=False)       # 1-based position in the API response
+    text = Column(Text, nullable=False)                 # hadith text, tags stripped, wording verbatim
+    narrator = Column(String, nullable=True)            # الراوي
+    muhaddith = Column(String, nullable=True)           # المحدث
+    book = Column(String, nullable=True)                # المصدر
+    reference = Column(String, nullable=True)           # الصفحة أو الرقم
+    grade = Column(Text, nullable=True)                 # خلاصة حكم المحدث, verbatim
+    raw_html = Column(Text, nullable=False)             # the API's HTML block for this hadith, for audit
+    trust_category = Column(SAEnum(TrustCategory), nullable=False, default=TrustCategory.POSSIBLE_CONNECTION)
+
+    verse = relationship("Verse")
+    source = relationship("Source")
