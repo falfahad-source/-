@@ -5,11 +5,16 @@ stored records; nothing is generated.
 """
 from __future__ import annotations
 
+import re
+
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ..config import CONTEMPORARY_TAFSIR_BOOKS
 from ..models import (
+    ArticleVerse,
     Concept,
+    CuratedTopic,
     Relationship,
     ScientificEvidence,
     TafsirEntry,
@@ -221,3 +226,66 @@ TRUST_LEGEND = [
     {"category": TrustCategory.POSSIBLE_CONNECTION.value, "label": "مقارنة / ارتباط محتمل", "description": "مقارنة يرسمها الباحث — ليست تفسيرًا شرعيًا."},
     {"category": TrustCategory.UNVERIFIED_CLAIM.value, "label": "ادعاء غير موثق", "description": "لم يُتحقق من مصدره بعد — يُتعامل معه بحذر."},
 ]
+
+
+IJAZ_LABEL = ("قراءة إعجازية من مصدر ثانوي — ليست تفسيرًا، ولم يتحقق آفاق من معلوماتها العلمية. "
+              "اقرأ المقال في موقعه وقارنه بالتفسير الموثق.")
+
+
+def ijaz_articles(db: Session, verse: Verse, limit: int = 8) -> dict:
+    """Secondary i'jaz articles that discuss this verse, most focused first: an
+    article whose title quotes the verse, then articles about few verses."""
+    links = db.query(ArticleVerse).filter_by(verse_id=verse.id).all()
+    if not links:
+        return {"total": 0, "articles": [], "label": IJAZ_LABEL}
+    ids = [link.article_id for link in links]
+    sizes = dict(db.query(ArticleVerse.article_id, func.count()).filter(ArticleVerse.article_id.in_(ids))
+                 .group_by(ArticleVerse.article_id).all())
+    vtext = normalize_arabic(verse.text_imlaei or verse.arabic_text)
+    rows = []
+    for link in links:
+        a = link.article
+        title_n = normalize_arabic(a.title)
+        in_title = any(len(chunk) >= 8 and chunk in vtext for chunk in
+                       (normalize_arabic(q) for q in _title_quotes(a.title)))
+        rows.append({
+            "title": a.title, "url": a.url, "published": a.published, "categories": a.categories,
+            "excerpt": a.excerpt, "match_method": link.match_method, "matched_text": link.matched_text,
+            "verses_in_article": sizes.get(a.id, 1), "focused": in_title or sizes.get(a.id, 1) <= 5,
+            "source": a.source.title, "trust_category": TrustCategory.POSSIBLE_CONNECTION.value,
+            "_rank": (not in_title, sizes.get(a.id, 1), title_n),
+        })
+    rows.sort(key=lambda r: r["_rank"])
+    for r in rows:
+        del r["_rank"]
+    return {"total": len(rows), "articles": rows[:limit], "label": IJAZ_LABEL}
+
+
+def _title_quotes(text: str) -> list[str]:
+    return re.findall(r"[﴿“\"]([^﴾”\"]{4,200})[﴾”\"]", text)
+
+
+def related_comparisons(db: Session, verse: Verse, topic_ids: list[int], limit: int = 6) -> list[dict]:
+    """Curated verses whose declared comparison topics (CuratedTopic) include one of
+    this verse's Quranic topics, with their concepts — a way to reach comparisons
+    when this verse has none of its own. Only topics a curator declared count, so a
+    broad shared topic (e.g. «الدِّين») never links unrelated comparisons."""
+    if not topic_ids:
+        return []
+    rows = (
+        db.query(CuratedTopic).filter(CuratedTopic.topic_id.in_(topic_ids), CuratedTopic.verse_id != verse.id)
+        .order_by(CuratedTopic.verse_id).all()
+    )
+    by_verse: dict[int, list[str]] = {}
+    for r in rows:
+        by_verse.setdefault(r.verse_id, []).append(r.topic.name)
+    out = []
+    for vid, shared in list(by_verse.items())[:limit]:
+        v = db.get(Verse, vid)
+        keys = {r.target_entity.removeprefix("concept:") for r in db.query(Relationship)
+                .filter(Relationship.source_entity.like(f"phrase:{v.surah_number}:{v.ayah_number}:%"))}
+        out.append({"surah_number": v.surah_number, "ayah_number": v.ayah_number, "surah_name": v.surah_name,
+                    "shared_topics": shared,
+                    "concepts": [c.name_ar for c in db.query(Concept).filter(Concept.key.in_(keys))]})
+    out.sort(key=lambda r: (r["surah_number"], r["ayah_number"]))
+    return out

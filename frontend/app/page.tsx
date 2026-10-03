@@ -192,7 +192,7 @@ function Journey({ a, highlight, onPhrase, open }: {
       <LinguisticLayer key={`l-${a.surah_number}-${a.ayah_number}`} a={a} highlight={highlight} />
       <TafsirTimeline a={a} />
       <ConceptMap key={`m-${a.surah_number}-${a.ayah_number}`} a={a} open={open} onPhrase={onPhrase} />
-      <ScienceLayer a={a} />
+      <ScienceLayer a={a} open={open} />
 
       {a.hadith_matches.length > 0 && (
         <section className="card" id="hadith">

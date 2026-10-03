@@ -19,7 +19,9 @@ from .layers import (
     TRUST_LEGEND,
     concept_graph,
     concepts_layer,
+    ijaz_articles,
     linguistic_layer,
+    related_comparisons,
     tafsir_timeline,
     topics_layer,
 )
@@ -38,6 +40,8 @@ class StructuredAnswer:
     linguistic: dict = field(default_factory=dict)
     topics: list[dict] = field(default_factory=list)
     graph: dict = field(default_factory=dict)
+    ijaz: dict = field(default_factory=dict)                     # secondary i'jaz articles (links only)
+    related_comparisons: list[dict] = field(default_factory=list)
     trust_legend: list[dict] = field(default_factory=lambda: TRUST_LEGEND)
     scientific_knowledge: list[dict] = field(default_factory=list)
     possible_connections: list[dict] = field(default_factory=list)
@@ -76,6 +80,8 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
     phrases, scientific_knowledge, phrase_connections = concepts_layer(
         db, verse, linguistic["meanings"], linguistic["words"], register_source)
     graph = concept_graph(verse, phrases, scientific_knowledge, topics)
+    ijaz = ijaz_articles(db, verse)
+    related = [] if phrases else related_comparisons(db, verse, [t["id"] for t in topics])
 
     # Relationships whose source_entity references this verse.
     entity_key = f"verse:{surah_number}:{ayah_number}"
@@ -126,6 +132,9 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
         not_established.append("لا توجد مقارنة علمية موثّقة مرتبطة بهذه الآية في قاعدة البيانات حتى الآن.")
     if not phrases:
         not_established.append("لم تُعدّ خريطة مفاهيم ومعرفة علمية لهذه الآية بعد.")
+    if ijaz["total"]:
+        not_established.append(
+            f"تُعرض {ijaz['total']} من القراءات الإعجازية من مصدر ثانوي بروابطها فقط؛ لم يتحقق آفاق من معلوماتها العلمية.")
     unverified = [c for s in scientific_knowledge for c in s["claims"]
                   if c["trust_category"] == TrustCategory.UNVERIFIED_CLAIM.value]
     if unverified:
@@ -149,6 +158,8 @@ def build_answer(db: Session, surah_number: int, ayah_number: int) -> Structured
         topics=topics,
         graph=graph,
         scientific_knowledge=scientific_knowledge,
+        ijaz=ijaz,
+        related_comparisons=related,
         possible_connections=possible_connections,
         hadith_matches=hadith_matches,
         not_established=not_established,

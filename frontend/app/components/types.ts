@@ -37,13 +37,23 @@ export type Hadith = {
   book: string | null; reference: string | null; grade: string | null; source: string;
 };
 
+export type IjazArticle = {
+  title: string; url: string; published: string | null; categories: string | null; excerpt: string | null;
+  match_method: "citation" | "quote"; matched_text: string | null; verses_in_article: number; focused: boolean; source: string;
+};
+export type RelatedComparison = {
+  surah_number: number; ayah_number: number; surah_name: string; shared_topics: string[]; concepts: string[];
+};
+
 export type Answer = {
   quranic_text: string; surah_number: number; ayah_number: number; surah_name: string;
   page_number: number | null; juz_number: number | null;
   verified_tafsir: Tafsir[];
   linguistic: { words: Word[]; meanings: Meaning[]; e3rab: Irab[]; attribution: string | null };
   concepts: Phrase[]; scientific_knowledge: Science[]; topics: Topic[]; graph: Graph;
-  possible_connections: Connection[]; hadith_matches: Hadith[]; not_established: string[];
+  possible_connections: Connection[];
+  ijaz: { total: number; articles: IjazArticle[]; label: string };
+  related_comparisons: RelatedComparison[]; hadith_matches: Hadith[]; not_established: string[];
   sources: { title: string; publisher: string; url: string; trust_category: Trust }[];
   trust_legend: { category: Trust; label: string; description: string }[];
 };

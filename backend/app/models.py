@@ -261,3 +261,51 @@ class VersePhrase(Base):
     word_to = Column(Integer, nullable=False)
 
     verse = relationship("Verse")
+
+
+class ExternalArticle(Base):
+    """An article from a secondary i'jaz site, indexed by link only.
+
+    Such sites reserve their rights, so only the title, link, date, category and
+    a short excerpt are stored; readers follow the link for the article itself.
+    The article's readings are POSSIBLE_CONNECTION and its scientific statements
+    are not verified by AFAQ.
+    """
+    __tablename__ = "external_articles"
+
+    id = Column(Integer, primary_key=True)
+    source_id = Column(Integer, ForeignKey("sources.id"), nullable=False)
+    external_id = Column(Integer, nullable=False)        # the site's own post id
+    title = Column(String, nullable=False)
+    url = Column(String, nullable=False)
+    published = Column(String, nullable=True)
+    categories = Column(String, nullable=True)
+    excerpt = Column(Text, nullable=True)                # at most a few sentences
+
+    source = relationship("Source")
+
+
+class ArticleVerse(Base):
+    __tablename__ = "article_verses"
+    __table_args__ = (UniqueConstraint("article_id", "verse_id", name="uq_article_verse"),)
+
+    id = Column(Integer, primary_key=True)
+    article_id = Column(Integer, ForeignKey("external_articles.id"), nullable=False)
+    verse_id = Column(Integer, ForeignKey("verses.id"), nullable=False)
+    match_method = Column(String, nullable=False)        # "citation" ([النمل: 18]) | "quote" (﴿...﴾ text)
+    matched_text = Column(String, nullable=True)
+
+    article = relationship("ExternalArticle")
+
+
+class CuratedTopic(Base):
+    """A Quranic topic a curated verse's comparisons concern (declared in its
+    curation file); verses sharing it are offered that verse's comparisons."""
+    __tablename__ = "curated_topics"
+    __table_args__ = (UniqueConstraint("verse_id", "topic_id", name="uq_curated_topic"),)
+
+    id = Column(Integer, primary_key=True)
+    verse_id = Column(Integer, ForeignKey("verses.id"), nullable=False)
+    topic_id = Column(Integer, ForeignKey("topics.id"), nullable=False)
+
+    topic = relationship("Topic")

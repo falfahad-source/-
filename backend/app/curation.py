@@ -38,13 +38,16 @@ from .config import SCIENTIFIC_SOURCE_ALLOWLIST
 from .db import SessionLocal, init_db
 from .models import (
     Concept,
+    CuratedTopic,
     Relationship,
     ScientificEvidence,
     Source,
     Verse,
     VersePhrase,
+    VerseTopic,
     WordAnalysis,
 )
+from .search import normalize_arabic
 from .trust import TrustCategory, require_provenance
 
 CURATION_DIR = Path(__file__).resolve().parents[1] / "curation"
@@ -140,6 +143,15 @@ def load_document(db: Session, doc: dict) -> dict[str, int]:
             ScientificEvidence.concept_id.in_(concept_ids), ScientificEvidence.source_id.in_(source_ids)
         ).delete(synchronize_session=False)
 
+    db.query(CuratedTopic).filter_by(verse_id=verse.id).delete()
+    # matched after normalization: Quranpedia's names carry irregular marks (e.g. «الرٍّياح»)
+    own_topics = {normalize_arabic(vt.topic.name): vt.topic_id
+                  for vt in db.query(VerseTopic).filter_by(verse_id=verse.id)}
+    for name in doc.get("related_topics", []):
+        name = normalize_arabic(name)
+        if name not in own_topics:
+            raise CurationError(f"related topic {name!r} is not one of verse {s}:{a}'s Quranic topics")
+        db.add(CuratedTopic(verse_id=verse.id, topic_id=own_topics[name]))
     for p in doc.get("phrases", []):
         db.add(VersePhrase(verse_id=verse.id, key=p["key"], label=p["label"],
                            word_from=p["words"][0], word_to=p["words"][1]))

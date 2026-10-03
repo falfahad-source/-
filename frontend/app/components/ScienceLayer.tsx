@@ -1,7 +1,7 @@
-import { LayerHead, TrustBadge } from "./common";
-import type { Answer } from "./types";
+import { ayahCount, LayerHead, SurahName, TrustBadge } from "./common";
+import type { Answer, OpenVerse } from "./types";
 
-export default function ScienceLayer({ a }: { a: Answer }) {
+export default function ScienceLayer({ a, open }: { a: Answer; open: OpenVerse }) {
   const science = a.scientific_knowledge;
   const links = a.possible_connections;
   return (
@@ -9,7 +9,12 @@ export default function ScienceLayer({ a }: { a: Answer }) {
       <LayerHead step="٤" title="المعرفة العلمية الحديثة">
         معطيات علمية للمقارنة والاستكشاف، دون تحويل المقارنة إلى تفسير قطعي للآية. كل معلومة تحمل مصدرها وفئة ثقتها.
       </LayerHead>
-      {science.length === 0 ? <p className="empty">لم تُربط هذه الآية بمعرفة علمية موثقة بعد.</p> : (
+      {science.length === 0 ? (
+        <p className="empty">
+          لم تُعدّ مقارنة علمية موثقة لهذه الآية بعد.
+          {a.related_comparisons.length > 0 && " لكن توجد مقارنات في آيات تشترك معها في الموضوع (أدناه)."}
+        </p>
+      ) : (
         <div className="grid2">
           {science.map((s) => (
             <article key={s.concept} className={`claim ${s.claims[0]?.trust_category ?? "UNVERIFIED_CLAIM"}`}>
@@ -54,6 +59,43 @@ export default function ScienceLayer({ a }: { a: Answer }) {
               </div>
             ))}
           </div>
+        </>
+      )}
+      {a.related_comparisons.length > 0 && (
+        <>
+          <h3 className="subhead">مقارنات علمية في آيات تشترك معها في الموضوع</h3>
+          <p className="lead">آيات أُعدّت لها مقارنات علمية موثقة المصادر، وتشترك مع هذه الآية في موضوع قرآني.</p>
+          <div className="grid2">
+            {a.related_comparisons.map((r) => (
+              <button type="button" key={`${r.surah_number}:${r.ayah_number}`} className="hit" onClick={() => open(r.surah_number, r.ayah_number)}>
+                <span className="ref">سورة <SurahName name={r.surah_name} /> — <b>الآية {r.ayah_number}</b></span>
+                <span>{r.concepts.join("، ")}</span>
+                <span className="note">الموضوع المشترك: {r.shared_topics.join("، ")}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      <h3 className="subhead">قراءات إعجازية من مصادر ثانوية</h3>
+      {a.ijaz.total === 0 ? <p className="empty">لا توجد مقالات إعجاز مفهرسة تتناول هذه الآية.</p> : (
+        <>
+          <div className="layer-head" style={{ margin: 0 }}><TrustBadge trust="POSSIBLE_CONNECTION" /></div>
+          <p className="lead">{a.ijaz.label}</p>
+          <ul className="ijaz">
+            {a.ijaz.articles.map((x) => (
+              <li key={x.url}>
+                <a href={x.url} target="_blank" rel="noopener noreferrer"><strong>{x.title}</strong></a>
+                {x.excerpt && <p className="note" style={{ margin: "2px 0" }}>{x.excerpt}</p>}
+                <span className="note">
+                  {x.source}{x.published ? ` — ${x.published}` : ""}{x.categories ? ` — ${x.categories}` : ""}
+                  {" — "}{x.match_method === "citation" ? "يذكر الآية بالإحالة" : "يقتبس نص الآية"}
+                  {!x.focused && ` ضمن مقال يذكر ${ayahCount(x.verses_in_article)}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+          {a.ijaz.total > a.ijaz.articles.length && <p className="note">و{a.ijaz.total - a.ijaz.articles.length} مقالًا آخر.</p>}
         </>
       )}
     </section>

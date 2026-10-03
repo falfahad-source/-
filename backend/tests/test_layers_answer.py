@@ -68,9 +68,11 @@ def db():
     gharib = book(1424, "كلمات القرآن", "مخلوف", None, "gharib_book")
     s.add_all([WordMeaning(verse_id=v.id, source_id=gharib.id, word_text="بحر لجّي", meaning="عميق كثير الماء"),
                WordMeaning(verse_id=v.id, source_id=gharib.id, word_text="فوقه أي من فوق الموج", meaning="m")])
-    s.add(Topic(id=897, name="البحار", source_id=q.id))
+    s.add_all([Topic(id=897, name="البحار", source_id=q.id), Topic(id=900, name="السَّحاب", source_id=q.id),
+               Topic(id=3520, name="الموج", source_id=q.id)])
     s.flush()
-    s.add_all([VerseTopic(verse_id=v.id, topic_id=897), VerseTopic(verse_id=other.id, topic_id=897)])
+    s.add_all([VerseTopic(verse_id=v.id, topic_id=897), VerseTopic(verse_id=other.id, topic_id=897),
+               VerseTopic(verse_id=v.id, topic_id=900), VerseTopic(verse_id=v.id, topic_id=3520)])
     s.commit()
     yield s
     s.close()
@@ -93,8 +95,8 @@ def test_tafsir_is_chronological_and_excludes_irab(db):
 
 
 def test_topics_list_related_verses(db):
-    t = build_answer(db, 24, 40).topics[0]
-    assert t["name"] == "البحار" and t["related_total"] == 1
+    t = next(t for t in build_answer(db, 24, 40).topics if t["name"] == "البحار")
+    assert t["related_total"] == 1
     assert t["related"][0] == {"surah_number": 25, "ayah_number": 53, "surah_name": "الفُرۡقَانِ"}
 
 
@@ -102,7 +104,7 @@ def test_uncurated_verse_says_no_concept_map(db):
     a = build_answer(db, 24, 40)
     assert a.concepts == [] and a.scientific_knowledge == []
     assert any("خريطة مفاهيم" in m for m in a.not_established)
-    assert [n["type"] for n in a.graph["nodes"]] == ["verse", "topic"]
+    assert [n["type"] for n in a.graph["nodes"]] == ["verse", "topic", "topic", "topic"]
 
 
 def test_curated_verse_layers(db):
@@ -222,3 +224,25 @@ def test_real_curation_file_loads_verified_claims_as_facts(db):
     claims = [c for s in a.scientific_knowledge for c in s["claims"]]
     assert claims and all(c["trust_category"] == "SCIENTIFIC_FACT" and c["verified_at"] for c in claims)
     assert not any("لم تُطابَق" in m for m in a.not_established)
+
+
+def test_related_comparisons_follow_declared_topics_only(db):
+    from app.models import Topic, VerseTopic
+    doc = copy.deepcopy(DOC)
+    doc["related_topics"] = ["البحار"]
+    load_document(db, doc)
+    other = db.query(Verse).filter_by(surah_number=25, ayah_number=53).one()
+    db.add(Topic(id=5, name="الدِّين", source_id=other.source_id))
+    db.flush()
+    db.add(VerseTopic(verse_id=other.id, topic_id=5))
+    db.commit()
+    rel = build_answer(db, 25, 53).related_comparisons
+    assert [(r["surah_number"], r["ayah_number"], r["shared_topics"]) for r in rel] == [(24, 40, ["البحار"])]
+    assert "تناقص الضوء مع العمق" in rel[0]["concepts"]
+
+
+def test_related_topic_must_belong_to_the_verse(db):
+    doc = copy.deepcopy(DOC)
+    doc["related_topics"] = ["موضوع ليس للآية"]
+    with pytest.raises(CurationError, match="not one of verse"):
+        load_document(db, doc)
