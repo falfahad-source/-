@@ -1,0 +1,85 @@
+{
+  "verse": [
+    21,
+    32
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية السقف المحفوظ أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "saqf",
+      "label": "سقفا محفوظا",
+      "words": [
+        3,
+        4
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "ozone_layer",
+      "name_ar": "طبقة الأوزون",
+      "name_en": "Ozone layer"
+    },
+    {
+      "key": "meteors_burn",
+      "name_ar": "احتراق الشهب في الغلاف الجوي",
+      "name_en": "Meteors"
+    }
+  ],
+  "sources": [
+    {
+      "key": "noaa",
+      "title": "NOAA — الإدارة الوطنية للمحيطات والغلاف الجوي",
+      "publisher": "NOAA",
+      "url": "https://www.noaa.gov"
+    },
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "ozone_layer",
+      "source": "noaa",
+      "domain": "علوم الغلاف الجوي",
+      "claim": "تمتص طبقة الأوزون في الستراتوسفير معظم الأشعة فوق البنفسجية الضارة القادمة من الشمس، فتحمي الحياة على سطح الأرض.",
+      "url": "https://csl.noaa.gov/assessments/ozone/2018/twentyquestions/",
+      "quote": "protects life on Earth",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    },
+    {
+      "concept": "meteors_burn",
+      "source": "nasa",
+      "domain": "علوم الفضاء",
+      "claim": "يسقط على الأرض يوميًا قرابة 48.5 طنًا من مواد النيازك، يتبخر معظمها تقريبًا في الغلاف الجوي.",
+      "url": "https://science.nasa.gov/solar-system/meteors-meteorites/facts/",
+      "quote": "vaporized in Earth's atmosphere",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "saqf",
+      "concept": "ozone_layer",
+      "source": "noaa",
+      "explanation": "فسّر أهل الغريب «محفوظا» بأنه مصون من الوقوع والتغير، ومن حراسة الشياطين. وحماية الغلاف الجوي للأرض من الإشعاع موضوع علمي يمكن مقارنته بوصف السقف المحفوظ."
+    },
+    {
+      "phrase": "saqf",
+      "concept": "meteors_burn",
+      "source": "nasa",
+      "explanation": "احتراق معظم الأجسام الساقطة في الغلاف الجوي قبل بلوغ الأرض صورة علمية للحماية يمكن مقارنتها بوصف السماء سقفًا محفوظًا."
+    }
+  ]
+}

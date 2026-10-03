@@ -1,0 +1,87 @@
+{
+  "verse": [
+    21,
+    30
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية الرتق والفتق والماء أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "ratq",
+      "label": "كانتا رتقا ففتقناهما",
+      "words": [
+        8,
+        10
+      ]
+    },
+    {
+      "key": "water_life",
+      "label": "من الماء كل شيء حي",
+      "words": [
+        12,
+        16
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "big_bang",
+      "name_ar": "نشأة الكون من حالة كثيفة حارة",
+      "name_en": "Big Bang"
+    },
+    {
+      "key": "water_life",
+      "name_ar": "الماء شرط للحياة",
+      "name_en": "Water and life"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "big_bang",
+      "source": "nasa",
+      "domain": "علم الكونيات",
+      "claim": "تقول نظرية الانفجار العظيم إن الكون بدأ قبل نحو 13.7 مليار سنة، وتمدد بسرعة من حالة شديدة الكثافة والحرارة.",
+      "url": "https://svs.gsfc.nasa.gov/10128",
+      "quote": "expanding rapidly from a very dense and incredibly hot state",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    },
+    {
+      "concept": "water_life",
+      "source": "nasa",
+      "domain": "علم الأحياء الفلكي",
+      "claim": "الماء من الشروط الأساسية لكل حياة نعرفها على الأرض؛ ولذلك يبحث العلماء عن الحياة خارج الأرض بتتبّع الماء.",
+      "url": "https://astrobiology.nasa.gov/education/alp/water-so-important-for-life/",
+      "quote": "Water is one of the essential requirements for all life as we know it on Earth",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "ratq",
+      "concept": "big_bang",
+      "source": "nasa",
+      "explanation": "من أقوال المفسرين أن السماوات والأرض كانتا ملتصقتين ففُصل بينهما، ومن أقوالهم أن السماء كانت لا تمطر والأرض لا تنبت ففُتقتا بالمطر والنبات. والمقارنة بنشأة الكون من حالة واحدة كثيفة قراءة معاصرة للاستكشاف."
+    },
+    {
+      "phrase": "water_life",
+      "concept": "water_life",
+      "source": "nasa",
+      "explanation": "فسّرها أهل الغريب بأن الماء جُعل سببًا لحياة كل نامٍ من حيوان ونبات، وهذا يتوافق مع ما يقرره علم الأحياء من أن الماء شرط لكل حياة معروفة."
+    }
+  ]
+}

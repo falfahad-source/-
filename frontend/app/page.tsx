@@ -20,6 +20,7 @@ export default function Home() {
   const [searching, setSearching] = useState(false);
   const [num, setNum] = useState<[number, number]>(START);
   const [phrase, setPhrase] = useState<string | null>(null);
+  const [explore, setExplore] = useState<{ surah_number: number; ayah_number: number; surah_name: string; concepts: string[] }[]>([]);
 
   async function load(s: number, a: number, scroll = true) {
     setError(null);
@@ -39,6 +40,7 @@ export default function Home() {
   useEffect(() => {
     const m = /^(\d{1,3}):(\d{1,3})$/.exec(new URLSearchParams(location.search).get("v") ?? "");
     load(m ? +m[1] : START[0], m ? +m[2] : START[1], false);
+    fetch(`${API_BASE}/explore`).then((r) => (r.ok ? r.json() : { verses: [] })).then((d) => setExplore(d.verses)).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -104,8 +106,23 @@ export default function Home() {
 
       <div className="layout">
         <aside className="results" aria-label="نتائج البحث">
-          <h2>نتائج البحث</h2>
-          {!search ? <p className="empty">ابحث بجزء من آية، ثم اختر الآية لتبدأ رحلتها.</p> : (
+          <h2>{search ? "نتائج البحث" : "آيات نموذجية"}</h2>
+          {!search ? (
+            <>
+              <p className="empty">ابحث بجزء من آية، ثم اختر الآية لتبدأ رحلتها. أو ابدأ بآية من الآيات النموذجية التي أُعدّت لها خريطة مفاهيم:</p>
+              <ol>
+                {explore.map((v) => (
+                  <li key={`${v.surah_number}:${v.ayah_number}`}>
+                    <button type="button" className="hit" onClick={() => load(v.surah_number, v.ayah_number)}
+                      aria-pressed={answer?.surah_number === v.surah_number && answer?.ayah_number === v.ayah_number}>
+                      <span className="ref">سورة <SurahName name={v.surah_name} /> — <b>الآية {v.ayah_number}</b></span>
+                      <span className="note">{v.concepts.join("، ")}</span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </>
+          ) : (
             <>
               <p>
                 {search.total === 0 ? "لا توجد آيات تحتوي هذا النص."

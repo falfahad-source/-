@@ -1,0 +1,71 @@
+{
+  "verse": [
+    23,
+    14
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية أطوار خلق الجنين أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "atwar",
+      "label": "النطفة علقة ... مضغة",
+      "words": [
+        2,
+        9
+      ]
+    },
+    {
+      "key": "izam_lahm",
+      "label": "عظاما فكسونا العظام لحما",
+      "words": [
+        10,
+        13
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "embryo_stages",
+      "name_ar": "مراحل التطور الجنيني",
+      "name_en": "Embryonic development"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "embryo_stages",
+      "source": "nih",
+      "domain": "علم الأجنة",
+      "claim": "في الأسبوعين السادس والسابع تبدأ براعم الذراعين والساقين بالنمو، وتتكوّن الأنسجة التي ستصير العمود الفقري وسائر العظام، ويستمر نمو الأنسجة العضلية والعظام.",
+      "url": "https://medlineplus.gov/ency/article/002398.htm",
+      "quote": "Muscle tissue and bones keep developing",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "atwar",
+      "concept": "embryo_stages",
+      "source": "nih",
+      "explanation": "الآية تذكر أطوار خلق الإنسان: نطفة ثم علقة ثم مضغة، وفسّر أهل الغريب العلقة بالدم المتجمد الملتصق بالرحم والمضغة بقطعة اللحم قدر ما يُمضغ. ووصف علم الأجنة لمراحل التطور الجنيني يُعرض للمقارنة."
+    },
+    {
+      "phrase": "izam_lahm",
+      "concept": "embryo_stages",
+      "source": "nih",
+      "explanation": "ذكر العظام ثم كسوتها لحمًا موضوع تتعدد فيه القراءات المعاصرة، والمصدر العلمي هنا يذكر نمو العظام والعضلات معًا في الأسابيع الأولى؛ فالمقارنة مفتوحة للبحث ولا يُبنى عليها حكم."
+    }
+  ]
+}

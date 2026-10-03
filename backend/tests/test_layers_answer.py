@@ -132,7 +132,7 @@ def test_reloading_curation_replaces_rather_than_duplicates(db):
 
 def test_verified_claim_requires_url_and_quote(db):
     doc = copy.deepcopy(DOC)
-    doc["claims"][0]["verified_at"] = "2026-10-03"
+    doc["claims"][0].update(verified_at="2026-10-03", url=None, quote=None)
     with pytest.raises(CurationError, match="without a url and a verbatim quote"):
         load_document(db, doc)
     doc["claims"][0].update(url="https://example.noaa.gov/page", quote="exact words from the page")
@@ -156,3 +156,55 @@ def test_invalid_curation_is_rejected_before_writing(db, mutate, match):
     with pytest.raises(CurationError, match=match):
         load_document(db, doc)
     assert db.query(ScientificEvidence).count() == 0
+
+
+def test_every_curation_file_is_valid_and_uses_allowed_sources():
+    from app.curation import allowed_url
+    for f in sorted(CURATION_DIR.glob("*.json")):
+        doc = json.loads(f.read_text(encoding="utf-8"))
+        assert f.stem == f"{doc['verse'][0]}-{doc['verse'][1]}", f.name
+        for c in doc["claims"]:
+            assert c["url"] and allowed_url(c["url"]), (f.name, c["url"])
+            assert c["quote"], f.name
+            assert not c.get("verified_at") or c.get("quote_origin") == "page", f.name
+
+
+def test_claim_url_outside_allowlist_is_rejected(db):
+    doc = copy.deepcopy(DOC)
+    doc["claims"][0]["url"] = "https://some-blog.example.com/miracles"
+    with pytest.raises(CurationError, match="SCIENTIFIC_SOURCE_ALLOWLIST"):
+        load_document(db, doc)
+
+
+def test_allowed_url_matches_domain_and_subdomains_only():
+    from app.curation import allowed_url
+    assert allowed_url("https://oceanservice.noaa.gov/facts/x.html")
+    assert allowed_url("https://medlineplus.gov/ency/article/000133.htm")
+    assert not allowed_url("http://www.noaa.gov/")            # https only
+    assert not allowed_url("https://noaa.gov.evil.example/")  # suffix trick
+    assert not allowed_url("https://notnasa.gov/")
+
+
+def test_verify_marks_only_quotes_found_on_the_page():
+    from app.curation import verify_document
+    doc = copy.deepcopy(DOC)
+    doc["claims"][0]["quote"] = "the “sunlight” zone"
+    doc["claims"][1]["quote"] = "a sentence that is not there"
+    page = "<html><script>var x='the sunlight zone'</script><p>The upper 200 meters is the\n" \
+           " &ldquo;sunlight&rdquo;   zone.</p></html>"
+    report = dict(verify_document(doc, lambda url: page, today="2026-10-03"))
+    assert report == {"ocean_zones": "verified", "light_attenuation": "quote NOT found on page"}
+    assert doc["claims"][0]["verified_at"] == "2026-10-03" and doc["claims"][0]["quote_origin"] == "page"
+    assert doc["claims"][1]["verified_at"] is None
+
+
+def test_verify_reports_fetch_failures_and_keeps_claims_unverified():
+    from app.curation import verify_document
+    doc = copy.deepcopy(DOC)
+
+    def blocked(url):
+        raise ConnectionError("egress blocked")
+
+    report = verify_document(doc, blocked)
+    assert all(outcome.startswith("fetch failed") for _, outcome in report)
+    assert all(c["verified_at"] is None for c in doc["claims"])

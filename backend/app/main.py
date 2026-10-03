@@ -54,3 +54,32 @@ def search(
         raise HTTPException(status_code=422, detail=str(e)) from e
     finally:
         db.close()
+
+
+@app.get("/explore")
+def explore():
+    """Verses that have a curated concept map, grouped by theme order of the mushaf."""
+    from sqlalchemy import func
+
+    from .models import Concept, Relationship, Verse, VersePhrase
+
+    db = SessionLocal()
+    try:
+        rows = (
+            db.query(Verse, func.count(VersePhrase.id))
+            .join(VersePhrase, VersePhrase.verse_id == Verse.id)
+            .group_by(Verse.id)
+            .order_by(Verse.surah_number, Verse.ayah_number)
+            .all()
+        )
+        out = []
+        for v, _ in rows:
+            prefix = f"phrase:{v.surah_number}:{v.ayah_number}:"
+            keys = {r.target_entity.removeprefix("concept:")
+                    for r in db.query(Relationship).filter(Relationship.source_entity.like(prefix + "%"))}
+            names = [c.name_ar for c in db.query(Concept).filter(Concept.key.in_(keys)).order_by(Concept.name_ar)]
+            out.append({"surah_number": v.surah_number, "ayah_number": v.ayah_number,
+                        "surah_name": v.surah_name, "concepts": names})
+        return {"verses": out}
+    finally:
+        db.close()

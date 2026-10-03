@@ -1,0 +1,87 @@
+{
+  "verse": [
+    24,
+    43
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية السحاب الركام والبرد أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "rukam",
+      "label": "يؤلف بينه ثم يجعله ركاما",
+      "words": [
+        8,
+        12
+      ]
+    },
+    {
+      "key": "jibal_barad",
+      "label": "من جبال فيها من برد",
+      "words": [
+        21,
+        25
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "cumulonimbus",
+      "name_ar": "السحب الركامية المزنية",
+      "name_en": "Cumulonimbus"
+    },
+    {
+      "key": "hail",
+      "name_ar": "تكوّن البَرَد",
+      "name_en": "Hail"
+    }
+  ],
+  "sources": [
+    {
+      "key": "noaa",
+      "title": "NOAA — الإدارة الوطنية للمحيطات والغلاف الجوي",
+      "publisher": "NOAA",
+      "url": "https://www.noaa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "cumulonimbus",
+      "source": "noaa",
+      "domain": "علم الأرصاد",
+      "claim": "تيارات الحمل الصاعدة القوية تكوّن السحب الركامية المزنية، وهي السحب السندانية التي تصاحب العواصف الشديدة.",
+      "url": "https://www.nesdis.noaa.gov/our-environment/severe-weather/thunderstorms",
+      "quote": "form cumulonimbus clouds",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    },
+    {
+      "concept": "hail",
+      "source": "noaa",
+      "domain": "علم الأرصاد",
+      "claim": "البَرَد هطول من جليد صلب يتكوّن داخل التيارات الصاعدة في السحب الرعدية.",
+      "url": "https://www.nssl.noaa.gov/education/svrwx101/hail/",
+      "quote": "solid ice that forms inside thunderstorm updrafts",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "rukam",
+      "concept": "cumulonimbus",
+      "source": "noaa",
+      "explanation": "فسّر أهل الغريب «ركاما» بأنه متراكم بعضه فوق بعض. وتكوّن السحب الركامية بتجمّع السحب وتراكمها رأسيًا موضوع يمكن مقارنته بهذا الوصف."
+    },
+    {
+      "phrase": "jibal_barad",
+      "concept": "hail",
+      "source": "noaa",
+      "explanation": "ذكر الآية للبرد النازل من السماء من «جبال» يفتح باب المقارنة مع تكوّن البرد داخل السحب الرعدية العالية."
+    }
+  ]
+}

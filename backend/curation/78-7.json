@@ -1,0 +1,57 @@
+{
+  "verse": [
+    78,
+    7
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية الجبال أوتادا أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "awtad",
+      "label": "والجبال أوتادا",
+      "words": [
+        1,
+        2
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "mountain_roots",
+      "name_ar": "جذور الجبال في القشرة الأرضية",
+      "name_en": "Mountain roots / isostasy"
+    }
+  ],
+  "sources": [
+    {
+      "key": "usgs",
+      "title": "USGS — هيئة المسح الجيولوجي الأمريكية",
+      "publisher": "USGS",
+      "url": "https://www.usgs.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "domain": "الجيولوجيا",
+      "claim": "تحت سلاسل الجبال الكبرى كالألب قد تمتد قاعدة القشرة الأرضية إلى عمق 100 كيلومتر، بينما لا تتجاوز تحت المحيطات نحو 5 كيلومترات.",
+      "url": "https://pubs.usgs.gov/gip/dynamic/inside.html",
+      "quote": "the base of the crust can be as deep as 100 km",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "awtad",
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "explanation": "فسّر أهل الغريب الأوتاد بأنها تثبّت الأرض لئلا تميد. وامتداد القشرة تحت الجبال إلى أعماق كبيرة (جذور الجبال) موضوع جيولوجي يمكن مقارنته بصورة الوتد."
+    }
+  ]
+}

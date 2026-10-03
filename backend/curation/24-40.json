@@ -1,54 +1,151 @@
 {
-  "verse": [24, 40],
+  "verse": [
+    24,
+    40
+  ],
   "provenance": {
     "key": "afaq:concept-doc",
     "title": "وثيقة فكرة مشروع آفاق (AFAQ.pdf) — حالة الاستخدام: سورة النور، آية 40",
     "note": "المفاهيم والمقارنات مأخوذة من وثيقة فكرة المشروع، وهي مسودة تحتاج مراجعة الباحث."
   },
   "phrases": [
-    {"key": "bahr_lujji", "label": "بحر لجي", "words": [4, 5]},
-    {"key": "mawj", "label": "موج من فوقه موج", "words": [7, 10]},
-    {"key": "sahab", "label": "سحاب", "words": [13, 13]},
-    {"key": "zulumat", "label": "ظلمات بعضها فوق بعض", "words": [14, 17]},
-    {"key": "lam_yakad", "label": "لم يكد يراها", "words": [21, 23]}
+    {
+      "key": "bahr_lujji",
+      "label": "بحر لجي",
+      "words": [
+        4,
+        5
+      ]
+    },
+    {
+      "key": "mawj",
+      "label": "موج من فوقه موج",
+      "words": [
+        7,
+        10
+      ]
+    },
+    {
+      "key": "sahab",
+      "label": "سحاب",
+      "words": [
+        13,
+        13
+      ]
+    },
+    {
+      "key": "zulumat",
+      "label": "ظلمات بعضها فوق بعض",
+      "words": [
+        14,
+        17
+      ]
+    },
+    {
+      "key": "lam_yakad",
+      "label": "لم يكد يراها",
+      "words": [
+        21,
+        23
+      ]
+    }
   ],
   "concepts": [
-    {"key": "ocean_zones", "name_ar": "المناطق الضوئية في المحيط", "name_en": "Ocean light zones"},
-    {"key": "light_attenuation", "name_ar": "تناقص الضوء مع العمق", "name_en": "Light attenuation"},
-    {"key": "deep_ocean", "name_ar": "أعماق المحيط", "name_en": "Deep ocean"},
-    {"key": "internal_waves", "name_ar": "الأمواج الداخلية", "name_en": "Internal waves"},
-    {"key": "surface_waves", "name_ar": "الأمواج السطحية", "name_en": "Surface waves"},
-    {"key": "atmospheric_light", "name_ar": "حجب السحب لضوء الشمس", "name_en": "Atmospheric light reduction"}
+    {
+      "key": "ocean_zones",
+      "name_ar": "المناطق الضوئية في المحيط",
+      "name_en": "Ocean light zones"
+    },
+    {
+      "key": "light_attenuation",
+      "name_ar": "تناقص الضوء مع العمق",
+      "name_en": "Light attenuation"
+    },
+    {
+      "key": "deep_ocean",
+      "name_ar": "أعماق المحيط",
+      "name_en": "Deep ocean"
+    },
+    {
+      "key": "internal_waves",
+      "name_ar": "الأمواج الداخلية",
+      "name_en": "Internal waves"
+    },
+    {
+      "key": "surface_waves",
+      "name_ar": "الأمواج السطحية",
+      "name_en": "Surface waves"
+    },
+    {
+      "key": "atmospheric_light",
+      "name_ar": "حجب السحب لضوء الشمس",
+      "name_en": "Atmospheric light reduction"
+    }
   ],
   "sources": [
-    {"key": "noaa", "title": "NOAA — الإدارة الوطنية للمحيطات والغلاف الجوي", "publisher": "NOAA", "url": "https://www.noaa.gov"}
+    {
+      "key": "noaa",
+      "title": "NOAA — الإدارة الوطنية للمحيطات والغلاف الجوي",
+      "publisher": "NOAA",
+      "url": "https://www.noaa.gov"
+    }
   ],
   "claims": [
     {
-      "concept": "ocean_zones", "source": "noaa", "domain": "علم المحيطات",
+      "concept": "ocean_zones",
+      "source": "noaa",
+      "domain": "علم المحيطات",
       "claim": "من 0 إلى 200 م منطقة الضوء: تخترقها أشعة الشمس. من 200 إلى 1000 م منطقة الشفق: يتناقص الضوء بسرعة حتى يكاد ينعدم. بعد 1000 م المنطقة المعتمة: لا يصل ضوء الشمس.",
-      "provenance_note": "منقول من وثيقة فكرة المشروع منسوبًا إلى NOAA؛ لم يُطابَق بعد مع صفحة NOAA الأصلية.",
-      "url": null, "quote": null, "verified_at": null
+      "provenance_note": "منقول من وثيقة فكرة المشروع منسوبًا إلى NOAA؛ اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "url": "https://oceanservice.noaa.gov/facts/light_travel.html",
+      "quote": "The upper 200 meters of the ocean is called the euphotic",
+      "verified_at": null,
+      "quote_origin": "search_excerpt"
     },
     {
-      "concept": "light_attenuation", "source": "noaa", "domain": "علم المحيطات",
+      "concept": "light_attenuation",
+      "source": "noaa",
+      "domain": "علم المحيطات",
       "claim": "يصبح الضوء محدودًا جدًا بين 200 و1000 متر، وينعدم كليًا بعد ذلك.",
-      "provenance_note": "منقول من وثيقة فكرة المشروع منسوبًا إلى NOAA؛ لم يُطابَق بعد مع صفحة NOAA الأصلية.",
-      "url": null, "quote": null, "verified_at": null
+      "provenance_note": "منقول من وثيقة فكرة المشروع منسوبًا إلى NOAA؛ اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "url": "https://oceanservice.noaa.gov/facts/light_travel.html",
+      "quote": "there is rarely any significant light beyond 200 meters",
+      "verified_at": null,
+      "quote_origin": "search_excerpt"
     }
   ],
   "connections": [
-    {"phrase": "zulumat", "concept": "light_attenuation", "source": "noaa",
-     "explanation": "عبارة ﴿ظلمات بعضها فوق بعض﴾ نقطة انطلاق لاستكشاف علم الضوء في المحيطات: امتصاص الضوء، وتناقصه، وتوزيعه عبر الطبقات."},
-    {"phrase": "zulumat", "concept": "ocean_zones", "source": "noaa",
-     "explanation": "تقسيم المحيط إلى طبقات ضوئية متتالية موضوعٌ يمكن مقارنته بوصف الظلمات المتراكمة."},
-    {"phrase": "bahr_lujji", "concept": "deep_ocean",
-     "explanation": "وصف البحر بأنه لجي (عميق كثير الماء عند أصحاب الغريب) يفتح باب المقارنة مع دراسة أعماق المحيط."},
-    {"phrase": "mawj", "concept": "internal_waves",
-     "explanation": "ذِكر موج فوقه موج يفتح باب المقارنة مع ما يدرسه علم المحيطات من أمواج داخلية بين طبقات الماء."},
-    {"phrase": "mawj", "concept": "surface_waves",
-     "explanation": "الموج الأعلى في الآية يقابل في الدراسة العلمية الأمواج السطحية."},
-    {"phrase": "sahab", "concept": "atmospheric_light",
-     "explanation": "ذِكر السحاب فوق الموج يفتح باب المقارنة مع أثر السحب في حجب ضوء الشمس."}
+    {
+      "phrase": "zulumat",
+      "concept": "light_attenuation",
+      "source": "noaa",
+      "explanation": "عبارة ﴿ظلمات بعضها فوق بعض﴾ نقطة انطلاق لاستكشاف علم الضوء في المحيطات: امتصاص الضوء، وتناقصه، وتوزيعه عبر الطبقات."
+    },
+    {
+      "phrase": "zulumat",
+      "concept": "ocean_zones",
+      "source": "noaa",
+      "explanation": "تقسيم المحيط إلى طبقات ضوئية متتالية موضوعٌ يمكن مقارنته بوصف الظلمات المتراكمة."
+    },
+    {
+      "phrase": "bahr_lujji",
+      "concept": "deep_ocean",
+      "explanation": "وصف البحر بأنه لجي (عميق كثير الماء عند أصحاب الغريب) يفتح باب المقارنة مع دراسة أعماق المحيط."
+    },
+    {
+      "phrase": "mawj",
+      "concept": "internal_waves",
+      "explanation": "ذِكر موج فوقه موج يفتح باب المقارنة مع ما يدرسه علم المحيطات من أمواج داخلية بين طبقات الماء."
+    },
+    {
+      "phrase": "mawj",
+      "concept": "surface_waves",
+      "explanation": "الموج الأعلى في الآية يقابل في الدراسة العلمية الأمواج السطحية."
+    },
+    {
+      "phrase": "sahab",
+      "concept": "atmospheric_light",
+      "explanation": "ذِكر السحاب فوق الموج يفتح باب المقارنة مع أثر السحب في حجب ضوء الشمس."
+    }
   ]
 }

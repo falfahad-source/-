@@ -1,0 +1,65 @@
+{
+  "verse": [
+    51,
+    47
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية توسع السماء أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "banaynaha",
+      "label": "والسماء بنيناها",
+      "words": [
+        1,
+        2
+      ]
+    },
+    {
+      "key": "musiun",
+      "label": "وإنا لموسعون",
+      "words": [
+        4,
+        5
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "cosmic_expansion",
+      "name_ar": "تمدد الكون",
+      "name_en": "Expanding universe"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "cosmic_expansion",
+      "source": "nasa",
+      "domain": "علم الفلك",
+      "claim": "أعلن إدوين هابل عام 1929 أن معظم المجرات تبدو متباعدة عنا، وكلما بعدت المجرة زادت سرعة ابتعادها، وهو ما يُفهم منه أن الكون يتمدد.",
+      "url": "https://starchild.gsfc.nasa.gov/docs/StarChild/questions/redshift.html",
+      "quote": "almost all galaxies appeared to be moving away from us",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "musiun",
+      "concept": "cosmic_expansion",
+      "source": "nasa",
+      "explanation": "فسّر أهل الغريب «لموسعون» بمعنى «لقادرون» أو ذوو سعة. وربطُها بتمدد الكون قراءة معاصرة تُعرض للمقارنة فقط، لا بديلًا عن المعنى المنقول."
+    }
+  ]
+}

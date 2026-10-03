@@ -14,9 +14,9 @@ DEFAULT_MUSHAF_ID = 1
 # Scientific sources are for scientific knowledge/comparison only — never
 # automatic tafsir (spec rule). Extend deliberately; do not widen silently.
 SCIENTIFIC_SOURCE_ALLOWLIST: list[str] = [
-    # Examples to be confirmed by the project owner before first scientific ingestion:
-    # "nasa.gov", "noaa.gov", "nature.com", "sciencedirect.com",
-    # "*.edu", "ncbi.nlm.nih.gov",
+    # Government scientific agencies used by the curated comparisons. A claim URL must
+    # be on one of these domains (or a subdomain); extend deliberately, with the owner.
+    "nasa.gov", "noaa.gov", "usgs.gov", "nih.gov", "medlineplus.gov", "usda.gov",
 ]
 
 # Minimum confidence required before a Relationship may be labeled POSSIBLE_CONNECTION

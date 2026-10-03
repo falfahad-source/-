@@ -1,0 +1,95 @@
+{
+  "verse": [
+    25,
+    53
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية مرج البحرين أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "bahrayn",
+      "label": "مرج البحرين",
+      "words": [
+        3,
+        4
+      ]
+    },
+    {
+      "key": "adhb_milh",
+      "label": "عذب فرات وملح أجاج",
+      "words": [
+        5,
+        10
+      ]
+    },
+    {
+      "key": "barzakh",
+      "label": "بينهما برزخا وحجرا محجورا",
+      "words": [
+        12,
+        15
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "estuary",
+      "name_ar": "مصبات الأنهار",
+      "name_en": "Estuaries"
+    },
+    {
+      "key": "salt_wedge",
+      "name_ar": "الحد بين الماء العذب والمالح",
+      "name_en": "Salt wedge / halocline"
+    }
+  ],
+  "sources": [
+    {
+      "key": "noaa",
+      "title": "NOAA — الإدارة الوطنية للمحيطات والغلاف الجوي",
+      "publisher": "NOAA",
+      "url": "https://www.noaa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "estuary",
+      "source": "noaa",
+      "domain": "علم المحيطات",
+      "claim": "مصب النهر (الخور) مسطح مائي شبه مغلق يختلط فيه ماء البحر المالح بالماء العذب القادم من الأنهار.",
+      "url": "https://oceanservice.noaa.gov/facts/estuary.html",
+      "quote": "mixes with fresh water from rivers or streams",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    },
+    {
+      "concept": "salt_wedge",
+      "source": "noaa",
+      "domain": "علم المحيطات",
+      "claim": "لأن الماء العذب أقل كثافة من الماء المالح فإنه يطفو فوقه، فتتكوّن حدود حادة بين الكتلتين: عذب في الأعلى وإسفين مالح في الأسفل.",
+      "url": "https://oceanservice.noaa.gov/education/tutorial_estuaries/est05_circulation.html",
+      "quote": "fresh water is less dense than saltwater",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "adhb_milh",
+      "concept": "estuary",
+      "source": "noaa",
+      "explanation": "تلاقي الماء العذب بالمالح في مصبات الأنهار ظاهرة يدرسها علم المحيطات، ويمكن مقارنتها بذكر البحرين العذب والملح."
+    },
+    {
+      "phrase": "barzakh",
+      "concept": "salt_wedge",
+      "source": "noaa",
+      "explanation": "فسّر أهل الغريب «برزخا» بأنه حاجز يمنع اختلاطهما أو إفساد أحدهما للآخر. وطبقية الماء العذب فوق المالح بحدّ فاصل يقل عنده الاختلاط موضوع علمي للمقارنة."
+    }
+  ]
+}

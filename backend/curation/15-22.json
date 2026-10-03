@@ -1,0 +1,57 @@
+{
+  "verse": [
+    15,
+    22
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية الرياح لواقح أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "lawaqih",
+      "label": "وأرسلنا الرياح لواقح",
+      "words": [
+        1,
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "wind_pollination",
+      "name_ar": "التلقيح بالرياح",
+      "name_en": "Wind pollination"
+    }
+  ],
+  "sources": [
+    {
+      "key": "usda",
+      "title": "USDA Forest Service — هيئة الغابات الأمريكية",
+      "publisher": "USDA Forest Service",
+      "url": "https://www.fs.usda.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "wind_pollination",
+      "source": "usda",
+      "domain": "علم النبات",
+      "claim": "معظم المخروطيات ونحو 12% من النباتات المزهرة في العالم تُلقَّح بالرياح، ومنها الحشائش ومحاصيل الحبوب.",
+      "url": "https://www.fs.usda.gov/wildflowers/pollinators/wind.shtml",
+      "quote": "12% of the world's flowering plants are wind-pollinated",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "lawaqih",
+      "concept": "wind_pollination",
+      "source": "usda",
+      "explanation": "ذكر أهل الغريب أن الرياح «تلقح الشجر وتلقح السحاب». ونقل الرياح لحبوب اللقاح بين النباتات ظاهرة نباتية يمكن مقارنتها بهذا المعنى."
+    }
+  ]
+}

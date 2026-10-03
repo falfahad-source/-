@@ -127,3 +127,18 @@ def test_search_endpoint_offset(db_session, monkeypatch):
     res = client.get("/search", params={"q": "بسم الله", "limit": 1, "offset": 1}).json()
     assert [(r["surah_number"], r["ayah_number"]) for r in res["results"]] == [(27, 30)]
     assert client.get("/search", params={"q": "بسم الله", "offset": -1}).status_code == 422
+
+
+def test_explore_lists_curated_verses(db_session, monkeypatch):
+    from app.models import Concept, Relationship, VersePhrase
+    v = db_session.query(Verse).filter_by(surah_number=27, ayah_number=30).one()
+    src = db_session.query(Source).first()
+    db_session.add(VersePhrase(verse_id=v.id, key="p", label="بسم الله", word_from=1, word_to=2))
+    db_session.add(Concept(key="c", name_ar="مفهوم", concept_type="scientific"))
+    db_session.add(Relationship(source_entity="phrase:27:30:p", target_entity="concept:c", relationship_type="comparison",
+                                evidence_source_id=src.id, trust_category=TrustCategory.POSSIBLE_CONNECTION,
+                                confidence=0.0, explanation="x"))
+    db_session.commit()
+    monkeypatch.setattr(main, "SessionLocal", db_session.session_factory)
+    res = TestClient(main.app).get("/explore").json()
+    assert res == {"verses": [{"surah_number": 27, "ayah_number": 30, "surah_name": "النَّمۡلِ", "concepts": ["مفهوم"]}]}

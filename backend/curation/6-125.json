@@ -1,0 +1,65 @@
+{
+  "verse": [
+    6,
+    125
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنات آية الصعود في السماء أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "dayyiq",
+      "label": "صدره ضيقا حرجا",
+      "words": [
+        14,
+        16
+      ]
+    },
+    {
+      "key": "yassaad",
+      "label": "كأنما يصعد في السماء",
+      "words": [
+        17,
+        20
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "altitude_hypoxia",
+      "name_ar": "نقص الأكسجين في المرتفعات",
+      "name_en": "High-altitude hypoxia"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "altitude_hypoxia",
+      "source": "nih",
+      "domain": "الطب",
+      "claim": "داء المرتفعات الحاد سببه انخفاض ضغط الهواء ونقص مستوى الأكسجين في الأماكن المرتفعة، ومن أعراضه ضيق النفس عند الجهد.",
+      "url": "https://medlineplus.gov/ency/article/000133.htm",
+      "quote": "lower oxygen levels at high altitudes",
+      "quote_origin": "search_excerpt",
+      "provenance_note": "اقتباس مرشَّح من مقتطف بحث للصفحة؛ لم يُطابَق بعد مع نص الصفحة مباشرة.",
+      "verified_at": null
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "yassaad",
+      "concept": "altitude_hypoxia",
+      "source": "nih",
+      "explanation": "الآية تشبيه لحال الصدر الضيق بمن يتكلف الصعود في السماء فلا يستطيع، كما فسّرها أهل الغريب. وضيق النفس عند الصعود إلى المرتفعات بسبب نقص الأكسجين ظاهرة طبية يمكن مقارنة التشبيه بها."
+    }
+  ]
+}
