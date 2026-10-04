@@ -13,9 +13,11 @@ import json
 import sys
 from pathlib import Path
 
+from sqlalchemy import func
+
 from .db import SessionLocal, init_db
 from .main import explore
-from .models import Verse, VersePhrase
+from .models import ArticleVerse, Verse, VersePhrase
 from .rag.answer_builder import build_answer
 
 
@@ -26,8 +28,9 @@ def export(path: Path) -> dict:
         model = sorted({(v.surah_number, v.ayah_number)
                         for v in db.query(Verse).join(VersePhrase, VersePhrase.verse_id == Verse.id)})
         answers = {f"{s}:{a}": dataclasses.asdict(build_answer(db, s, a)) for s, a in model}
+        ijaz = dict(db.query(ArticleVerse.verse_id, func.count()).group_by(ArticleVerse.verse_id).all())
         verses = [[v.surah_number, v.ayah_number, v.surah_name, v.arabic_text, v.text_imlaei or "",
-                   v.page_number, v.juz_number]
+                   v.page_number, v.juz_number, ijaz.get(v.id, 0)]
                   for v in db.query(Verse).filter_by(reading="hafs").order_by(Verse.surah_number, Verse.ayah_number)]
     finally:
         db.close()

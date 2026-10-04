@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Markdown from "../components/Markdown";
+import SiteNav from "../components/SiteNav";
 import { SurahName, TrustBadge } from "../components/common";
+import { addHistory } from "../components/history";
+import { link, readParams, replaceUrl, verseParam } from "../components/links";
 import type { Trust } from "../components/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
-// Static demo build (no server): this page lives at #ai-v{surah}-{ayah}, the verse journey at #v{surah}-{ayah}.
-const DEMO = process.env.NEXT_PUBLIC_DEMO === "1";
 
 type Status = {
   mode: "mock" | "live"; provider: string; model: string | null; configured: boolean;
@@ -27,9 +28,8 @@ export default function AiIjazPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const m = /^(\d{1,3}):(\d{1,3})$/.exec(new URLSearchParams(location.search).get("v") ?? "")
-      ?? /^#ai-v(\d{1,3})-(\d{1,3})$/.exec(location.hash);
-    if (m) setNum([+m[1], +m[2]]);
+    const v = verseParam(readParams());
+    if (v) setNum(v);
     fetch(`${API_BASE}/ai-research/status`)
       .then(async (r) => (r.ok ? setStatus(await r.json()) : setError((await r.json().catch(() => ({}))).detail || "تعذّر الاتصال بالخادم.")))
       .catch(() => setError("تعذّر الاتصال بالخادم."));
@@ -52,7 +52,8 @@ export default function AiIjazPage() {
         return;
       }
       setReport(body);
-      try { history.replaceState(null, "", DEMO ? `#ai-v${num[0]}-${num[1]}` : `?v=${num[0]}:${num[1]}`); } catch { /* not allowed in some frames */ }
+      addHistory({ kind: "ai", s: num[0], a: num[1], surah: body.verse.surah_name, mode: body.mode });
+      replaceUrl(link.ai(num[0], num[1]));
     } catch {
       setError("تعذّر الاتصال بالخادم.");
     } finally { setBusy(false); }
@@ -60,11 +61,12 @@ export default function AiIjazPage() {
 
   return (
     <div className="shell">
+      <SiteNav current="ai" />
       <header className="masthead">
-        <h1>آفاق <span>| الذكاء الاصطناعي في الإعجاز العلمي</span></h1>
+        <h1>الذكاء الاصطناعي في الإعجاز العلمي</h1>
         <p>باحث ذكاء اصطناعي ناقد: يفهم الآية من التفاسير، ويبحث في العلم الحديث، ويحاول دحض كل ربط قبل أن يحكم عليه.</p>
       </header>
-      <p className="note"><a href={DEMO ? `#v${num[0]}-${num[1]}` : `/?v=${num[0]}:${num[1]}`}>← العودة إلى رحلة الآية</a></p>
+      <p className="note"><a href={link.verse(num[0], num[1])}>← التفسير والمعرفة العلمية لهذه الآية</a></p>
 
       {status && (
         <div className={`ai-mode ${status.mode}`} role="status">

@@ -2,9 +2,13 @@
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import AiIjazPage from "../app/ai-ijaz/page";
+import HistoryPage from "../app/history/page";
 import Home from "../app/page";
+import QuranPage from "../app/quran/page";
+import SearchPage from "../app/search/page";
 
-type V = [number, number, string, string, string, number | null, number | null];
+// [surah, ayah, surah name, text, imla'i text, page, juz, i'jaz article count (newer exports)]
+type V = [number, number, string, string, string, number | null, number | null, number?];
 const DATA = JSON.parse(document.getElementById("afaq-data")!.textContent!) as {
   answers: Record<string, unknown>; verses: V[]; explore: unknown;
 };
@@ -19,6 +23,18 @@ const norm = (t: string) => t.replace(MARKS, "").replace(DIGITS, "").replace(/[�
 const AI = JSON.parse(document.getElementById("afaq-ai")!.textContent!) as {
   status: Record<string, unknown>; disclaimer: string; report_template: string;
 };
+// Curated verses are the ones with a full answer; i'jaz counts come with the verse in newer exports,
+// otherwise only the full answers know them.
+const curated = (v: V) => `${v[0]}:${v[1]}` in DATA.answers;
+const ijaz = (v: V) => v[7] ?? (DATA.answers[`${v[0]}:${v[1]}`] as { ijaz?: { total: number } } | undefined)?.ijaz?.total ?? 0;
+const SURAHS: { number: number; name: string; ayah_count: number; curated_ayahs: number; ijaz_ayahs: number }[] = [];
+for (const v of DATA.verses) {
+  if (SURAHS[SURAHS.length - 1]?.number !== v[0]) SURAHS.push({ number: v[0], name: v[2], ayah_count: 0, curated_ayahs: 0, ijaz_ayahs: 0 });
+  const x = SURAHS[SURAHS.length - 1];
+  x.ayah_count += 1;
+  if (curated(v)) x.curated_ayahs += 1;
+  if (ijaz(v)) x.ijaz_ayahs += 1;
+}
 const KEYS = DATA.verses.map((v) => [norm(v[4]), norm(v[3])]);
 
 const json = (body: unknown, status = 200) =>
@@ -48,6 +64,14 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     return v ? json(minimalAnswer(v)) : json({ detail: "لم يتم العثور على هذه الآية في المصادر المعتمدة المستوعبة حتى الآن." }, 404);
   }
   if (url.pathname === "/explore") return json(DATA.explore);
+  if (url.pathname === "/surahs") return json({ surahs: SURAHS });
+  const surah = /^\/surah\/(\d+)$/.exec(url.pathname);
+  if (surah) {
+    const vs = DATA.verses.filter((v) => v[0] === +surah[1]);
+    if (!vs.length) return json({ detail: "لم يتم العثور على هذه السورة في المصادر المعتمدة المستوعبة حتى الآن." }, 404);
+    return json({ number: vs[0][0], name: vs[0][2], verses: vs.map((v) => ({
+      ayah_number: v[1], text: v[3], page_number: v[5], juz_number: v[6], curated: curated(v), ijaz_articles: ijaz(v) })) });
+  }
   if (url.pathname === "/search") {
     const q = url.searchParams.get("q") ?? "";
     const needle = norm(q);
@@ -74,17 +98,28 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   return json({ detail: "غير متاح في النسخة التجريبية." }, 404);
 };
 
-// One page, two views: #ai or #ai-v{surah}-{ayah} is the AI section, anything else the verse journey.
-const isAi = () => /^#ai(-|$)/.test(location.hash);
+// One page, every view a hash route (see app/components/links.ts).
+type Route = "home" | "search" | "history" | "quran" | "ai";
+function route(): Route {
+  const h = location.hash;
+  if (/^#(search|v\d)/.test(h)) return "search";
+  if (/^#history/.test(h)) return "history";
+  if (/^#quran/.test(h)) return "quran";
+  if (/^#ai(-|$)/.test(h)) return "ai";
+  return "home";
+}
+const PAGES: Record<Route, () => JSX.Element> = { home: Home, search: SearchPage, history: HistoryPage, quran: QuranPage, ai: AiIjazPage };
+
 function App() {
-  const [ai, setAi] = useState(isAi);
+  const [r, setR] = useState(route);
   useEffect(() => {
-    // the journey rewrites the hash on every verse it opens; only a switch of view scrolls to the top
-    const on = () => setAi((was) => { const now = isAi(); if (now !== was) scrollTo(0, 0); return now; });
+    // pages rewrite the hash as the reader moves (a verse, a surah); only a switch of page remounts and scrolls up
+    const on = () => setR((was) => { const now = route(); if (now !== was) scrollTo(0, 0); return now; });
     addEventListener("hashchange", on);
     return () => removeEventListener("hashchange", on);
   }, []);
-  return ai ? <AiIjazPage /> : <Home />;
+  const Page = PAGES[r];
+  return <Page key={r} />;
 }
 
 createRoot(document.getElementById("root")!).render(<App />);

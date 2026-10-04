@@ -141,7 +141,7 @@ function ReviewCard({ item, token, onSaved, onError }: {
           {" "}<span style={{ fontFamily: "var(--f-quran)" }}>{item.phrase.label}</span> ↔ {item.concept.name_ar}
         </h2>
         <span className={`status status-${item.status}`}>{STATUS_LABEL[item.status]}</span>
-        <a className="note" href={`/?v=${item.verse.surah_number}:${item.verse.ayah_number}`} target="_blank" rel="noopener noreferrer">عرض الآية</a>
+        <a className="note" href={`/search?v=${item.verse.surah_number}:${item.verse.ayah_number}`} target="_blank" rel="noopener noreferrer">عرض الآية</a>
       </div>
       <p className="verse">{item.verse.text}</p>
 

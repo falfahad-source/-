@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .ai_research.api import router as ai_research_router
 from .db import SessionLocal, init_db
+from .quran_api import router as quran_router
 from .rag.answer_builder import build_answer
 from .review_api import router as review_router
 from .search import search_verses
@@ -32,6 +33,7 @@ app.add_middleware(
 )
 app.include_router(review_router)
 app.include_router(ai_research_router)
+app.include_router(quran_router)
 
 
 @app.get("/health")
