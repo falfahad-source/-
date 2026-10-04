@@ -22,9 +22,11 @@ const AI_TOPIC_NOTE = AI.topic_note ?? "منصة الذكاء الاصطناعي
 // otherwise only the full answers know them.
 const curated = (v: V) => `${v[0]}:${v[1]}` in DATA.answers;
 const ijaz = (v: V) => v[7] ?? (DATA.answers[`${v[0]}:${v[1]}`] as { ijaz?: { total: number } } | undefined)?.ijaz?.total ?? 0;
-const SURAHS: { number: number; name: string; ayah_count: number; curated_ayahs: number; ijaz_ayahs: number }[] = [];
+const SURAHS: { number: number; name: string; ayah_count: number; start_page: number | null; curated_ayahs: number; ijaz_ayahs: number }[] = [];
+const JUZ_PAGES: Record<string, number> = {};
 for (const v of DATA.verses) {
-  if (SURAHS[SURAHS.length - 1]?.number !== v[0]) SURAHS.push({ number: v[0], name: v[2], ayah_count: 0, curated_ayahs: 0, ijaz_ayahs: 0 });
+  if (v[6] != null && v[5] != null && !(String(v[6]) in JUZ_PAGES)) JUZ_PAGES[String(v[6])] = v[5];
+  if (SURAHS[SURAHS.length - 1]?.number !== v[0]) SURAHS.push({ number: v[0], name: v[2], ayah_count: 0, start_page: v[5], curated_ayahs: 0, ijaz_ayahs: 0 });
   const x = SURAHS[SURAHS.length - 1];
   x.ayah_count += 1;
   if (curated(v)) x.curated_ayahs += 1;
@@ -123,7 +125,18 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     } catch (e) { return json({ detail: (e as Error).message }, 422); }
   }
   if (url.pathname === "/explore") return json(DATA.explore);
-  if (url.pathname === "/surahs") return json({ surahs: SURAHS });
+  if (url.pathname === "/surahs") return json({ surahs: SURAHS, juz_pages: JUZ_PAGES });
+  const pg = /^\/page\/(\d+)$/.exec(url.pathname);
+  if (pg) {
+    const vs = DATA.verses.filter((v) => v[5] === +pg[1]);
+    const pages = DATA.verses.reduce((m, v) => Math.max(m, v[5] ?? 0), 0);
+    if (!vs.length) return json({ detail: `لا توجد الصفحة ${pg[1]} في المصحف (من 1 إلى ${pages}).` }, 404);
+    return json({ page: +pg[1], pages, juz: [...new Set(vs.map((v) => v[6]).filter((j) => j != null))].sort((a, b) => a! - b!),
+      // as the backend: al-Fatiha 1:1 without its ayah-end sign heads each surah starting on the page
+      basmala: DATA.verses[0][3].replace(/\s*\u06dd[\d\u0660-\u0669]*\s*$/, ""),
+      verses: vs.map((v) => ({ surah_number: v[0], surah_name: v[2], ayah_number: v[1], text: v[3], juz_number: v[6],
+        curated: curated(v), ijaz_articles: ijaz(v) })) });
+  }
   const surah = /^\/surah\/(\d+)$/.exec(url.pathname);
   if (surah) {
     const vs = DATA.verses.filter((v) => v[0] === +surah[1]);

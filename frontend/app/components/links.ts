@@ -16,6 +16,8 @@ export const link = {
   verse: (s: number, a: number) => (DEMO ? `#v${s}-${a}` : `/search?v=${s}:${a}`),
   history: () => (DEMO ? "#history" : "/history"),
   quran: (s?: number, a?: number) => (DEMO ? `#quran${s ? `-${s}` : ""}${a ? `-${a}` : ""}` : `/quran${q({ s, a })}`),
+  // a mushaf page, optionally with an ayah selected on it
+  mushafPage: (p: number, s?: number, a?: number) => (DEMO ? `#quran${q({ p, s, a })}` : `/quran${q({ p, s, a })}`),
   ai: (s?: number, a?: number) => (DEMO ? (s ? `#ai-v${s}-${a}` : "#ai") : `/ai-ijaz${s ? `?v=${s}:${a}` : ""}`),
 };
 

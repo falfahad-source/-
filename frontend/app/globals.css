@@ -285,20 +285,15 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .mark-ijaz { color: var(--t-connection); } .mark-ijaz::before { background: var(--t-connection); }
 .map-legend .mark { font-size: inherit; }
 
-.mushaf-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 14px;
-  border-bottom: 1px solid var(--rule); padding-bottom: 8px; margin-bottom: 10px; }
-.mushaf-head h2 { margin: 0; font-family: var(--f-display); color: var(--ink); font-size: 1.4rem; }
-.mushaf-nav { display: flex; gap: 12px; }
 .mushaf-text { font-family: var(--f-quran); font-size: 1.75rem; line-height: 2.3; text-align: justify; margin: 0; color: var(--ink); }
 .ayah { font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; margin: 0; border-radius: 6px; cursor: pointer;
   display: inline; text-align: inherit; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .ayah:hover { background: var(--violet-soft); }
+.ayah:focus-visible { outline: 2px solid var(--violet); outline-offset: 1px; }
 .ayah[aria-pressed="true"] { background: color-mix(in srgb, var(--violet) 18%, transparent); }
 .ayah.has-curated { text-decoration: underline 2px var(--t-quran); text-underline-offset: 10px; }
 .ayah.has-ijaz { text-decoration: underline 2px var(--t-connection); text-underline-offset: 10px; }
 .ayah.has-curated.has-ijaz { text-decoration: underline double 3px var(--t-quran); }
-.mushaf { padding-bottom: 120px; }
-
 .ayah-panel { position: sticky; bottom: 0; z-index: 3; margin-top: -100px; background: var(--sheet); border: 1px solid var(--violet);
   border-radius: 14px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 24px color-mix(in srgb, var(--ink) 14%, transparent); }
 .ayah-panel-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
@@ -320,3 +315,30 @@ a.btn-primary { color: var(--sheet); }
 .reason-tafsir { color: var(--muted); }
 .reason .via { font-style: normal; opacity: .8; }
 .reason-ai { color: var(--violet); }
+
+/* mushaf pages */
+.index-tools { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 12px; }
+.index-tools .filter { margin: 0; }
+.page-jump { display: flex; align-items: center; gap: 6px; font-size: .88rem; color: var(--muted); }
+.page-jump input { width: 6.5em; font: inherit; padding: 4px 8px; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); color: var(--text); }
+.juz-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+.juz-list a { display: grid; text-align: center; padding: 6px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); color: var(--ink); text-decoration: none; font-size: .9rem; }
+.juz-list a:hover { border-color: var(--violet); }
+.juz-list small { color: var(--muted); font-size: .72rem; }
+.page-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 10px; }
+.page-nav-turn { display: flex; align-items: center; gap: 10px; }
+.page-of { color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mushaf-page { max-width: 760px; margin: 0 auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 14px 22px 10px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--t-quran) 10%, var(--paper)), 0 0 0 7px var(--rule); margin-bottom: 120px; }
+.mushaf-top { display: flex; justify-content: space-between; gap: 12px; font-size: .85rem; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 6px; margin-bottom: 8px; }
+.mushaf-page .mushaf-text { text-align: justify; text-align-last: center; }
+.mushaf-page .mushaf-text.opening { text-align: center; }
+.surah-head { display: block; text-align: center; margin: 10px 0 4px; }
+.surah-title { display: block; font-family: var(--f-display); font-size: 1.2rem; color: var(--ink); padding: 4px 0; margin: 0 auto 4px; max-width: 420px;
+  border: 1px solid var(--t-quran); border-radius: 999px; background: color-mix(in srgb, var(--t-quran) 8%, var(--sheet)); }
+.basmala { display: block; font-family: var(--f-quran); font-size: 1.6rem; color: var(--ink); line-height: 2; }
+.mushaf-foot { text-align: center; color: var(--muted); border-top: 1px solid var(--rule); margin-top: 8px; padding-top: 4px; font-family: var(--f-quran); }
+@media (max-width: 560px) {
+  .mushaf-page { padding: 10px 12px 8px; box-shadow: none; }
+  .mushaf-page .mushaf-text { font-size: 1.45rem; }
+}
