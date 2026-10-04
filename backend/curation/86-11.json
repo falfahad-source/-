@@ -1,0 +1,58 @@
+{
+  "verse": [
+    86,
+    11
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «والسماء ذات الرجع» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "raj",
+      "label": "والسماء ذات الرجع",
+      "words": [
+        1,
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "water_cycle",
+      "name_ar": "دورة الماء في الغلاف الجوي",
+      "name_en": "Atmospheric water cycle"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "water_cycle",
+      "source": "nasa",
+      "domain": "علوم الأرض",
+      "claim": "يتبخر الماء من سطح الأرض ويصعد إلى الغلاف الجوي، فيتكاثف سحابًا تحمله الرياح، ثم يعود إلى الأرض مطرًا أو ثلجًا.",
+      "url": "https://science.nasa.gov/earth/earth-observatory/global-maps/water-vapor/",
+      "quote": "It condenses into clouds, is blown by the wind, and then falls back to the Earth as rain or snow.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "raj",
+      "concept": "water_cycle",
+      "source": "nasa",
+      "explanation": "فسّر أهل الغريب «الرجع» بالمطر، وقال التفسير الميسر: ذات المطر المتكرر؛ سُمّي رجعًا لأنه يرجع ويتكرر. ودورة الماء التي يتبخر فيها الماء ثم يعود مطرًا يقارنها المعاصرون بهذا الوصف. ويقرأ بعضهم «الرجع» برجوع الموجات والإشعاعات من الغلاف الجوي، وتلك قراءة لا يدعمها كلام المفسرين."
+    }
+  ],
+  "related_topics": []
+}

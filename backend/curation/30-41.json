@@ -1,0 +1,58 @@
+{
+  "verse": [
+    30,
+    41
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «ظهر الفساد في البر والبحر» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "fasad",
+      "label": "ظهر الفساد في البر والبحر بما كسبت أيدي الناس",
+      "words": [
+        1,
+        9
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "marine_debris",
+      "name_ar": "التلوث من صنع الإنسان في البر والبحر",
+      "name_en": "Human-made pollution on land and at sea"
+    }
+  ],
+  "sources": [
+    {
+      "key": "noaa",
+      "title": "NOAA — الإدارة الوطنية للمحيطات والغلاف الجوي",
+      "publisher": "NOAA",
+      "url": "https://www.noaa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "marine_debris",
+      "source": "noaa",
+      "domain": "علوم البيئة البحرية",
+      "claim": "بعض المخلفات البحرية مصدره نشاط الإنسان في البحر، وبعضها يصل إلى المجاري المائية من اليابسة.",
+      "url": "https://oceanservice.noaa.gov/news/marinedebris/ten-things.html",
+      "quote": "Some of this marine debris comes from human activity at sea, and some of it makes its way into our waterways from land.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "fasad",
+      "concept": "marine_debris",
+      "source": "noaa",
+      "explanation": "فسّر التفسير الميسر الفساد بالجدب وقلة الأمطار وكثرة الأمراض والأوبئة بسبب المعاصي، وفسّره أهل الغريب بنقصان البركة؛ فالمعنى عند المفسرين عقوبة على الذنوب لا التلوث. ويقرأ بعض المعاصرين الآية في التلوث الذي يحدثه الإنسان في البر والبحر، كما يصفه المصدر العلمي. وهذه قراءة توسّع معنى «الفساد» إلى غير ما ذكره المفسرون، والتلوث نفسه أمر مشاهد لا يحتاج إلى علم خفي؛ فالمقارنة تطبيق معاصر للآية لا إعجاز."
+    }
+  ],
+  "related_topics": []
+}

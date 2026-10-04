@@ -1,0 +1,58 @@
+{
+  "verse": [
+    96,
+    2
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «خلق الإنسان من علق» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "alaq",
+      "label": "خلق الإنسان من علق",
+      "words": [
+        1,
+        4
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "embryo_stages",
+      "name_ar": "مراحل التطور الجنيني",
+      "name_en": "Stages of embryonic development"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "embryo_stages",
+      "source": "nih",
+      "domain": "علم الأجنة",
+      "claim": "في الأسابيع الأولى من الحمل تنشأ أنسجة تصير لاحقًا العمود الفقري وسائر العظام.",
+      "url": "https://medlineplus.gov/ency/article/002398.htm",
+      "quote": "Tissue grows that will become your baby's spine and other bones.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "alaq",
+      "concept": "embryo_stages",
+      "source": "nih",
+      "explanation": "العلق جمع علقة، وهي عند المفسرين الدم الجامد الذي يعلق بالرحم. ويقارن المعاصرون العلقة بالمرحلة المبكرة التي ينغرس فيها الجنين في جدار الرحم ويتعلق به. والاعتراض نفسه في الحج 5 والمؤمنون 14: تقسيم الجنين إلى أطوار عُرف قبل الإسلام، وتعيين الأطوار علميًا قراءة معاصرة."
+    }
+  ],
+  "related_topics": []
+}

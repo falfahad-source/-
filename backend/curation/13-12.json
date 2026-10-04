@@ -1,0 +1,58 @@
+{
+  "verse": [
+    13,
+    12
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «وينشئ السحاب الثقال» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "barq_sahab",
+      "label": "يريكم البرق خوفا وطمعا وينشئ السحاب الثقال",
+      "words": [
+        3,
+        9
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "cumulonimbus",
+      "name_ar": "السحب الركامية المزنية",
+      "name_en": "Cumulonimbus"
+    }
+  ],
+  "sources": [
+    {
+      "key": "noaa",
+      "title": "NOAA — الإدارة الوطنية للمحيطات والغلاف الجوي",
+      "publisher": "NOAA",
+      "url": "https://www.noaa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "cumulonimbus",
+      "source": "noaa",
+      "domain": "علم الأرصاد",
+      "claim": "تيارات الحمل الصاعدة القوية تكوّن السحب الركامية المزنية، وهي السحب السندانية التي تصاحب العواصف الشديدة.",
+      "url": "https://www.nesdis.noaa.gov/our-environment/severe-weather/thunderstorms",
+      "quote": "form cumulonimbus clouds",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "barq_sahab",
+      "concept": "cumulonimbus",
+      "source": "noaa",
+      "explanation": "«الثقال» المثقلة بالماء كما قال أهل الغريب. والسحب الركامية المزنية التي تتكوّن بالتيارات الصاعدة هي سحب العواصف والبرق، فيقارن المعاصرون اقتران البرق بالسحاب الثقال في الآية بها، كما في النور 43. واقتران البرق بالسحب الثقيلة مشاهد لكل الناس."
+    }
+  ],
+  "related_topics": []
+}

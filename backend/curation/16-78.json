@@ -1,0 +1,80 @@
+{
+  "verse": [
+    16,
+    78
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «وجعل لكم السمع والأبصار» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "sam_basar",
+      "label": "وجعل لكم السمع والأبصار والأفئدة",
+      "words": [
+        9,
+        13
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "hearing_before_sight",
+      "name_ar": "نشوء السمع قبل البصر",
+      "name_en": "Hearing develops before sight"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "hearing_before_sight",
+      "source": "nih",
+      "domain": "علم الأجنة",
+      "claim": "في الأسابيع 19 إلى 21 من الحمل يستطيع الجنين السمع.",
+      "url": "https://medlineplus.gov/ency/article/002398.htm",
+      "quote": "Weeks 19 to 21 Your baby can hear.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    },
+    {
+      "concept": "hearing_before_sight",
+      "source": "nih",
+      "domain": "علم الأجنة",
+      "claim": "يُغلق الجنين جفنيه في الأسابيع 11 إلى 14 ولا يفتحهما حتى نحو الأسبوع الثامن والعشرين.",
+      "url": "https://medlineplus.gov/ency/article/002398.htm",
+      "quote": "Your baby's eyelids close and will not reopen until about the 28th week.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    },
+    {
+      "concept": "hearing_before_sight",
+      "source": "nih",
+      "domain": "طب الأطفال",
+      "claim": "المولود يرى في مدى 20 إلى 30 سنتيمترًا فقط، ويتطور إبصار الألوان بين الشهر الرابع والسادس.",
+      "url": "https://medlineplus.gov/ency/article/002004.htm",
+      "quote": "Vision, the newborn infant can see within a range of 8 to 12 inches",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "sam_basar",
+      "concept": "hearing_before_sight",
+      "source": "nih",
+      "explanation": "قدّم القرآن السمع على البصر هنا وفي مواضع كثيرة. ويذكر المصدر الطبي أن الجنين يسمع في الأسبوع التاسع عشر إلى الحادي والعشرين بينما جفناه مغلقان حتى نحو الأسبوع الثامن والعشرين، وأن إبصار المولود محدود. فتقدّم السمع في النشوء يقارنه بعض المعاصرين بتقديم اللفظ. وأقوى اعتراض أن الآية تذكر الجعل بعد الإخراج من البطون، وأن تقديم السمع قد يكون لشرفه في التلقي أو لنسق الكلام، والقرآن قدّم البصر على السمع في مواضع قليلة مثل السجدة 12."
+    }
+  ],
+  "related_topics": []
+}

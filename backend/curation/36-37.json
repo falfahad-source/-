@@ -1,0 +1,58 @@
+{
+  "verse": [
+    36,
+    37
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «الليل نسلخ منه النهار» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "salkh",
+      "label": "الليل نسلخ منه النهار فإذا هم مظلمون",
+      "words": [
+        3,
+        9
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "earth_rotation",
+      "name_ar": "دوران الأرض وتعاقب الليل والنهار",
+      "name_en": "Earth's rotation and the day–night cycle"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "earth_rotation",
+      "source": "nasa",
+      "domain": "علم الفلك",
+      "claim": "تدور الأرض حول محورها فينشأ اليوم ذو الأربع والعشرين ساعة، أي تعاقب الليل والنهار.",
+      "url": "https://science.nasa.gov/learn/basics-of-space-flight/chapter2-1/",
+      "quote": "Earth rotates on its own axis, producing the 24-hour day.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "salkh",
+      "concept": "earth_rotation",
+      "source": "nasa",
+      "explanation": "فسّر أهل الغريب «نسلخ منه النهار» بأن ننزع منه الضوء. ويقارن بعض المعاصرين هذا النزع بانحسار ضوء النهار عن جهة الأرض التي تدور بعيدًا عن الشمس، فيعود الليل الذي هو الأصل. والآية تصف ما يشاهده كل إنسان عند الغروب، فالمقارنة في الصورة لا في معلومة خفية."
+    }
+  ],
+  "related_topics": []
+}

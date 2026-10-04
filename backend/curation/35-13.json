@@ -1,0 +1,88 @@
+{
+  "verse": [
+    35,
+    13
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «يولج الليل في النهار» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "iilaj",
+      "label": "يولج الليل في النهار ويولج النهار في الليل",
+      "words": [
+        1,
+        8
+      ]
+    },
+    {
+      "key": "ajal",
+      "label": "وسخر الشمس والقمر كل يجري لأجل مسمى",
+      "words": [
+        9,
+        15
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "earth_rotation",
+      "name_ar": "دوران الأرض وتعاقب الليل والنهار",
+      "name_en": "Earth's rotation and the day–night cycle"
+    },
+    {
+      "key": "sun_orbit",
+      "name_ar": "مدار الشمس حول مركز المجرة",
+      "name_en": "The Sun's galactic orbit"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "earth_rotation",
+      "source": "nasa",
+      "domain": "علم الفلك",
+      "claim": "تدور الأرض حول محورها فينشأ اليوم ذو الأربع والعشرين ساعة، أي تعاقب الليل والنهار.",
+      "url": "https://science.nasa.gov/learn/basics-of-space-flight/chapter2-1/",
+      "quote": "Earth rotates on its own axis, producing the 24-hour day.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    },
+    {
+      "concept": "sun_orbit",
+      "source": "nasa",
+      "domain": "علم الفلك",
+      "claim": "تدور الشمس حول مركز مجرة درب التبانة مرة كل نحو 230 مليون سنة أرضية، حاملةً معها الكواكب والكويكبات والمذنبات.",
+      "url": "https://science.nasa.gov/sun/facts/",
+      "quote": "the Sun orbits the center of the Milky Way about every 230 million Earth years",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "iilaj",
+      "concept": "earth_rotation",
+      "source": "nasa",
+      "explanation": "«يولج» يُدخل، أي يُدخل الليل في النهار فيطول أحدهما ويقصر الآخر، أو يدخل كلٌّ منهما على الآخر تدريجًا. وتعاقب الليل والنهار بدوران الأرض موضوع فلكي للمقارنة، وهو مشاهد بلا علم بسببه."
+    },
+    {
+      "phrase": "ajal",
+      "concept": "sun_orbit",
+      "source": "nasa",
+      "explanation": "«كل يجري لأجل مسمى» أي إلى وقت معلوم. ودوران الشمس في مدار حول مركز المجرة موضوع فلكي يقارنه بعض المعاصرين بجريانها، كما في يس 38 و40. والمفسرون فسّروا الجريان بسيرها الظاهر في السماء."
+    }
+  ],
+  "related_topics": []
+}

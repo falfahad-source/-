@@ -1,0 +1,58 @@
+{
+  "verse": [
+    41,
+    11
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «ثم استوى إلى السماء وهي دخان» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "dukhan",
+      "label": "ثم استوى إلى السماء وهي دخان",
+      "words": [
+        1,
+        6
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "star_forming_clouds",
+      "name_ar": "سحب الغاز والغبار الكونية",
+      "name_en": "Clouds of gas and dust"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "star_forming_clouds",
+      "source": "nasa",
+      "domain": "الفيزياء الفلكية",
+      "claim": "تولد النجوم في سحب ضخمة من الغبار والغاز، ثم تصير محركات اندماج نووي مستقرة تعيش ملايين إلى مليارات السنين.",
+      "url": "https://science.nasa.gov/mission/webb/star-lifecycle/",
+      "quote": "Stars are born in massive clouds of dust and gas",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "dukhan",
+      "concept": "star_forming_clouds",
+      "source": "nasa",
+      "explanation": "نقل ابن كثير أن الدخان «بخار الماء المتصاعد منه حين خلقت الأرض»، وقال التفسير الميسر: كانت دخانًا من قبل. ويقارن بعض المعاصرين وصف السماء بالدخان قبل تمام خلقها بسحب الغاز والغبار التي تتكون منها النجوم. والمقارنة ضعيفة الدلالة: الدخان في كلام المفسرين بخار ماء، وسحب الغاز والغبار تكوّن النجوم اليوم لا تصف أصل السماء، ومادة الكون الأولى كانت غازًا حارًا لا دخانًا بالمعنى المعروف."
+    }
+  ],
+  "related_topics": []
+}
