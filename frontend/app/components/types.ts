@@ -65,7 +65,10 @@ export type SearchResult = {
   results: { surah_number: number; surah_name: string; ayah_number: number; text: string; page_number: number | null }[];
 };
 
-export type TopicReason = { kind: "concept" | "topic" | "article" | "tafsir"; label: string; url: string | null; coverage: number };
+export type TopicReason = {
+  kind: "concept" | "topic" | "article" | "tafsir"; label: string; url: string | null; coverage: number;
+  synonyms?: string[];  // matched through these synonyms of the words typed (app/synonyms.json)
+};
 export type TopicResult = {
   query: string; words: string[]; total: number; offset: number;
   results: (SearchResult["results"][number] & { score: number; reasons: TopicReason[]; more_reasons: number })[];

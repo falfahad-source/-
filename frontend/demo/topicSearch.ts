@@ -1,6 +1,7 @@
 // Topic search for the static demo: a line-by-line port of backend/app/topic_search.py
 // (keep the two in step; demo/check-topic-search.mjs compares them on real queries).
-// Entries come from the export (`topic_index`) plus التفسير الميسر read from the page data.
+// Entries come from the export (`topic_index`) plus التفسير الميسر read from the page data; the
+// lemma map and synonyms from `topic_lexicon` and `topic_synonyms` (call loadLexicon first).
 
 // Same normalization as backend/app/search.py normalize_arabic.
 // Written as \u escapes: right-to-left editors silently reorder literal Arabic in ranges.
@@ -23,8 +24,19 @@ const SUFFIXES = ["يات", "ات", "ون", "ين", "ان", "يه", "ه", "ي"];
 const WEIGHTS = { concept: 5, topic: 3, article: 2, tafsir: 1 } as const;
 const FEW = 10;
 
+const SYNONYM_CREDIT = 0.8;
+
 export type Kind = keyof typeof WEIGHTS;
-export type Entry = { kind: Kind; label: string; url: string | null; stems: Set<string>; verses: number[] };
+type Words = [string, Set<string>][];  // a text's words as [stem, lemmas]; lemmas empty if unknown
+export type Entry = { kind: Kind; label: string; url: string | null; words: Words; verses: number[] };
+
+// The Quran word -> lemma map and the synonym groups, from the export (load before searching).
+let LEX = new Map<string, Set<string>>();
+let SYNONYM_GROUPS: string[][] = [];
+export function loadLexicon(lexicon: { lemmas: string[]; forms: Record<string, number[]> }, synonyms: string[][]) {
+  LEX = new Map(Object.entries(lexicon.forms).map(([w, ix]) => [w, new Set(ix.map((i) => lexicon.lemmas[i]))]));
+  SYNONYM_GROUPS = synonyms;
+}
 
 export function stem(word: string): string {
   for (const p of PREFIXES) if (word.startsWith(p) && word.length - p.length >= 3) { word = word.slice(p.length); break; }
@@ -39,16 +51,23 @@ export function stem(word: string): string {
   return word;
 }
 
-export const stems = (text: string) => new Set(norm(text).split(" ").filter((w) => w && !STOPWORDS.has(w)).map(stem));
+function stripArticle(w: string): string {
+  for (const p of PREFIXES) if (w.startsWith(p) && w.length - p.length >= 2) return w.slice(p.length);
+  return w;
+}
 
-export function queryStems(q: string): string[] {
-  const out: string[] = [];
-  for (const w of norm(q).split(" ")) {
+const EMPTY = new Set<string>();
+const wordLemmas = (w: string) => LEX.get(w) ?? LEX.get(stripArticle(w)) ?? EMPTY;
+
+export function textWords(text: string): Words {
+  const seen = new Map<string, [string, Set<string>]>();
+  for (const w of norm(text).split(" ")) {
     if (!w || STOPWORDS.has(w)) continue;
-    const s = stem(w);
-    if (s.length >= 3 && !out.includes(s)) out.push(s);
+    const s = stem(w), l = wordLemmas(w);
+    const key = `${s}|${[...l].sort().join(",")}`;
+    if (!seen.has(key)) seen.set(key, [s, l]);
   }
-  return out;
+  return [...seen.values()];
 }
 
 export function coreStem(q: string): string | null {
@@ -63,24 +82,57 @@ export function coreStem(q: string): string | null {
 
 const wordMatch = (q: string, c: string) =>
   c === q || c.startsWith(q) || (q.length >= 4 && c.includes(q)) || (c.length >= 4 && q.length - c.length <= 1 && q.startsWith(c));
-const has = (w: string, cand: Set<string>) => { for (const c of cand) if (wordMatch(w, c)) return true; return false; };
+const meets = (a: Set<string>, b: Set<string>) => { for (const x of a) if (b.has(x)) return true; return false; };
+const sameWord = (qs: string, ql: Set<string>, cs: string, cl: Set<string>) =>
+  ql.size && cl.size ? meets(ql, cl) : wordMatch(qs, cs);
 
-type Reason = { kind: Kind; label: string; url: string | null; coverage: number };
+type Word = { stem: string; lemmas: Set<string>; synonyms: [string, string, Set<string>][] };
 
-function score(entries: Entry[], words: string[], hits: string[][], weight: Record<string, number>, core: string | null) {
+function queryWords(q: string): Word[] {
+  const out: Word[] = [];
+  for (const w of norm(q).split(" ")) {
+    if (!w || STOPWORDS.has(w)) continue;
+    const s = stem(w);
+    if (s.length < 3 || out.some((x) => x.stem === s)) continue;
+    const lemmas = wordLemmas(w);
+    const syns: [string, string, Set<string>][] = [];
+    for (const group of SYNONYM_GROUPS) {
+      const members = group.map((m) => [m, stem(norm(m)), wordLemmas(norm(m))] as [string, string, Set<string>]);
+      if (members.some(([, ms, ml]) => ms === s || (lemmas.size > 0 && meets(ml, lemmas))))
+        syns.push(...members.filter(([, ms, ml]) => ms !== s && !(lemmas.size > 0 && meets(ml, lemmas))));
+    }
+    out.push({ stem: s, lemmas, synonyms: syns });
+  }
+  return out;
+}
+
+function credit(w: Word, words: Words, allowSynonyms: boolean): [number, string | null] {
+  if (words.some(([cs, cl]) => sameWord(w.stem, w.lemmas, cs, cl))) return [1, null];
+  if (allowSynonyms)
+    for (const [word, ms, ml] of w.synonyms) if (words.some(([cs, cl]) => sameWord(ms, ml, cs, cl))) return [SYNONYM_CREDIT, word];
+  return [0, null];
+}
+
+type Reason = { kind: Kind; label: string; url: string | null; coverage: number; synonyms: string[] };
+type Hit = Map<string, [number, string | null]>;
+
+function score(entries: Entry[], words: Word[], hits: Hit[], weight: Record<string, number>, core: string | null) {
   const sc = new Map<number, number>(), reasons = new Map<number, Reason[]>();
-  const total = words.reduce((a, w) => a + weight[w], 0);
+  const total = words.reduce((a, w) => a + weight[w.stem], 0);
   entries.forEach((e, i) => {
     const h = hits[i];
-    if (!h.length) return;
-    const cov = h.reduce((a, w) => a + weight[w], 0) / total;
+    if (!h.size) return;
+    let sum = 0;
+    for (const [w, [c]] of h) sum += weight[w] * c;
+    const cov = sum / total;
     if (e.kind === "tafsir") { if (cov < 0.75) return; }
-    else if (cov < 0.5 && h.length / words.length < 0.5 && !(core && h.includes(core))) return;
+    else if (cov < 0.5 && h.size / words.length < 0.5 && !(core && h.has(core))) return;
+    const via = [...new Set([...h.values()].map(([, v]) => v).filter((v): v is string => !!v))].sort();
     for (const v of e.verses) {
       const rs = reasons.get(v) ?? [];
       if (rs.some((r) => r.kind === e.kind && r.label === e.label)) continue;
       sc.set(v, (sc.get(v) ?? 0) + WEIGHTS[e.kind] * cov * cov);
-      rs.push({ kind: e.kind, label: e.label, url: e.url, coverage: Math.round(cov * 100) / 100 });
+      rs.push({ kind: e.kind, label: e.label, url: e.url, coverage: Math.round(cov * 100) / 100, synonyms: via });
       reasons.set(v, rs);
     }
   });
@@ -90,18 +142,26 @@ function score(entries: Entry[], words: string[], hits: string[][], weight: Reco
 /** Same result shape as GET /search/topics; `verse(i)` gives a verse's [surah, ayah, name, text, page]. */
 export function searchTopics(entries: Entry[], verse: (i: number) => [number, number, string, string, number | null],
   q: string, limit: number, offset: number) {
-  const words = queryStems(q);
+  const words = queryWords(q);
   if (!words.length) throw new Error("اكتب موضوعًا من كلمة واحدة على الأقل (ثلاثة أحرف فأكثر)، مثل: الرضاعة، البحار، الجنين.");
-  const hits = entries.map((e) => words.filter((w) => has(w, e.stems)));
+  const hits: Hit[] = entries.map((e) => {
+    const h: Hit = new Map();
+    for (const w of words) {
+      const [c, via] = credit(w, e.words, e.kind !== "tafsir");
+      if (c) h.set(w.stem, [c, via]);
+    }
+    return h;
+  });
   const n = entries.length;
   const weight: Record<string, number> = {};
-  for (const w of words) weight[w] = Math.log((n + 1) / (hits.filter((h) => h.includes(w)).length + 1)) + 1;
+  for (const w of words) weight[w.stem] = Math.log((n + 1) / (hits.filter((h) => h.has(w.stem)).length + 1)) + 1;
   let r = score(entries, words, hits, weight, null);
   const core = coreStem(q);
   if (r.sc.size < FEW && words.length >= 2 && core) r = score(entries, words, hits, weight, core);
   const ranked = [...r.sc.keys()].sort((a, b) => {
-    const d = r.sc.get(b)! - r.sc.get(a)!;
-    if (Math.abs(d) > 1e-9) return d;
+    const r6 = (x: number) => Math.round(x * 1e6) / 1e6;  // equal scores tie exactly, as in the backend
+    const d = r6(r.sc.get(b)!) - r6(r.sc.get(a)!);
+    if (d) return d;
     const [sa, aa] = verse(a), [sb, ab] = verse(b);
     return sa - sb || aa - ab;
   });
@@ -111,5 +171,5 @@ export function searchTopics(entries: Entry[], verse: (i: number) => [number, nu
     return { surah_number: s, ayah_number: a, surah_name: name, text, page_number: page,
       score: Math.round(r.sc.get(i)! * 100) / 100, reasons: rs.slice(0, 4), more_reasons: Math.max(0, rs.length - 4) };
   });
-  return { query: q, words, total: ranked.length, offset, results };
+  return { query: q, words: words.map((w) => w.stem), total: ranked.length, offset, results };
 }

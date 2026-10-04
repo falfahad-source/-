@@ -6,7 +6,7 @@ import HistoryPage from "../app/history/page";
 import Home from "../app/page";
 import QuranPage from "../app/quran/page";
 import SearchPage from "../app/search/page";
-import { type Entry, type Kind, norm, searchTopics, stems } from "./topicSearch";
+import { type Entry, type Kind, loadLexicon, norm, searchTopics, textWords } from "./topicSearch";
 
 // [surah, ayah, surah name, text, imla'i text, page, juz, i'jaz article count (newer exports)]
 type V = [number, number, string, string, string, number | null, number | null, number?];
@@ -36,15 +36,19 @@ const KEYS = DATA.verses.map((v) => [norm(v[4]), norm(v[3])]);
 let TOPIC_ENTRIES: Entry[] | null = null;
 function topicEntries(): Entry[] {
   if (TOPIC_ENTRIES) return TOPIC_ENTRIES;
-  const idx = (DATA as unknown as { topic_index?: [Kind, string, string | null, number[]][] }).topic_index ?? [];
-  const entries: Entry[] = idx.map(([kind, label, url, verses]) => ({ kind, label, url, stems: stems(label), verses }));
+  const D = DATA as unknown as {
+    topic_index?: [Kind, string, string | null, number[]][];
+    topic_lexicon?: { lemmas: string[]; forms: Record<string, number[]> }; topic_synonyms?: string[][];
+  };
+  loadLexicon(D.topic_lexicon ?? { lemmas: [], forms: {} }, D.topic_synonyms ?? []);
+  const entries: Entry[] = (D.topic_index ?? []).map(([kind, label, url, verses]) => ({ kind, label, url, words: textWords(label), verses }));
   const book = LIGHT.brief?.meta?.source as string | undefined;
   if (book) {
     DATA.verses.forEach((v, i) => {
       const key = `${v[0]}:${v[1]}`;
       const full = DATA.answers[key] as { verified_tafsir?: { source: string; text: string }[] } | undefined;
       const text = full ? full.verified_tafsir?.find((t) => t.source === book)?.text : LIGHT.brief?.verses[key]?.[0];
-      if (text) entries.push({ kind: "tafsir", label: book, url: null, stems: stems(text), verses: [i] });
+      if (text) entries.push({ kind: "tafsir", label: book, url: null, words: textWords(text), verses: [i] });
     });
   }
   return (TOPIC_ENTRIES = entries);

@@ -74,9 +74,11 @@ export default function SearchPage() {
       const text = ok(t), topic = ok(p);
       if (!text && !topic) { setError((t as { error: string }).error); return; }
       setSearch({ query: q, text, topic });
-      // a verse fragment finds a few verses by text; a subject finds none, or too many to read
+      // a verse fragment (several words) finds a few verses by text; a subject — one word, or none
+      // or too many text matches — is better served by topic
       const nText = text?.total ?? 0, nTopic = topic?.total ?? 0;
-      setTab(nTopic > 0 && (nText === 0 || nText > 5) ? "topic" : "text");
+      const fragment = q.trim().split(/\s+/).length >= 2 && nText >= 1 && nText <= 5;
+      setTab(nTopic > 0 && !fragment ? "topic" : "text");
       addHistory({ kind: "search", query: q.trim(), total: Math.max(nText, nTopic) });
     } finally { setSearching(false); }
   }
@@ -313,6 +315,7 @@ function TopicHits({ r, ...h }: Hits & { r: TopicResult | null }) {
               {x.reasons.map((rs, i) => (
                 <span key={i} className={`reason reason-${rs.kind}`}>
                   {rs.kind === "tafsir" ? `ورد في «${rs.label}»` : `${REASON[rs.kind]}: ${rs.label}`}
+                  {rs.synonyms?.length ? <em className="via"> — بمرادف «{rs.synonyms.join("»، «")}»</em> : null}
                 </span>
               ))}
               {x.more_reasons > 0 && <span className="note">و{x.more_reasons} غيرها</span>}
@@ -321,7 +324,7 @@ function TopicHits({ r, ...h }: Hits & { r: TopicResult | null }) {
         ))}
       </ol>
       {r.total > 0 && (
-        <p className="note">الصلة من مصادر آفاق: مقارناته العلمية، وفهرس موضوعات Quranpedia، وعناوين مقالات الإعجاز (مصدر ثانوي)، ونص التفسير الميسر. ليست تفسيرًا للآية.</p>
+        <p className="note">الصلة من مصادر آفاق: مقارناته العلمية، وفهرس موضوعات Quranpedia، وعناوين مقالات الإعجاز (مصدر ثانوي)، ونص التفسير الميسر. يُطابَق الجمع بمفرده (البحار والبحر) بمعجم ألفاظ القرآن، والمرادفات من قائمة معدّة تُذكر في النتيجة. ليست تفسيرًا للآية.</p>
       )}
     </>
   );

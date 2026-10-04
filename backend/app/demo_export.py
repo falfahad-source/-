@@ -21,6 +21,7 @@ from .main import explore
 from .models import ArticleVerse, Source, TafsirEntry, Verse, VersePhrase
 from .rag.answer_builder import build_answer
 from .rag.layers import IJAZ_LABEL, ijaz_articles, tafsir_timeline
+from .topic_search import SYNONYM_GROUPS
 
 BRIEF_TAFSIR_BOOK = "quranpedia:book:2012"  # التفسير الميسر — short, covers every ayah
 ARTICLE_FIELDS = ("title", "url", "published", "categories", "excerpt", "source", "trust_category")
@@ -74,6 +75,17 @@ def _topic_index(db, verses: list) -> list:
     return out
 
 
+def _lexicon(db) -> dict:
+    """The Quran word -> lemma map the topic search uses, compactly: {"lemmas": [...],
+    "forms": {word: [lemma positions]}}."""
+    from .topic_search import build_lexicon
+
+    lex = build_lexicon(db)
+    lemmas = sorted({lm for ls in lex.values() for lm in ls})
+    pos = {lm: i for i, lm in enumerate(lemmas)}
+    return {"lemmas": lemmas, "forms": {w: sorted(pos[lm] for lm in ls) for w, ls in sorted(lex.items())}}
+
+
 def export(path: Path) -> dict:
     init_db()
     db = SessionLocal()
@@ -87,9 +99,11 @@ def export(path: Path) -> dict:
                   for v in db.query(Verse).filter_by(reading="hafs").order_by(Verse.surah_number, Verse.ayah_number)]
         light = _light(db, set(answers))
         topic_index = _topic_index(db, verses)
+        lexicon = _lexicon(db)
     finally:
         db.close()
-    data = {"answers": answers, "verses": verses, "explore": explore(), **light, "topic_index": topic_index}
+    data = {"answers": answers, "verses": verses, "explore": explore(), **light, "topic_index": topic_index,
+            "topic_lexicon": lexicon, "topic_synonyms": SYNONYM_GROUPS}
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return {"model_verses": len(answers), "verses": len(verses), "bytes": path.stat().st_size}
 
