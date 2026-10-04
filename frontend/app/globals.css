@@ -309,3 +309,12 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 a.btn-primary, a.btn-ai { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 10px; text-decoration: none; font-weight: 600; }
 a.btn-primary { color: var(--sheet); }
 .btn-ai { border: 1px solid var(--violet); color: var(--violet); background: var(--violet-soft); }
+
+/* topic search */
+.result-tabs { margin: 0 0 8px; }
+.reasons { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.reason { font-size: .74rem; line-height: 1.5; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; background: var(--sheet); }
+.reason-concept { color: var(--t-quran); }
+.reason-topic { color: var(--t-tafsir); }
+.reason-article { color: var(--t-connection); }
+.reason-tafsir { color: var(--muted); }

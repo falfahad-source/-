@@ -6,6 +6,7 @@ import HistoryPage from "../app/history/page";
 import Home from "../app/page";
 import QuranPage from "../app/quran/page";
 import SearchPage from "../app/search/page";
+import { type Entry, type Kind, norm, searchTopics, stems } from "./topicSearch";
 
 // [surah, ayah, surah name, text, imla'i text, page, juz, i'jaz article count (newer exports)]
 type V = [number, number, string, string, string, number | null, number | null, number?];
@@ -13,13 +14,6 @@ const DATA = JSON.parse(document.getElementById("afaq-data")!.textContent!) as {
   answers: Record<string, unknown>; verses: V[]; explore: unknown;
 };
 
-// Same normalization as backend/app/search.py.
-const MARKS = /[ؐ-ًؚ-ٰٟۖ-ۭـ]/g;
-const DIGITS = /[0-9٠-٩۰-۹]/g;
-const NON_LETTER = /[^ء-ي ]/g;
-const FOLD: Record<string, string> = { "أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ى": "ي", "ة": "ه", "ؤ": "و", "ئ": "ي" };
-const norm = (t: string) => t.replace(MARKS, "").replace(DIGITS, "").replace(/[أإآٱىةؤئ]/g, (c) => FOLD[c])
-  .replace(NON_LETTER, " ").split(/\s+/).filter(Boolean).join(" ");
 const AI = JSON.parse(document.getElementById("afaq-ai")!.textContent!) as {
   status: Record<string, unknown>; disclaimer: string; report_template: string;
 };
@@ -36,6 +30,25 @@ for (const v of DATA.verses) {
   if (ijaz(v)) x.ijaz_ayahs += 1;
 }
 const KEYS = DATA.verses.map((v) => [norm(v[4]), norm(v[3])]);
+
+// Topic search index, built on the first topic search: the exported entries, then التفسير الميسر
+// of every verse (in the curated answers, or in `brief` for the others).
+let TOPIC_ENTRIES: Entry[] | null = null;
+function topicEntries(): Entry[] {
+  if (TOPIC_ENTRIES) return TOPIC_ENTRIES;
+  const idx = (DATA as unknown as { topic_index?: [Kind, string, string | null, number[]][] }).topic_index ?? [];
+  const entries: Entry[] = idx.map(([kind, label, url, verses]) => ({ kind, label, url, stems: stems(label), verses }));
+  const book = LIGHT.brief?.meta?.source as string | undefined;
+  if (book) {
+    DATA.verses.forEach((v, i) => {
+      const key = `${v[0]}:${v[1]}`;
+      const full = DATA.answers[key] as { verified_tafsir?: { source: string; text: string }[] } | undefined;
+      const text = full ? full.verified_tafsir?.find((t) => t.source === book)?.text : LIGHT.brief?.verses[key]?.[0];
+      if (text) entries.push({ kind: "tafsir", label: book, url: null, stems: stems(text), verses: [i] });
+    });
+  }
+  return (TOPIC_ENTRIES = entries);
+}
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -89,6 +102,12 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     if (DATA.answers[key]) return json(DATA.answers[key]);
     const v = DATA.verses.find((x) => x[0] === +verse[1] && x[1] === +verse[2]);
     return v ? json(minimalAnswer(v)) : json({ detail: "لم يتم العثور على هذه الآية في المصادر المعتمدة المستوعبة حتى الآن." }, 404);
+  }
+  if (url.pathname === "/search/topics") {
+    try {
+      return json(searchTopics(topicEntries(), (i) => { const v = DATA.verses[i]; return [v[0], v[1], v[2], v[3], v[5]]; },
+        url.searchParams.get("q") ?? "", +(url.searchParams.get("limit") ?? 50), +(url.searchParams.get("offset") ?? 0)));
+    } catch (e) { return json({ detail: (e as Error).message }, 422); }
   }
   if (url.pathname === "/explore") return json(DATA.explore);
   if (url.pathname === "/surahs") return json({ surahs: SURAHS });

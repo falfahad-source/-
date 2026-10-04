@@ -9,7 +9,7 @@ import TafsirTimeline from "../components/TafsirTimeline";
 import { ayahCount, LayerHead, SurahName, TrustBadge } from "../components/common";
 import { addHistory } from "../components/history";
 import { DEMO, link, readParams, replaceUrl, verseParam } from "../components/links";
-import type { Answer, SearchResult } from "../components/types";
+import type { Answer, SearchResult, TopicReason, TopicResult } from "../components/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
 const PAGE_SIZE = 50;
@@ -19,7 +19,9 @@ export default function SearchPage() {
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [search, setSearch] = useState<SearchResult | null>(null);
+  // one query, two answers: verses whose text contains it, and verses the sources link to it as a topic
+  const [search, setSearch] = useState<{ query: string; text: SearchResult | null; topic: TopicResult | null } | null>(null);
+  const [tab, setTab] = useState<"topic" | "text">("topic");
   const [searching, setSearching] = useState(false);
   const [num, setNum] = useState<[number, number]>(START);
   const [phrase, setPhrase] = useState<string | null>(null);
@@ -53,24 +55,29 @@ export default function SearchPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function fetchPage(q: string, offset: number): Promise<SearchResult | null> {
+  async function fetchPage<T>(path: string, q: string, offset: number): Promise<T | { error: string }> {
     const params = new URLSearchParams({ q, limit: String(PAGE_SIZE), offset: String(offset) });
-    const res = await fetch(`${API_BASE}/search?${params}`);
-    if (!res.ok) {
-      setError((await res.json()).detail || "تعذّر البحث.");
-      return null;
-    }
-    return res.json();
+    try {
+      const res = await fetch(`${API_BASE}${path}?${params}`);
+      if (!res.ok) return { error: (await res.json().catch(() => ({}))).detail || "تعذّر البحث." };
+      return res.json();
+    } catch { return { error: "تعذّر الاتصال بالخادم." }; }
   }
+  const ok = <T,>(r: T | { error: string }): T | null => (r && typeof r === "object" && "error" in r ? null : r as T);
 
   async function runQuery(q: string) {
     setError(null);
     setSearch(null);
     setSearching(true);
     try {
-      const r = await fetchPage(q, 0);
-      setSearch(r);
-      if (r) addHistory({ kind: "search", query: q.trim(), total: r.total });
+      const [t, p] = await Promise.all([fetchPage<SearchResult>("/search", q, 0), fetchPage<TopicResult>("/search/topics", q, 0)]);
+      const text = ok(t), topic = ok(p);
+      if (!text && !topic) { setError((t as { error: string }).error); return; }
+      setSearch({ query: q, text, topic });
+      // a verse fragment finds a few verses by text; a subject finds none, or too many to read
+      const nText = text?.total ?? 0, nTopic = topic?.total ?? 0;
+      setTab(nTopic > 0 && (nText === 0 || nText > 5) ? "topic" : "text");
+      addHistory({ kind: "search", query: q.trim(), total: Math.max(nText, nTopic) });
     } finally { setSearching(false); }
   }
 
@@ -82,11 +89,12 @@ export default function SearchPage() {
   // Appends the next page of the query the shown results came from, so editing
   // the box without pressing بحث never mixes results of two different searches.
   async function loadMore() {
-    if (!search) return;
+    const cur = search?.[tab];
+    if (!search || !cur) return;
     setSearching(true);
     try {
-      const next = await fetchPage(search.query, search.results.length);
-      if (next) setSearch({ ...next, results: [...search.results, ...next.results] });
+      const next = ok(await fetchPage<SearchResult & TopicResult>(tab === "text" ? "/search" : "/search/topics", search.query, cur.results.length));
+      if (next) setSearch({ ...search, [tab]: { ...next, results: [...cur.results, ...next.results] } });
     } finally { setSearching(false); }
   }
 
@@ -102,12 +110,12 @@ export default function SearchPage() {
       <SiteNav current="search" />
       <header className="masthead">
         <h1>بحث جديد</h1>
-        <p>حين يلتقي التفسير بالمعرفة — استكشاف الآية عبر التفسير الموثق والمعرفة العلمية، مع تصنيف واضح لكل معلومة.</p>
+        <p>ابحث بجزء من آية، أو بموضوع مثل «مدة الرضاعة الطبيعية» لتظهر الآيات التي تربطها المصادر به، ثم اختر الآية لتبدأ رحلتها.</p>
       </header>
 
       <form className="searchbar" onSubmit={runSearch} role="search">
         <input id="q" type="search" value={query} onChange={(e) => setQuery(e.target.value)}
-          placeholder="اكتب جزءًا من الآية، مثل: ظلمات بعضها فوق بعض" aria-label="البحث في نص الآيات" />
+          placeholder="جزء من آية أو موضوع، مثل: ظلمات بعضها فوق بعض، أو مدة الرضاعة الطبيعية" aria-label="البحث بنص الآية أو بالموضوع" />
         <button className="btn-primary" type="submit" disabled={searching}>{searching ? "جارٍ البحث..." : "بحث"}</button>
       </form>
       <details className="by-number">
@@ -127,7 +135,7 @@ export default function SearchPage() {
           <h2>{search ? "نتائج البحث" : "آيات نموذجية"}</h2>
           {!search ? (
             <>
-              <p className="empty">ابحث بجزء من آية، ثم اختر الآية لتبدأ رحلتها. أو ابدأ بآية من الآيات النموذجية التي أُعدّت لها خريطة مفاهيم:</p>
+              <p className="empty">ابحث بجزء من آية أو بموضوع، ثم اختر الآية لتبدأ رحلتها. أو ابدأ بآية من الآيات النموذجية التي أُعدّت لها خريطة مفاهيم:</p>
               <ol>
                 {explore.map((v) => (
                   <li key={`${v.surah_number}:${v.ayah_number}`}>
@@ -142,28 +150,24 @@ export default function SearchPage() {
             </>
           ) : (
             <>
-              <p>
-                {search.total === 0 ? "لا توجد آيات تحتوي هذا النص."
-                  : search.total > search.results.length
-                    ? `وُجدت ${ayahCount(search.total)}، يُعرض منها ${search.results.length}. اختر الآية:`
-                    : `وُجدت ${ayahCount(search.total)}. اختر الآية:`}
-              </p>
-              <ol>
-                {search.results.map((r) => (
-                  <li key={`${r.surah_number}:${r.ayah_number}`}>
-                    <button type="button" className="hit" onClick={() => load(r.surah_number, r.ayah_number)}
-                      aria-pressed={answer?.surah_number === r.surah_number && answer?.ayah_number === r.ayah_number}>
-                      <span className="ref">سورة <SurahName name={r.surah_name} /> — <b>الآية {r.ayah_number}</b></span>
-                      <span className="ayah">{r.text}</span>
-                    </button>
-                  </li>
-                ))}
-              </ol>
-              {search.results.length < search.total && (
-                <button type="button" className="btn-ghost more" onClick={loadMore} disabled={searching}>
-                  {searching ? "جارٍ التحميل..." : `عرض المزيد (المتبقي ${search.total - search.results.length})`}
+              <div className="tabs result-tabs" role="tablist" aria-label="نوع النتائج">
+                <button type="button" role="tab" className="btn-ghost" aria-selected={tab === "topic"} onClick={() => setTab("topic")}>
+                  حسب الموضوع ({search.topic?.total ?? 0})
                 </button>
-              )}
+                <button type="button" role="tab" className="btn-ghost" aria-selected={tab === "text"} onClick={() => setTab("text")}>
+                  نص الآية ({search.text?.total ?? 0})
+                </button>
+              </div>
+              {tab === "topic" ? <TopicHits r={search.topic} answer={answer} load={load} />
+                : <TextHits r={search.text} answer={answer} load={load} />}
+              {(() => {
+                const cur = search[tab];
+                return cur && cur.results.length < cur.total && (
+                  <button type="button" className="btn-ghost more" onClick={loadMore} disabled={searching}>
+                    {searching ? "جارٍ التحميل..." : `عرض المزيد (المتبقي ${cur.total - cur.results.length})`}
+                  </button>
+                );
+              })()}
             </>
           )}
         </aside>
@@ -173,7 +177,7 @@ export default function SearchPage() {
             <main className="journey">
               <section className="card">
                 <LayerHead title="ابدأ رحلة الآية" />
-                <p className="lead">اكتب جزءًا من الآية في مربع البحث، ثم اختر الآية من النتائج لتظهر طبقاتها: التحليل اللغوي، والتفسير عبر العصور، والمفاهيم، والمعرفة العلمية.</p>
+                <p className="lead">اكتب جزءًا من آية أو موضوعًا مثل «مدة الرضاعة الطبيعية» في مربع البحث، ثم اختر الآية من النتائج لتظهر طبقاتها: التحليل اللغوي، والتفسير عبر العصور، والمفاهيم، والمعرفة العلمية.</p>
                 <p className="note">أو تصفّح المصحف من <a href={link.quran()}>القرآن الكريم</a>، أو عُد إلى بحث سابق من <a href={link.history()}>سجل البحث</a>.</p>
               </section>
             </main>
@@ -255,5 +259,70 @@ function Journey({ a, highlight, onPhrase, open }: {
         </ul>
       </section>
     </main>
+  );
+}
+
+type Hits = { answer: Answer | null; load: (s: number, a: number) => void };
+
+function VerseHit({ r, answer, load, children }: Hits & {
+  r: { surah_number: number; ayah_number: number; surah_name: string; text: string }; children?: React.ReactNode;
+}) {
+  return (
+    <li>
+      <button type="button" className="hit" onClick={() => load(r.surah_number, r.ayah_number)}
+        aria-pressed={answer?.surah_number === r.surah_number && answer?.ayah_number === r.ayah_number}>
+        <span className="ref">سورة <SurahName name={r.surah_name} /> — <b>الآية {r.ayah_number}</b></span>
+        <span className="ayah">{r.text}</span>
+        {children}
+      </button>
+    </li>
+  );
+}
+
+function TextHits({ r, ...h }: Hits & { r: SearchResult | null }) {
+  if (!r) return <p className="empty">اكتب حرفين عربيين على الأقل للبحث في نص الآيات.</p>;
+  return (
+    <>
+      <p>
+        {r.total === 0 ? "لا توجد آيات تحتوي هذا النص."
+          : r.total > r.results.length
+            ? `وُجدت ${ayahCount(r.total)} تحتوي هذا النص، يُعرض منها ${r.results.length}. اختر الآية:`
+            : `وُجدت ${ayahCount(r.total)} تحتوي هذا النص. اختر الآية:`}
+      </p>
+      <ol>{r.results.map((x) => <VerseHit key={`${x.surah_number}:${x.ayah_number}`} r={x} {...h} />)}</ol>
+    </>
+  );
+}
+
+const REASON: Record<TopicReason["kind"], string> = {
+  concept: "مقارنة علمية", topic: "موضوع", article: "مقال إعجاز", tafsir: "التفسير",
+};
+
+function TopicHits({ r, ...h }: Hits & { r: TopicResult | null }) {
+  if (!r) return <p className="empty">اكتب موضوعًا من كلمة واحدة على الأقل، مثل: الرضاعة، البحار، الجنين.</p>;
+  return (
+    <>
+      <p>
+        {r.total === 0 ? "لم تربط المصادر أي آية بهذا الموضوع. جرّب كلمة أخرى أو ابحث في نص الآية."
+          : `وُجدت ${ayahCount(r.total)} ذات صلة بالموضوع، الأقوى صلة أولًا. تحت كل آية سبب ظهورها:`}
+      </p>
+      <ol>
+        {r.results.map((x) => (
+          <VerseHit key={`${x.surah_number}:${x.ayah_number}`} r={x} {...h}>
+            <span className="reasons">
+              {x.reasons.map((rs, i) => (
+                <span key={i} className={`reason reason-${rs.kind}`}>
+                  {rs.kind === "tafsir" ? `ورد في «${rs.label}»` : `${REASON[rs.kind]}: ${rs.label}`}
+                </span>
+              ))}
+              {x.more_reasons > 0 && <span className="note">و{x.more_reasons} غيرها</span>}
+            </span>
+          </VerseHit>
+        ))}
+      </ol>
+      {r.total > 0 && (
+        <p className="note">الصلة من مصادر آفاق: مقارناته العلمية، وفهرس موضوعات Quranpedia، وعناوين مقالات الإعجاز (مصدر ثانوي)، ونص التفسير الميسر. ليست تفسيرًا للآية.</p>
+      )}
+    </>
   );
 }

@@ -10,6 +10,7 @@ from .quran_api import router as quran_router
 from .rag.answer_builder import build_answer
 from .review_api import router as review_router
 from .search import search_verses
+from .topic_search import search_topics
 
 
 @asynccontextmanager
@@ -72,6 +73,24 @@ def search(
     db = SessionLocal()
     try:
         return search_verses(db, q, limit, offset)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    finally:
+        db.close()
+
+
+@app.get("/search/topics")
+def search_by_topic(
+    q: str = Query(..., max_length=200),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """Verses linked to a subject the user typed («مدة الرضاعة الطبيعية»), each with the
+    sources that link it: curated comparisons, Quranpedia topics, i'jaz article titles,
+    التفسير الميسر. See app.topic_search."""
+    db = SessionLocal()
+    try:
+        return search_topics(db, q, limit, offset)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
     finally:

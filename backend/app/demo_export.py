@@ -57,6 +57,23 @@ def _light(db, model: set[str]) -> dict:
                      "articles": articles, "verses": links}}
 
 
+def _topic_index(db, verses: list) -> list:
+    """The topic search index (app.topic_search) for the page's own search: [kind, label,
+    url, [positions in `verses`]] per entry. Tafsir entries are left out: the page reads
+    التفسير الميسر from the answers and from `brief`, which already carry it."""
+    from .topic_search import _build
+
+    pos = {(v[0], v[1]): i for i, v in enumerate(verses)}
+    idx = _build(db, stamp=())
+    out = []
+    for e in idx.entries:
+        if e.kind == "tafsir":
+            continue
+        refs = sorted({pos[idx.verses[vid][:2]] for vid in e.verse_ids if idx.verses[vid][:2] in pos})
+        out.append([e.kind, e.label, e.url, refs])
+    return out
+
+
 def export(path: Path) -> dict:
     init_db()
     db = SessionLocal()
@@ -69,9 +86,10 @@ def export(path: Path) -> dict:
                    v.page_number, v.juz_number, ijaz.get(v.id, 0)]
                   for v in db.query(Verse).filter_by(reading="hafs").order_by(Verse.surah_number, Verse.ayah_number)]
         light = _light(db, set(answers))
+        topic_index = _topic_index(db, verses)
     finally:
         db.close()
-    data = {"answers": answers, "verses": verses, "explore": explore(), **light}
+    data = {"answers": answers, "verses": verses, "explore": explore(), **light, "topic_index": topic_index}
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return {"model_verses": len(answers), "verses": len(verses), "bytes": path.stat().st_size}
 
