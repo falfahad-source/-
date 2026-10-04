@@ -1,6 +1,7 @@
 // Build the static demo page: the real AFAQ page bundled with its data, one HTML body.
 //   (backend) python -m app.demo_export ../frontend/demo/data.json
 //   (frontend) node demo/build.mjs demo/afaq-demo.html
+// Runs python in ../backend for the AI section's test-mode data.
 // Needs the KFGQPC font at public/fonts/kfgqpc_hafs_v30.ttf (not in git).
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -17,6 +18,9 @@ const font = readFileSync(join(here, "..", "public", "fonts", "kfgqpc_hafs_v30.t
 const css = readFileSync(join(here, "..", "app", "globals.css"), "utf8")
   .replace('url("/fonts/kfgqpc_hafs_v30.ttf")', `url(data:font/ttf;base64,${font})`);
 const data = readFileSync(join(here, "data.json"), "utf8").replace(/<\//g, "<\\/");
+// «الذكاء الاصطناعي في الإعجاز العلمي» in test mode: prompt, disclaimer and report template from the backend
+const ai = execFileSync("python", ["-m", "app.ai_research.demo_data"], { cwd: join(here, "..", "..", "backend") })
+  .toString().replace(/<\//g, "<\\/");
 const html = `<title>آفاق</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,6 +28,7 @@ const html = `<title>آفاق</title>
 <style>${css}</style>
 <div id="root" dir="rtl" lang="ar"></div>
 <script type="application/json" id="afaq-data">${data}</script>
+<script type="application/json" id="afaq-ai">${ai}</script>
 <script>${bundle.replace(/<\/script/gi, "<\\/script")}</script>
 `;
 writeFileSync(out, html);
