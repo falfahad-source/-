@@ -1,0 +1,58 @@
+{
+  "verse": [
+    2,
+    233
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «حولين كاملين» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "hawlayn",
+      "label": "يرضعن أولادهن حولين كاملين لمن أراد أن يتم الرضاعة",
+      "words": [
+        2,
+        10
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "breastfeeding_duration",
+      "name_ar": "مدة الرضاعة الطبيعية",
+      "name_en": "Breastfeeding duration"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "breastfeeding_duration",
+      "source": "nih",
+      "domain": "طب الأطفال",
+      "claim": "توصي الهيئات الطبية بأن يقتصر غذاء الرضيع على حليب الأم في الأشهر الستة الأولى، ثم يبقى حليب الأم جزءًا رئيسيًا من غذائه حتى عمر سنة إلى سنتين على الأقل.",
+      "url": "https://medlineplus.gov/ency/article/002452.htm",
+      "quote": "continue to have breast milk as a main part of their diet until they are at least 1 to 2 years old",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "hawlayn",
+      "concept": "breastfeeding_duration",
+      "source": "nih",
+      "explanation": "قال الطبري: «حولين» سنتين، وهي غاية الرضاع لمن أراد الإتمام لا فرض على الوالدات، ثم أجازت الآية الفطام قبلها بالتراضي. وتوصية الطب الحديث بإبقاء حليب الأم غذاءً رئيسيًا حتى سنة إلى سنتين على الأقل توافق جعل الحولين حدّ التمام. وأقوى اعتراض أن الرضاع نحو سنتين كان عادة معروفة عند العرب وغيرهم قبل الإسلام؛ فالتوافق في الحكم لا في كشف معلومة مجهولة."
+    }
+  ],
+  "related_topics": []
+}

@@ -138,15 +138,22 @@ function route(): Route {
 const PAGES: Record<Route, () => JSX.Element> = { home: Home, search: SearchPage, history: HistoryPage, quran: QuranPage, ai: AiIjazPage };
 
 function App() {
-  const [r, setR] = useState(route);
+  const [view, setView] = useState({ r: route(), n: 0 });
   useEffect(() => {
-    // pages rewrite the hash as the reader moves (a verse, a surah); only a switch of page remounts and scrolls up
-    const on = () => setR((was) => { const now = route(); if (now !== was) scrollTo(0, 0); return now; });
+    // Pages rewrite the address with replaceState (no event) as the reader moves, so a hashchange is
+    // a link the reader followed: open that page afresh, as a server build would. The Quran browser
+    // follows its own surah links, so it keeps its state.
+    const on = () => setView((was) => {
+      const r = route();
+      if (r === "quran" && was.r === "quran") return was;
+      scrollTo(0, 0);
+      return { r, n: was.n + 1 };
+    });
     addEventListener("hashchange", on);
     return () => removeEventListener("hashchange", on);
   }, []);
-  const Page = PAGES[r];
-  return <Page key={r} />;
+  const Page = PAGES[view.r];
+  return <Page key={`${view.r}-${view.n}`} />;
 }
 
 createRoot(document.getElementById("root")!).render(<App />);

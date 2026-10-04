@@ -1,0 +1,58 @@
+{
+  "verse": [
+    31,
+    10
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «وألقى في الأرض رواسي أن تميد بكم» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "rawasi",
+      "label": "وألقى في الأرض رواسي أن تميد بكم",
+      "words": [
+        6,
+        12
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "mountain_roots",
+      "name_ar": "جذور الجبال",
+      "name_en": "Mountain roots"
+    }
+  ],
+  "sources": [
+    {
+      "key": "usgs",
+      "title": "USGS — هيئة المسح الجيولوجي الأمريكية",
+      "publisher": "USGS",
+      "url": "https://www.usgs.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "domain": "الجيولوجيا",
+      "claim": "تمتد القشرة الأرضية تحت السلاسل الجبلية الكبرى إلى أعماق قد تبلغ نحو 100 كيلومتر، أعمق كثيرًا منها تحت السهول والمحيطات.",
+      "url": "https://pubs.usgs.gov/gip/dynamic/inside.html",
+      "quote": "the base of the crust can be as deep as 100 km",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "rawasi",
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "explanation": "فسّر أهل الغريب «رواسي» بالجبال الثوابت و«أن تميد» بأن تضطرب وتتحرك. وامتداد القشرة تحت الجبال إلى أعماق كبيرة موضوع جيولوجي يمكن مقارنته بوصف الجبال رواسي. أما ربط الجبال بمنع اضطراب الأرض فلا يقرره المصدر العلمي، فيبقى خارج المقارنة."
+    }
+  ],
+  "related_topics": []
+}
