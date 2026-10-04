@@ -40,14 +40,41 @@ const KEYS = DATA.verses.map((v) => [norm(v[4]), norm(v[3])]);
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
+// Lighter answer for verses without a curated map: their text, one short tafsir and their i'jaz
+// article links, when the data has them (see backend/app/demo_export.py `_light`).
+type Light = {
+  brief?: { meta: Record<string, unknown> | null; verses: Record<string, [string, string | null]> };
+  ijaz?: { label: string; article_fields: string[]; link_fields: string[]; articles: unknown[][];
+    verses: Record<string, [number, [number, ...unknown[]][]]> };
+};
+const LIGHT = DATA as unknown as Light;
+const zip = (keys: string[], vals: unknown[]) => Object.fromEntries(keys.map((k, i) => [k, vals[i]]));
+
 function minimalAnswer(v: V) {
+  const key = `${v[0]}:${v[1]}`;
+  const brief = LIGHT.brief?.verses[key];
+  const tafsir = brief && LIGHT.brief?.meta
+    ? [{ ...LIGHT.brief.meta, text: brief[0], page: brief[1], disagreement_group: `surah${v[0]}:ayah${v[1]}` }] : [];
+  const links = LIGHT.ijaz?.verses[key];
+  const ij = LIGHT.ijaz;
+  const articles = links && ij
+    ? links[1].map(([i, ...rest]) => ({ ...zip(ij.article_fields, ij.articles[i]), ...zip(ij.link_fields, rest) })) : [];
+  const sources = [{ title: "مصحف المدينة النبوية للنشر الحاسوبي — رواية حفص (الإصدار 3.0)", publisher: "مجمع الملك فهد لطباعة المصحف الشريف", url: "https://qurancomplex.gov.sa/quran-hafs/", trust_category: "QURANIC_TEXT" }];
+  if (tafsir.length) sources.push({ title: String(LIGHT.brief!.meta!.source), publisher: "Quranpedia.net", url: "https://quranpedia.net", trust_category: "TAFSIR_VERIFIED" });
+  if (articles.length) sources.push({ title: String(articles[0].source), publisher: "quran-m.com", url: "https://quran-m.com", trust_category: "POSSIBLE_CONNECTION" });
   return {
     quranic_text: v[3], surah_number: v[0], ayah_number: v[1], surah_name: v[2], page_number: v[5], juz_number: v[6],
-    verified_tafsir: [], linguistic: { words: [], meanings: [], e3rab: [], attribution: null },
+    verified_tafsir: tafsir, linguistic: { words: [], meanings: [], e3rab: [], attribution: null },
     concepts: [], scientific_knowledge: [], topics: [], graph: { nodes: [{ id: "v", type: "verse", label: `${v[2]} ${v[1]}`, trust_category: "QURANIC_TEXT" }], edges: [] },
-    possible_connections: [], hadith_matches: [], ijaz: { total: 0, articles: [], label: "" }, related_comparisons: [],
-    not_established: ["النسخة التجريبية تعرض الطبقات الكاملة (التحليل اللغوي، التفسير، الخريطة، العلم) للآيات النموذجية فقط؛ وهي كلها متاحة لكل الآيات في نسخة الخادم."],
-    sources: [{ title: "مصحف المدينة النبوية للنشر الحاسوبي — رواية حفص (الإصدار 3.0)", publisher: "مجمع الملك فهد لطباعة المصحف الشريف", url: "https://qurancomplex.gov.sa/quran-hafs/", trust_category: "QURANIC_TEXT" }],
+    possible_connections: [], hadith_matches: [],
+    ijaz: { total: links ? links[0] : 0, articles, label: ij?.label ?? "" }, related_comparisons: [],
+    not_established: [
+      tafsir.length
+        ? "النسخة التجريبية تعرض لهذه الآية «التفسير الميسر» وحده، والطبقات الكاملة (التفاسير التسعة، التحليل اللغوي، الخريطة، العلم) للآيات النموذجية؛ وهي كلها متاحة لكل الآيات في نسخة الخادم."
+        : "النسخة التجريبية تعرض الطبقات الكاملة (التحليل اللغوي، التفسير، الخريطة، العلم) للآيات النموذجية فقط؛ وهي كلها متاحة لكل الآيات في نسخة الخادم.",
+      ...(links ? [`تُعرض ${articles.length} من ${links[0]} من القراءات الإعجازية من مصدر ثانوي بروابطها فقط؛ لم يتحقق آفاق من معلوماتها العلمية.`] : []),
+    ],
+    sources,
     trust_legend: (Object.values(DATA.answers)[0] as { trust_legend: unknown }).trust_legend,
   };
 }

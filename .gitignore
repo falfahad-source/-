@@ -12,3 +12,4 @@ backend/data/quranpedia/
 frontend/public/fonts/*.ttf
 frontend/demo/data.json
 frontend/demo/*.html
+*.tsbuildinfo

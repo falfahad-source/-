@@ -3,8 +3,9 @@
     python -m app.demo_export ../frontend/demo/data.json
 
 Full answers (every layer) for the verses that have a curated concept map, the
-text of all verses for client-side search, and the /explore list. Answers for
-other verses are built in the page with the text only, so the file stays small.
+text of all verses for client-side search, and the /explore list. Other verses get
+a lighter answer built in the page: one short tafsir (BRIEF_TAFSIR_BOOK) and their
+i'jaz article links, stored compactly here so the file stays small.
 """
 from __future__ import annotations
 
@@ -17,8 +18,43 @@ from sqlalchemy import func
 
 from .db import SessionLocal, init_db
 from .main import explore
-from .models import ArticleVerse, Verse, VersePhrase
+from .models import ArticleVerse, Source, TafsirEntry, Verse, VersePhrase
 from .rag.answer_builder import build_answer
+from .rag.layers import IJAZ_LABEL, ijaz_articles, tafsir_timeline
+
+BRIEF_TAFSIR_BOOK = "quranpedia:book:2012"  # التفسير الميسر — short, covers every ayah
+ARTICLE_FIELDS = ("title", "url", "published", "categories", "excerpt", "source", "trust_category")
+LINK_FIELDS = ("match_method", "matched_text", "verses_in_article", "focused")
+
+
+def _light(db, model: set[str]) -> dict:
+    """Brief tafsir and i'jaz links for every verse without a full answer:
+      brief = {meta: entry fields shared by every verse, verses: {"s:a": [text, page]}}
+      ijaz  = {label, articles: [article fields], verses: {"s:a": [total, [[article index, *link fields]]]}}"""
+    book = db.query(Source).filter_by(citation_identifier=BRIEF_TAFSIR_BOOK).one_or_none()
+    brief_meta, brief, articles, index, links = None, {}, [], {}, {}
+    linked = {vid for (vid,) in db.query(ArticleVerse.verse_id).distinct()}
+    for v in db.query(Verse).filter_by(reading="hafs").order_by(Verse.surah_number, Verse.ayah_number):
+        key = f"{v.surah_number}:{v.ayah_number}"
+        if key in model:
+            continue
+        if book:
+            entries = db.query(TafsirEntry).filter_by(verse_id=v.id, source_id=book.id).all()
+            for e in tafsir_timeline(entries)[:1]:
+                brief_meta = brief_meta or {k: x for k, x in e.items() if k not in ("text", "page", "disagreement_group")}
+                brief[key] = [e["text"], e.get("page")]
+        if v.id in linked:
+            ij = ijaz_articles(db, v)
+            rows = []
+            for a in ij["articles"]:
+                if a["url"] not in index:
+                    index[a["url"]] = len(articles)
+                    articles.append([a[f] for f in ARTICLE_FIELDS])
+                rows.append([index[a["url"]], *(a[f] for f in LINK_FIELDS)])
+            links[key] = [ij["total"], rows]
+    return {"brief": {"meta": brief_meta, "verses": brief},
+            "ijaz": {"label": IJAZ_LABEL, "article_fields": ARTICLE_FIELDS, "link_fields": LINK_FIELDS,
+                     "articles": articles, "verses": links}}
 
 
 def export(path: Path) -> dict:
@@ -32,9 +68,10 @@ def export(path: Path) -> dict:
         verses = [[v.surah_number, v.ayah_number, v.surah_name, v.arabic_text, v.text_imlaei or "",
                    v.page_number, v.juz_number, ijaz.get(v.id, 0)]
                   for v in db.query(Verse).filter_by(reading="hafs").order_by(Verse.surah_number, Verse.ayah_number)]
+        light = _light(db, set(answers))
     finally:
         db.close()
-    data = {"answers": answers, "verses": verses, "explore": explore()}
+    data = {"answers": answers, "verses": verses, "explore": explore(), **light}
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return {"model_verses": len(answers), "verses": len(verses), "bytes": path.stat().st_size}
 
