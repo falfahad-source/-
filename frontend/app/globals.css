@@ -319,3 +319,4 @@ a.btn-primary { color: var(--sheet); }
 .reason-article { color: var(--t-connection); }
 .reason-tafsir { color: var(--muted); }
 .reason .via { font-style: normal; opacity: .8; }
+.reason-ai { color: var(--violet); }

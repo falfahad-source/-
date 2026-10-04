@@ -70,7 +70,7 @@ export default function SearchPage() {
     setSearch(null);
     setSearching(true);
     try {
-      const [t, p] = await Promise.all([fetchPage<SearchResult>("/search", q, 0), fetchPage<TopicResult>("/search/topics", q, 0)]);
+      const [t, p] = await Promise.all([fetchPage<SearchResult>("/search", q, 0), fetchPage<TopicResult>("/search/ai", q, 0)]);
       const text = ok(t), topic = ok(p);
       if (!text && !topic) { setError((t as { error: string }).error); return; }
       setSearch({ query: q, text, topic });
@@ -95,7 +95,7 @@ export default function SearchPage() {
     if (!search || !cur) return;
     setSearching(true);
     try {
-      const next = ok(await fetchPage<SearchResult & TopicResult>(tab === "text" ? "/search" : "/search/topics", search.query, cur.results.length));
+      const next = ok(await fetchPage<SearchResult & TopicResult>(tab === "text" ? "/search" : "/search/ai", search.query, cur.results.length));
       if (next) setSearch({ ...search, [tab]: { ...next, results: [...cur.results, ...next.results] } });
     } finally { setSearching(false); }
   }
@@ -112,7 +112,7 @@ export default function SearchPage() {
       <SiteNav current="search" />
       <header className="masthead">
         <h1>بحث جديد</h1>
-        <p>ابحث بجزء من آية، أو بموضوع مثل «مدة الرضاعة الطبيعية» لتظهر الآيات التي تربطها المصادر به، ثم اختر الآية لتبدأ رحلتها.</p>
+        <p>ابحث بجزء من آية، أو بموضوع مثل «ذكاء الإنسان» ليقترح الذكاء الاصطناعي الآيات المتصلة به، ثم اختر الآية لتبدأ رحلتها.</p>
       </header>
 
       <form className="searchbar" onSubmit={runSearch} role="search">
@@ -154,7 +154,7 @@ export default function SearchPage() {
             <>
               <div className="tabs result-tabs" role="tablist" aria-label="نوع النتائج">
                 <button type="button" role="tab" className="btn-ghost" aria-selected={tab === "topic"} onClick={() => setTab("topic")}>
-                  حسب الموضوع ({search.topic?.total ?? 0})
+                  ✦ بالذكاء الاصطناعي ({search.topic?.total ?? 0})
                 </button>
                 <button type="button" role="tab" className="btn-ghost" aria-selected={tab === "text"} onClick={() => setTab("text")}>
                   نص الآية ({search.text?.total ?? 0})
@@ -179,7 +179,7 @@ export default function SearchPage() {
             <main className="journey">
               <section className="card">
                 <LayerHead title="ابدأ رحلة الآية" />
-                <p className="lead">اكتب جزءًا من آية أو موضوعًا مثل «مدة الرضاعة الطبيعية» في مربع البحث، ثم اختر الآية من النتائج لتظهر طبقاتها: التحليل اللغوي، والتفسير عبر العصور، والمفاهيم، والمعرفة العلمية.</p>
+                <p className="lead">اكتب جزءًا من آية أو موضوعًا مثل «ذكاء الإنسان» في مربع البحث، ثم اختر الآية من النتائج لتظهر طبقاتها: التحليل اللغوي، والتفسير عبر العصور، والمفاهيم، والمعرفة العلمية.</p>
                 <p className="note">أو تصفّح المصحف من <a href={link.quran()}>القرآن الكريم</a>، أو عُد إلى بحث سابق من <a href={link.history()}>سجل البحث</a>.</p>
               </section>
             </main>
@@ -296,16 +296,20 @@ function TextHits({ r, ...h }: Hits & { r: SearchResult | null }) {
 }
 
 const REASON: Record<TopicReason["kind"], string> = {
-  concept: "مقارنة علمية", topic: "موضوع", article: "مقال إعجاز", tafsir: "التفسير",
+  concept: "مقارنة علمية", topic: "موضوع", article: "مقال إعجاز", tafsir: "التفسير", ai: "سبب الصلة",
 };
 
 function TopicHits({ r, ...h }: Hits & { r: TopicResult | null }) {
-  if (!r) return <p className="empty">اكتب موضوعًا من كلمة واحدة على الأقل، مثل: الرضاعة، البحار، الجنين.</p>;
+  if (!r) return <p className="empty">اكتب موضوعًا من ثلاثة أحرف على الأقل، مثل: ذكاء الإنسان، الرضاعة، البحار.</p>;
+  const live = r.mode === "live";
   return (
     <>
+      {r.note && <p className="ai-mode mock">{r.note}</p>}
+      {live && r.disclaimer && <p className="ai-disclaimer">{r.disclaimer}</p>}
       <p>
-        {r.total === 0 ? "لم تربط المصادر أي آية بهذا الموضوع. جرّب كلمة أخرى أو ابحث في نص الآية."
-          : `وُجدت ${ayahCount(r.total)} ذات صلة بالموضوع، الأقوى صلة أولًا. تحت كل آية سبب ظهورها:`}
+        {r.total === 0
+          ? (live ? "لم يقترح الذكاء الاصطناعي آيات لهذا الموضوع." : "لم تربط المصادر أي آية بهذا الموضوع. جرّب كلمة أخرى أو ابحث في نص الآية.")
+          : `${live ? "اقترح الذكاء الاصطناعي" : "وُجدت"} ${ayahCount(r.total)} ذات صلة بالموضوع، الأقوى صلة أولًا:`}
       </p>
       <ol>
         {r.results.map((x) => (
@@ -318,12 +322,14 @@ function TopicHits({ r, ...h }: Hits & { r: TopicResult | null }) {
                 </span>
               ))}
               {x.more_reasons > 0 && <span className="note">و{x.more_reasons} غيرها</span>}
+              {x.corrected && <span className="note">صُحّح رقم الآية من الاقتباس</span>}
             </span>
           </VerseHit>
         ))}
       </ol>
-      {r.total > 0 && (
-        <p className="note">الصلة من مصادر آفاق: مقارناته العلمية، وفهرس موضوعات Quranpedia، وعناوين مقالات الإعجاز (مصدر ثانوي)، ونص التفسير الميسر. يُطابَق الجمع بمفرده (البحار والبحر) بمعجم ألفاظ القرآن، والمرادفات من قائمة معدّة تُذكر في النتيجة. ليست تفسيرًا للآية.</p>
+      {live && !!r.dropped && <p className="note">حُذف {ayahCount(r.dropped)} اقترحها النموذج ولم يُعثر على اقتباسها في المصحف.</p>}
+      {!live && r.total > 0 && (
+        <p className="note">الصلة من مصادر آفاق: مقارناته العلمية، وفهرس موضوعات Quranpedia، وعناوين مقالات الإعجاز (مصدر ثانوي)، ونص التفسير الميسر. ليست تفسيرًا للآية.</p>
       )}
     </>
   );

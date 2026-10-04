@@ -1,10 +1,13 @@
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from .ai_research.api import _check_rate
 from .ai_research.api import router as ai_research_router
+from .ai_research.providers import ProviderError
+from .ai_research.topic import ai_topic_search
 from .db import SessionLocal, init_db
 from .quran_api import router as quran_router
 from .rag.answer_builder import build_answer
@@ -93,6 +96,27 @@ def search_by_topic(
         return search_topics(db, q, limit, offset)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
+    finally:
+        db.close()
+
+
+@app.get("/search/ai")
+def search_by_ai(
+    request: Request,
+    q: str = Query(..., max_length=200),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """Verses related to a subject, proposed by the AI platform and checked against the stored
+    text (app.ai_research.topic). In test mode, the source-based topic search answers instead."""
+    db = SessionLocal()
+    try:
+        client = request.client.host if request.client else "unknown"
+        return ai_topic_search(db, q, limit, offset, rate_check=lambda: _check_rate(client))
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except ProviderError as e:
+        raise HTTPException(status_code=502, detail=str(e)) from e
     finally:
         db.close()
 

@@ -66,12 +66,17 @@ export type SearchResult = {
 };
 
 export type TopicReason = {
-  kind: "concept" | "topic" | "article" | "tafsir"; label: string; url: string | null; coverage: number;
+  kind: "concept" | "topic" | "article" | "tafsir" | "ai"; label: string; url: string | null; coverage: number;
   synonyms?: string[];  // matched through these synonyms of the words typed (app/synonyms.json)
 };
 export type TopicResult = {
   query: string; words: string[]; total: number; offset: number;
-  results: (SearchResult["results"][number] & { score: number; reasons: TopicReason[]; more_reasons: number })[];
+  results: (SearchResult["results"][number] & {
+    score?: number; reasons: TopicReason[]; more_reasons: number;
+    quote?: string; corrected?: boolean;  // AI search: the model's quote, and whether its reference was fixed
+  })[];
+  // GET /search/ai: "live" = the AI platform answered; "mock" = test mode, the source search answered
+  mode?: "live" | "mock"; model?: string | null; note?: string | null; disclaimer?: string | null; dropped?: number;
 };
 
 export type OpenVerse = (surah: number, ayah: number) => void;

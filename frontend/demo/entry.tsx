@@ -15,8 +15,9 @@ const DATA = JSON.parse(document.getElementById("afaq-data")!.textContent!) as {
 };
 
 const AI = JSON.parse(document.getElementById("afaq-ai")!.textContent!) as {
-  status: Record<string, unknown>; disclaimer: string; report_template: string;
+  status: Record<string, unknown>; disclaimer: string; report_template: string; topic_note?: string;
 };
+const AI_TOPIC_NOTE = AI.topic_note ?? "منصة الذكاء الاصطناعي لم تُربط بعد، فالنتائج مؤقتًا من البحث في مصادر آفاق.";
 // Curated verses are the ones with a full answer; i'jaz counts come with the verse in newer exports,
 // otherwise only the full answers know them.
 const curated = (v: V) => `${v[0]}:${v[1]}` in DATA.answers;
@@ -106,6 +107,14 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     if (DATA.answers[key]) return json(DATA.answers[key]);
     const v = DATA.verses.find((x) => x[0] === +verse[1] && x[1] === +verse[2]);
     return v ? json(minimalAnswer(v)) : json({ detail: "لم يتم العثور على هذه الآية في المصادر المعتمدة المستوعبة حتى الآن." }, 404);
+  }
+  if (url.pathname === "/search/ai") {
+    // no AI platform in the demo: test mode, answered by the source search, as a server in test mode
+    try {
+      const r = searchTopics(topicEntries(), (i) => { const v = DATA.verses[i]; return [v[0], v[1], v[2], v[3], v[5]]; },
+        url.searchParams.get("q") ?? "", +(url.searchParams.get("limit") ?? 50), +(url.searchParams.get("offset") ?? 0));
+      return json({ ...r, mode: "mock", note: AI_TOPIC_NOTE, dropped: 0, disclaimer: null });
+    } catch (e) { return json({ detail: (e as Error).message }, 422); }
   }
   if (url.pathname === "/search/topics") {
     try {
