@@ -70,7 +70,11 @@ afaq/
                          #   - تخزين نص الآية حرفيًا دون تعديل
                          #   - عدم ترقية UNVERIFIED_CLAIM إلى SCIENTIFIC_FACT
                          #   - وجود جميع أقسام A-G مع تمييز POSSIBLE_CONNECTION
-  frontend/app/          # هيكل Next.js RTL أولي (اختيار سورة/آية + عرض الأقسام) — واجهة فقط، لم تُوصَل بعد
+  backend/app/quran_api.py       # /surahs و /surah/{n} لتصفح المصحف
+  backend/app/ai_research/       # الذكاء الاصطناعي في الإعجاز العلمي (التعليمات، المحوّلات، وضع الاختبار)
+  backend/curation/              # المقارنات العلمية المعدّة يدويًا، ملف لكل آية
+  frontend/app/          # Next.js RTL: / الرئيسية، /search رحلة الآية، /history، /quran، /ai-ijaz، /review
+  frontend/demo/         # بناء النسخة التجريبية الثابتة (صفحة واحدة بلا خادم)
   docker-compose.yml     # Postgres + backend + frontend
   docs/IMPLEMENTATION_PLAN.md   # خطة التنفيذ الكاملة مرحلة بمرحلة
 ```
@@ -78,17 +82,19 @@ afaq/
 ## التشغيل (يُنفَّذ في Claude Code أو بيئة بشبكة فعلية)
 ```bash
 cd afaq
-cp .env.example .env            # أضف OPENAI/ANTHROPIC key إن رغبت في طبقة RAG/LLM
+cp .env.example .env            # إعدادات منصة الذكاء الاصطناعي (AFAQ_AI_*) ورموز المراجعين (AFAQ_REVIEWERS)
 docker compose up -d db
 cd backend && pip install -r requirements.txt -r requirements-dev.txt
-alembic upgrade head             # (يُضاف لاحقًا) أو python -m app.db إنشاء الجداول مباشرة للتطوير
+ # الجداول تُنشأ تلقائيًا عند أول أمر استيعاب أو عند تشغيل الخادم (لا توجد Alembic بعد)
 python -m app.ingestion.ingest_kfgqpc                   # نص القرآن كاملًا (6236 آية) من ملف مجمع الملك فهد — انظر أدناه
 python -m app.ingestion.ingest_tafsir_dump               # التفسير للقرآن كاملًا من ملفات Quranpedia الرسمية (التفاسير الأساسية)
 python -m app.ingestion.ingest_tafsir_dump --books 3,2012  # أو كتب محددة بأرقامها
 python -m app.ingestion.ingest_layers_dump              # الصرف، الغريب، الإعراب، الموضوعات، سنوات الوفاة
+python -m app.ingestion.ingest_quran_m                  # فهرس مقالات الإعجاز من quran-m.com (نحو 20 دقيقة)
 python -m app.curation                                  # خرائط المفاهيم والمعرفة العلمية المعدّة يدويًا (backend/curation/)
 pytest                           # اختبارات بمحاكاة الشبكة، تعمل بلا اتصال
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --env-file ../.env   # بدون --env-file لا يقرأ الخادم ملف .env
+cd ../frontend && npm ci && npm run dev              # الواجهة على http://localhost:3000
 ```
 
 ## نص القرآن: ملف مجمع الملك فهد (kfgqpc_hafs_v30)
@@ -245,9 +251,13 @@ python -m app.ingestion.ingest_hadith --surah 2 --ayah 43 --query "الصلاة"
 **وضع الاختبار (الافتراضي):** `AFAQ_AI_PROVIDER=mock` — يعمل القسم كاملًا بلا شبكة، والتقرير قالب
 بالشكل المطلوب لكن بلا أي نتيجة أو مصدر، حتى لا يُعرض على المستخدم شيء مخترع.
 
-**ربط المنصة لاحقًا:** في `.env` ضع `AFAQ_AI_PROVIDER=http` و`AFAQ_AI_API_URL` (نقطة chat-completions
+**ربط المنصة لاحقًا:** في `.env` (يقرؤه `docker compose`، أو `uvicorn --env-file ../.env`) ضع `AFAQ_AI_PROVIDER=http` و`AFAQ_AI_API_URL` (نقطة chat-completions
 متوافقة مع OpenAI) و`AFAQ_AI_API_KEY` و`AFAQ_AI_MODEL`. المفتاح يبقى في الخادم فقط. إن كانت المنصة
 بصيغة أخرى، أضف صنفًا في `backend/app/ai_research/providers.py` له الدالة `generate(system, user)`.
+- **الحد من التكلفة:** عند ربط منصة مدفوعة يُسمح لكل عنوان بعدد محدود من التقارير في الساعة
+  (`AFAQ_AI_HOURLY_LIMIT`، الافتراضي 10، و0 بلا حد). وضع الاختبار بلا حد.
+- **عند النشر على نطاق:** ضع عنوان الواجهة في `AFAQ_CORS_ORIGINS` (مثل `https://afaq.example.com`)،
+  وإلا يرفض المتصفح طلبات الواجهة إلى الخادم. وتُبنى الواجهة مع `NEXT_PUBLIC_API_BASE` = عنوان الخادم.
 
 ## الصفحة الرئيسية وأقسام المنصة
 

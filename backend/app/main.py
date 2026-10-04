@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query
@@ -25,9 +26,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Sites allowed to call the API from a browser: the frontend's address. On a server set
+# AFAQ_CORS_ORIGINS="https://example.com,https://www.example.com"; locally it is the dev server.
+CORS_ORIGINS = [o.strip() for o in os.environ.get("AFAQ_CORS_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["Authorization", "Content-Type"],
 )

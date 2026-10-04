@@ -43,3 +43,10 @@ def test_surah_verses_carry_their_marks(client):
     assert v["verses"][0]["text"] == "أَوۡ كَظُلُمَٰتࣲ ..."
     assert client.get("/surah/25").json()["verses"][0]["ijaz_articles"] == 2
     assert client.get("/surah/99").status_code == 404
+
+
+def test_cors_allows_only_configured_origins(client):
+    ok = client.get("/health", headers={"Origin": "http://localhost:3000"})
+    assert ok.headers.get("access-control-allow-origin") == "http://localhost:3000"
+    other = client.get("/health", headers={"Origin": "https://evil.example"})
+    assert "access-control-allow-origin" not in other.headers

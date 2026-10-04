@@ -84,3 +84,18 @@ def test_http_provider_sends_prompt_as_system_and_verse_as_user(client, monkeypa
     monkeypatch.setattr(providers.requests, "post", lambda *a, **k: FakeResponse(500, {}))
     r = client.post("/ai-research", json={"surah_number": 24, "ayah_number": 40})
     assert r.status_code == 502 and "k" * 20 not in r.text  # the key never leaks
+
+
+def test_live_reports_are_limited_per_client(client, monkeypatch):
+    monkeypatch.setenv("AFAQ_AI_PROVIDER", "http")
+    monkeypatch.setenv("AFAQ_AI_API_URL", "https://ai.example/v1/chat/completions")
+    monkeypatch.setenv("AFAQ_AI_API_KEY", "k" * 20)
+    monkeypatch.setenv("AFAQ_AI_MODEL", "m1")
+    monkeypatch.setenv("AFAQ_AI_HOURLY_LIMIT", "2")
+    monkeypatch.setattr(api, "_recent", api.defaultdict(api.deque))
+    monkeypatch.setattr(providers.requests, "post",
+                        lambda *a, **k: FakeResponse(200, {"choices": [{"message": {"content": "# r"}}]}))
+    body = {"surah_number": 24, "ayah_number": 40}
+    assert [client.post("/ai-research", json=body).status_code for _ in range(3)] == [200, 200, 429]
+    monkeypatch.setenv("AFAQ_AI_PROVIDER", "mock")  # test mode is never limited
+    assert client.post("/ai-research", json=body).status_code == 200
