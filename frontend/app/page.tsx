@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import HistoryRow from "./components/HistoryRow";
 import SiteNav from "./components/SiteNav";
 import { type HistoryEntry, readHistory } from "./components/history";
-import { DEMO, link } from "./components/links";
+import { link } from "./components/links";
 
 const CARDS = [
   { href: () => link.search(), icon: "⌕", title: "بحث جديد",
@@ -47,10 +47,9 @@ export default function Home() {
       )}
 
       <footer className="foot">
-        نص المصحف: مجمع الملك فهد لطباعة المصحف الشريف (رواية حفص، الإصدار 3.0). التفاسير والغريب والإعراب والموضوعات:
-        {" "}<a href="https://quranpedia.net" target="_blank" rel="noopener noreferrer">الموسوعة القرآنية Quranpedia.net</a>.
-        آفاق لا يطلب من الذكاء الاصطناعي تفسير القرآن، بل يستعمله للتنقل في المعرفة الموثقة حوله، ويصنّف كل ما يُنتجه ادعاءً غير موثق حتى يراجعه باحث.
-        {DEMO && " هذه نسخة تجريبية تعمل دون خادم."}
+        نص المصحف: مجمع الملك فهد لطباعة المصحف الشريف (رواية حفص، الإصدار 3.0).
+        <br />
+        آفاق لا يطلب من الذكاء الاصطناعي تفسير القرآن، بل يستعمله للتنقل في المعرفة الموثقة حوله.
       </footer>
     </div>
   );
