@@ -164,7 +164,7 @@ export default function Home() {
         {" "}<a href="https://quranpedia.net" target="_blank" rel="noopener noreferrer">الموسوعة القرآنية Quranpedia.net</a>.
         التحليل الصرفي: Quranic Arabic Corpus (corpus.quran.com). آفاق لا يطلب من الذكاء الاصطناعي تفسير القرآن، بل يستعمله للتنقل في المعرفة الموثقة حوله.
         {DEMO ? " هذه نسخة تجريبية: الطبقات الكاملة متاحة للآيات النموذجية، ومراجعة الباحثين تعمل على الخادم فقط."
-          : <>{" "}<a href="/review">مراجعة المقارنات (للباحثين)</a>.</>}
+          : <>{" "}<a href="/review">مراجعة المقارنات (للباحثين)</a> — <a href="/ai-ijaz">الذكاء الاصطناعي في الإعجاز العلمي</a>.</>}
       </footer>
     </div>
   );
@@ -195,6 +195,7 @@ function Journey({ a, highlight, onPhrase, open }: {
         <a href="#science"><b>٤</b>المعرفة العلمية</a>
         {a.hadith_matches.length > 0 && <a href="#hadith">الأحاديث</a>}
         <a href="#limits">ما لا تثبته المصادر</a>
+        {!DEMO && <a href={`/ai-ijaz?v=${a.surah_number}:${a.ayah_number}`}><b>✦</b>الذكاء الاصطناعي في الإعجاز العلمي</a>}
       </nav>
 
       <LinguisticLayer key={`l-${a.surah_number}-${a.ayah_number}`} a={a} highlight={highlight} />

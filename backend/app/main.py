@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
+from .ai_research.api import router as ai_research_router
 from .db import SessionLocal, init_db
 from .rag.answer_builder import build_answer
 from .review_api import router as review_router
@@ -30,6 +31,7 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 app.include_router(review_router)
+app.include_router(ai_research_router)
 
 
 @app.get("/health")

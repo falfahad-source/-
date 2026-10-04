@@ -205,3 +205,26 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .history { margin: 0; padding-inline-start: 18px; font-size: .85rem; color: var(--muted); }
 .login { display: grid; gap: 8px; max-width: 420px; }
 .login input { font: inherit; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); color: var(--text); }
+
+/* AI i'jaz research page */
+.ai-mode { margin: 12px 0; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--sheet); }
+.ai-mode.mock { border-inline-start: 3px solid var(--t-connection); }
+.ai-mode.live { border-inline-start: 3px solid var(--t-quran); }
+.ai-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.ai-form label { display: grid; gap: 2px; color: var(--muted); font-size: .88rem; }
+.ai-form input { width: 8em; font: inherit; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); color: var(--text); }
+.ai-form .btn-primary { padding: 8px 18px; }
+.ai-disclaimer { margin: 0 0 12px; padding: 8px 12px; border-radius: 10px; border-inline-start: 3px solid var(--t-unverified);
+  background: color-mix(in srgb, var(--t-unverified) 8%, var(--sheet)); font-size: .9rem; }
+.md { font-family: var(--f-read); line-height: 2; max-width: 80ch; }
+.md h2, .md h3, .md h4, .md h5, .md h6 { font-family: var(--f-display); color: var(--ink); margin: 18px 0 6px; line-height: 1.5; }
+.md h2 { font-size: 1.3rem; } .md h3 { font-size: 1.1rem; } .md h4, .md h5, .md h6 { font-size: 1rem; }
+.md p { margin: 0 0 10px; }
+.md ul, .md ol { margin: 0 0 10px; padding-inline-start: 22px; }
+.md hr { border: 0; border-top: 1px solid var(--rule); margin: 16px 0; }
+.md blockquote { margin: 0 0 12px; padding: 8px 12px; border-inline-start: 3px solid var(--t-connection); background: var(--violet-soft); border-radius: 8px; }
+.md code { font-family: ui-monospace, monospace; font-size: .9em; }
+.md-table { overflow-x: auto; margin: 0 0 12px; }
+.md table { border-collapse: collapse; font-family: var(--f-ui); font-size: .9rem; min-width: 100%; }
+.md th, .md td { border: 1px solid var(--rule); padding: 4px 10px; text-align: start; vertical-align: top; }
+.md th { background: var(--violet-soft); color: var(--ink); }
