@@ -1,14 +1,12 @@
-import { ayahCount, LayerHead, ReviewPill, SurahName, TrustBadge } from "./common";
+import { ar, ayahCount, Layer, ReviewPill, SurahName, TrustBadge } from "./common";
 import type { Answer, OpenVerse } from "./types";
 
 export default function ScienceLayer({ a, open }: { a: Answer; open: OpenVerse }) {
   const science = a.scientific_knowledge;
   const links = a.possible_connections;
   return (
-    <section className="card" id="science">
-      <LayerHead step="٤" title="المعرفة العلمية الحديثة">
-        معطيات علمية للمقارنة والاستكشاف، دون تحويل المقارنة إلى تفسير قطعي للآية. كل معلومة تحمل مصدرها وفئة ثقتها.
-      </LayerHead>
+    <Layer id="science" step="٤" title="المعرفة العلمية الحديثة"
+      lead="معطيات علمية للمقارنة والاستكشاف، دون تحويل المقارنة إلى تفسير قطعي للآية. كل معلومة تحمل مصدرها وفئة ثقتها.">
       {science.length === 0 ? (
         <p className="empty">
           لم تُعدّ مقارنة علمية موثقة لهذه الآية بعد.
@@ -65,7 +63,7 @@ export default function ScienceLayer({ a, open }: { a: Answer; open: OpenVerse }
           <div className="grid2">
             {a.related_comparisons.map((r) => (
               <button type="button" key={`${r.surah_number}:${r.ayah_number}`} className="hit" onClick={() => open(r.surah_number, r.ayah_number)}>
-                <span className="ref">سورة <SurahName name={r.surah_name} /> — <b>الآية {r.ayah_number}</b></span>
+                <span className="ref">سورة <SurahName name={r.surah_name} /> — <b>الآية {ar(r.ayah_number)}</b></span>
                 <span>{r.concepts.join("، ")}</span>
                 <span className="note">الموضوع المشترك: {r.shared_topics.join("، ")}</span>
               </button>
@@ -92,9 +90,9 @@ export default function ScienceLayer({ a, open }: { a: Answer; open: OpenVerse }
               </li>
             ))}
           </ul>
-          {a.ijaz.total > a.ijaz.articles.length && <p className="note">و{a.ijaz.total - a.ijaz.articles.length} مقالًا آخر.</p>}
+          {a.ijaz.total > a.ijaz.articles.length && <p className="note">و{ar(a.ijaz.total - a.ijaz.articles.length)} مقالًا آخر.</p>}
         </>
       )}
-    </section>
+    </Layer>
   );
 }

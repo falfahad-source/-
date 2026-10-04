@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Footer from "./components/Footer";
 import HistoryRow from "./components/HistoryRow";
 import SiteNav from "./components/SiteNav";
 import { type HistoryEntry, readHistory } from "./components/history";
@@ -17,8 +18,13 @@ const CARDS = [
     text: "باحث آلي ناقد يدرس الآية: يفهمها من التفاسير، ويقارنها بالعلم الحديث، ويحاول دحض كل ربط قبل أن يحكم." },
 ];
 
+// topics and verse fragments to start from, as typed in the search box
+const EXAMPLES = ["مدة الرضاعة الطبيعية", "ذكاء الإنسان", "الجبال", "البحار", "ظلمات بعضها فوق بعض", "خلق الإنسان"];
+
 export default function Home() {
   const [recent, setRecent] = useState<HistoryEntry[]>([]);
+  const [q, setQ] = useState("");
+  const search = (query: string) => { if (query.trim()) location.href = link.search(query.trim()); };
   useEffect(() => { setRecent(readHistory().slice(0, 4)); }, []);
 
   return (
@@ -28,6 +34,16 @@ export default function Home() {
         <h1>آفاق <span>| AFAQ</span></h1>
         <p>حين يلتقي التفسير بالمعرفة — استكشاف الآية عبر التفسير الموثق والمعرفة العلمية، مع تصنيف واضح لكل معلومة.</p>
       </header>
+
+      <form className="searchbar home-search" role="search" onSubmit={(e) => { e.preventDefault(); search(q); }}>
+        <input id="home-q" type="search" value={q} onChange={(e) => setQ(e.target.value)}
+          placeholder="ابحث بجزء من آية أو بموضوع" aria-label="البحث بنص الآية أو بالموضوع" />
+        <button className="btn-primary" type="submit">بحث</button>
+      </form>
+      <div className="examples" aria-label="أمثلة للبحث">
+        <span className="note">جرّب:</span>
+        {EXAMPLES.map((x) => <a key={x} className="chip" href={link.search(x)}>{x}</a>)}
+      </div>
 
       <div className="home-grid">
         {CARDS.map((c) => (
@@ -46,11 +62,7 @@ export default function Home() {
         </section>
       )}
 
-      <footer className="foot">
-        نص المصحف: مجمع الملك فهد لطباعة المصحف الشريف (رواية حفص، الإصدار 3.0).
-        <br />
-        آفاق لا يطلب من الذكاء الاصطناعي تفسير القرآن، بل يستعمله للتنقل في المعرفة الموثقة حوله.
-      </footer>
+      <Footer />
     </div>
   );
 }

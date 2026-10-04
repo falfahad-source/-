@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import HistoryRow from "../components/HistoryRow";
+import Footer from "../components/Footer";
 import SiteNav from "../components/SiteNav";
 import { clearHistory, type HistoryEntry, readHistory, removeHistory } from "../components/history";
 import { link } from "../components/links";
@@ -72,6 +73,7 @@ export default function HistoryPage() {
           </ul>
         </section>
       ))}
+      <Footer />
     </div>
   );
 }

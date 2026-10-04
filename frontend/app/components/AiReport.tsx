@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Markdown from "./Markdown";
-import { LayerHead, TrustBadge } from "./common";
+import { Layer, TrustBadge } from "./common";
 import { addHistory } from "./history";
 import { link } from "./links";
 import type { Trust } from "./types";
@@ -60,10 +60,8 @@ export function AiLayer({ s, a }: { s: number; a: number }) {
   }
 
   return (
-    <section className="card" id="ai-layer">
-      <LayerHead step="٥" title="الذكاء الاصطناعي في الإعجاز العلمي" trust="UNVERIFIED_CLAIM">
-        باحث آلي ناقد يدرس الآية: يفهمها من التفاسير، ويقارنها بالعلم الحديث، ويحاول دحض كل ربط قبل أن يحكم.
-      </LayerHead>
+    <Layer id="ai-layer" step="٥" title="الذكاء الاصطناعي في الإعجاز العلمي" trust="UNVERIFIED_CLAIM"
+      lead="باحث آلي ناقد يدرس الآية: يفهمها من التفاسير، ويقارنها بالعلم الحديث، ويحاول دحض كل ربط قبل أن يحكم.">
       {!r && !error && <p className="empty">جارٍ التحميل...</p>}
       {r?.mode === "mock" && <p className="ai-mode mock"><strong>وضع الاختبار.</strong> منصة الذكاء الاصطناعي لم تُربط بعد؛ التقرير قالب تجريبي بلا نتائج.</p>}
       {r && r.report_markdown && (
@@ -80,6 +78,6 @@ export function AiLayer({ s, a }: { s: number; a: number }) {
       )}
       <p className="error" role="alert">{error}</p>
       <p className="note"><a href={link.ai(s, a)}>افتح في صفحة «الذكاء الاصطناعي في الإعجاز العلمي»</a></p>
-    </section>
+    </Layer>
   );
 }

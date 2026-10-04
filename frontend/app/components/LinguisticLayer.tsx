@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LayerHead, toPlainText } from "./common";
+import { ar, Layer, toPlainText } from "./common";
 import type { Answer } from "./types";
 
 export default function LinguisticLayer({ a, highlight }: { a: Answer; highlight: Set<number> }) {
@@ -14,10 +14,8 @@ export default function LinguisticLayer({ a, highlight }: { a: Answer; highlight
   }, {});
 
   return (
-    <section className="card" id="language" aria-labelledby="language-h">
-      <LayerHead step="١" title="التحليل اللغوي" trust="TAFSIR_VERIFIED">
-        صرف كل كلمة، ومعاني الغريب كما شرحها أهل اللغة، وإعراب الآية من كتب الإعراب.
-      </LayerHead>
+    <Layer id="language" step="١" title="التحليل اللغوي" trust="TAFSIR_VERIFIED"
+      lead="صرف كل كلمة، ومعاني الغريب كما شرحها أهل اللغة، وإعراب الآية من كتب الإعراب.">
 
       {words.length === 0 ? <p className="empty">لا يتوفر تحليل صرفي لهذه الآية بعد.</p> : (
         <>
@@ -31,7 +29,7 @@ export default function LinguisticLayer({ a, highlight }: { a: Answer; highlight
           {w ? (
             <div className="word-detail" aria-live="polite">
               <dl className="kv">
-                <dt>الكلمة</dt><dd>{w.text} <span className="note">(رقم {w.number})</span></dd>
+                <dt>الكلمة</dt><dd>{w.text} <span className="note">(رقم {ar(w.number)})</span></dd>
                 {w.root && <><dt>الجذر</dt><dd>{w.root}</dd></>}
                 {w.lemma && <><dt>الأصل</dt><dd>{w.lemma}</dd></>}
                 {w.pos && <><dt>النوع</dt><dd>{w.pos}</dd></>}
@@ -60,12 +58,12 @@ export default function LinguisticLayer({ a, highlight }: { a: Answer; highlight
       {e3rab.length === 0 ? <p className="empty">لا يوجد إعراب مستوعب لهذه الآية.</p> : e3rab.map((e, i) => (
         <details className="fold" key={e.book} open={i === 0}>
           <summary>
-            <strong>{e.book}</strong><span>{e.author}{e.year ? ` (ت ${e.year}هـ)` : ""}</span>
+            <strong>{e.book}</strong><span>{e.author}{e.year ? ` (ت ${ar(e.year)}هـ)` : ""}</span>
             {e.is_excerpt === false && <span className="pill">نص الصفحة كاملًا — قد يشمل آيات مجاورة</span>}
           </summary>
           <div className="read">{toPlainText(e.text)}</div>
         </details>
       ))}
-    </section>
+    </Layer>
   );
 }

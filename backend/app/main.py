@@ -1,4 +1,6 @@
+import logging
 import os
+import threading
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query, Request
@@ -13,13 +15,26 @@ from .quran_api import router as quran_router
 from .rag.answer_builder import build_answer
 from .review_api import router as review_router
 from .search import search_verses
-from .topic_search import search_topics
+from .topic_search import search_topics, warm_index
+
+
+def _warm():
+    """Build the search indexes once at startup, so the first reader's topic search does not
+    wait for them (several seconds on the full data). They are rebuilt later only if the data changes."""
+    try:
+        with SessionLocal() as db:
+            warm_index(db)
+            search_verses(db, "الله", limit=1)
+    except Exception:  # an empty or unreachable database: the first search builds them instead
+        logging.getLogger(__name__).warning("search indexes not warmed at startup", exc_info=True)
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # bring an existing database up to the current schema (new tables, new nullable columns)
     init_db()
+    if os.environ.get("AFAQ_WARM_INDEX", "1") != "0":
+        threading.Thread(target=_warm, name="warm-search-index", daemon=True).start()
     yield
 
 

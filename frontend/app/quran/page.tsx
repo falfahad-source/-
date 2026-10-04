@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Footer from "../components/Footer";
+import ShareVerse from "../components/ShareVerse";
 import SiteNav from "../components/SiteNav";
-import { SurahName } from "../components/common";
+import { ar, SurahName } from "../components/common";
 import { DEMO, link, readParams } from "../components/links";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
@@ -14,7 +16,7 @@ type Sel = { p: number | null; s: number | null; a: number | null };
 
 // Surah names are stored in Uthmani script; strip the marks so the index filter matches plain typing.
 const plain = (t: string) => t.replace(/[ؐ-ًؚ-ٰٟۖ-ۭ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي");
-const arabicDigits = (n: number) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[+d]);
+const MARKS_KEY = "afaq-mushaf-marks";
 
 function current(): Sel {
   const p = readParams();
@@ -30,6 +32,10 @@ export default function QuranPage() {
   const [page, setPage] = useState<MushafPage | null>(null);
   const [goTo, setGoTo] = useState("");
   const [error, setError] = useState<string | null>(null);
+  // the i'jaz underlines are off by default, so the page reads as a mushaf; the reader's choice is kept
+  const [marks, setMarks] = useState(false);
+  useEffect(() => { try { setMarks(localStorage.getItem(MARKS_KEY) === "1"); } catch { /* storage blocked */ } }, []);
+  const showMarks = (on: boolean) => { setMarks(on); try { localStorage.setItem(MARKS_KEY, on ? "1" : "0"); } catch { /* storage blocked */ } };
 
   // address -> state. A surah/ayah without a page (an older link, or a link from elsewhere in the
   // site) is turned into the page that verse is on.
@@ -94,7 +100,8 @@ export default function QuranPage() {
   }, [page, go]);
 
   const shown = useMemo(() => {
-    const f = plain(filter.trim());
+    // digits typed either way: «18» or «١٨»
+    const f = plain(filter.trim()).replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x660));
     return f ? index.filter((x) => plain(x.name).includes(f) || String(x.number) === f) : index;
   }, [index, filter]);
 
@@ -114,7 +121,7 @@ export default function QuranPage() {
   const pageForm = (
     <form className="page-jump" onSubmit={jump}>
       <label htmlFor="goto">اذهب إلى الصفحة</label>
-      <input id="goto" type="number" min={1} max={total} value={goTo} onChange={(e) => setGoTo(e.target.value)} placeholder={`1–${total}`} />
+      <input id="goto" type="number" min={1} max={total} value={goTo} onChange={(e) => setGoTo(e.target.value)} placeholder={`${ar(1)}–${ar(total)}`} />
       <button type="submit" className="btn-ghost">اذهب</button>
     </form>
   );
@@ -124,7 +131,7 @@ export default function QuranPage() {
       <SiteNav current="quran" />
       <header className="masthead">
         <h1>القرآن الكريم</h1>
-        <p>تصفّح المصحف صفحةً صفحة كما في مصحف المدينة النبوية (604 صفحات)، واضغط أي آية لتنتقل إلى تفسيرها وما يتصل بها من المعرفة العلمية والإعجاز العلمي إن وُجد.</p>
+        <p>تصفّح المصحف صفحةً صفحة كما في مصحف المدينة النبوية (٦٠٤ صفحات)، واضغط أي آية لتنتقل إلى تفسيرها وما يتصل بها من المعرفة العلمية والإعجاز العلمي إن وُجد.</p>
       </header>
       <p className="error" role="alert">{error}</p>
 
@@ -135,17 +142,18 @@ export default function QuranPage() {
               placeholder="ابحث عن سورة بالاسم أو الرقم" aria-label="ابحث عن سورة" />
             {pageForm}
           </div>
+          <Legend />
           <ol className="surah-grid">
             {shown.map((x) => (
               <li key={x.number}>
                 <a href={link.mushafPage(x.start_page)} onClick={(e) => { e.preventDefault(); go(x.start_page); }}>
-                  <span className="num">{x.number}</span>
+                  <span className="num">{ar(x.number)}</span>
                   <span className="name"><SurahName name={x.name} /></span>
-                  <span className="note">{x.ayah_count} آية — ص {x.start_page}</span>
+                  <span className="note">{ar(x.ayah_count)} آية — ص {ar(x.start_page)}</span>
                   {(x.curated_ayahs > 0 || x.ijaz_ayahs > 0) && (
                     <span className="marks">
-                      {x.curated_ayahs > 0 && <span className="mark mark-curated" title="آيات لها مقارنة علمية موثّقة">{x.curated_ayahs}</span>}
-                      {x.ijaz_ayahs > 0 && <span className="mark mark-ijaz" title="آيات لها مقالات في الإعجاز العلمي">{x.ijaz_ayahs}</span>}
+                      {x.curated_ayahs > 0 && <span className="mark mark-curated" title={`${ar(x.curated_ayahs)} من آياتها لها مقارنة علمية موثّقة`}>{ar(x.curated_ayahs)}</span>}
+                      {x.ijaz_ayahs > 0 && <span className="mark mark-ijaz" title={`${ar(x.ijaz_ayahs)} من آياتها لها مقالات في الإعجاز العلمي`}>{ar(x.ijaz_ayahs)}</span>}
                     </span>
                   )}
                 </a>
@@ -157,12 +165,11 @@ export default function QuranPage() {
               <h2 className="subhead">الأجزاء</h2>
               <ol className="juz-list">
                 {Object.entries(juzPages).map(([j, p]) => (
-                  <li key={j}><a href={link.mushafPage(p)} onClick={(e) => { e.preventDefault(); go(p); }}>الجزء {j}<small>ص {p}</small></a></li>
+                  <li key={j}><a href={link.mushafPage(p)} onClick={(e) => { e.preventDefault(); go(p); }}>الجزء {ar(j)}<small>ص {ar(p)}</small></a></li>
                 ))}
               </ol>
             </>
           )}
-          <Legend />
         </>
       )}
 
@@ -172,11 +179,12 @@ export default function QuranPage() {
             <a href={link.quran()} onClick={(e) => { e.preventDefault(); go(null); }}>فهرس السور</a>
             <span className="page-nav-turn">
               <button type="button" className="btn-ghost" disabled={sel.p <= 1} onClick={() => go(sel.p! - 1)}>→ السابقة</button>
-              <span className="page-of">صفحة {sel.p} من {total}</span>
+              <span className="page-of">صفحة {ar(sel.p)} من {ar(total)}</span>
               <button type="button" className="btn-ghost" disabled={sel.p >= total} onClick={() => go(sel.p! + 1)}>التالية ←</button>
             </span>
             {pageForm}
           </nav>
+          <Legend toggle={{ on: marks, set: showMarks }} />
 
           <main className="mushaf-page" aria-label={`صفحة ${sel.p}`}>
             {!page || page.page !== sel.p ? <p className="empty">جارٍ التحميل...</p> : (
@@ -185,7 +193,7 @@ export default function QuranPage() {
                   <span>{[...new Map(page.verses.map((v) => [v.surah_number, v.surah_name])).values()].map((n, i) => (
                     <span key={i}>{i > 0 && " · "}<SurahName name={n} /></span>
                   ))}</span>
-                  <span>{page.juz.map((j) => `الجزء ${j}`).join("، ")}</span>
+                  <span>{page.juz.map((j) => `الجزء ${ar(j)}`).join("، ")}</span>
                 </div>
                 {/* as in the printed mushaf, the two opening pages are centered */}
                 <div className={`mushaf-text${page.page <= 2 ? " opening" : ""}`}>
@@ -200,7 +208,7 @@ export default function QuranPage() {
                       {/* a span, not a <button>: buttons lay out as closed boxes, which would start
                           every ayah on a new line instead of flowing as in the mushaf */}
                       <span id={`a${v.surah_number}-${v.ayah_number}`} role="button" tabIndex={0}
-                        className={`ayah${v.curated ? " has-curated" : ""}${v.ijaz_articles ? " has-ijaz" : ""}`}
+                        className={`ayah${marks && v.curated ? " has-curated" : ""}${marks && v.ijaz_articles ? " has-ijaz" : ""}`}
                         aria-pressed={sel.s === v.surah_number && sel.a === v.ayah_number}
                         aria-label={`سورة ${v.surah_name} الآية ${v.ayah_number}${v.curated ? "، لها مقارنة علمية" : ""}${v.ijaz_articles ? "، لها مقالات في الإعجاز العلمي" : ""}`}
                         onClick={() => toggle(v)}
@@ -210,42 +218,54 @@ export default function QuranPage() {
                     </span>
                   ))}
                 </div>
-                <div className="mushaf-foot">{arabicDigits(page.page)}</div>
+                <div className="mushaf-foot">{ar(page.page)}</div>
               </>
             )}
           </main>
-          <Legend />
         </>
       )}
 
       {page && verse && (
         <aside className="ayah-panel" aria-label="الآية المختارة">
           <div className="ayah-panel-head">
-            <strong>سورة <SurahName name={verse.surah_name} /> — الآية {verse.ayah_number}</strong>
-            <span className="note">الصفحة {page.page}، الجزء {verse.juz_number}</span>
+            <strong>سورة <SurahName name={verse.surah_name} /> — الآية {ar(verse.ayah_number)}</strong>
+            <span className="note">الصفحة {ar(page.page)}{verse.juz_number != null && `، الجزء ${ar(verse.juz_number)}`}</span>
             <button type="button" className="btn-ghost" onClick={() => go(sel.p, null, null, false)} aria-label="إغلاق">إغلاق</button>
           </div>
           <p className="ayah-panel-marks note">
             {verse.curated && <span className="mark mark-curated">مقارنة علمية موثّقة</span>}
-            {verse.ijaz_articles > 0 && <span className="mark mark-ijaz">{verse.ijaz_articles} من مقالات الإعجاز العلمي</span>}
+            {verse.ijaz_articles > 0 && <span className="mark mark-ijaz">{ar(verse.ijaz_articles)} من مقالات الإعجاز العلمي</span>}
             {!verse.curated && !verse.ijaz_articles && "لا توجد لهذه الآية مقارنة علمية أو مقالات إعجاز في مصادر آفاق حتى الآن؛ التفسير متاح دائمًا."}
           </p>
           <div className="ayah-actions">
             <a className="btn-primary" href={link.verse(verse.surah_number, verse.ayah_number)}>التفسير والإعجاز العلمي</a>
             <a className="btn-ai" href={link.ai(verse.surah_number, verse.ayah_number)}>✦ الذكاء الاصطناعي في الإعجاز العلمي</a>
           </div>
+          <ShareVerse s={verse.surah_number} a={verse.ayah_number} surah={verse.surah_name} text={verse.text} />
         </aside>
       )}
+      <Footer />
     </div>
   );
 }
 
-function Legend() {
+/** What the coloured marks mean; on a page, also the switch that shows them under the ayahs. */
+function Legend({ toggle }: { toggle?: { on: boolean; set: (on: boolean) => void } }) {
   return (
-    <p className="map-legend">
-      <span><span className="mark mark-curated" /> مقارنة علمية موثّقة في آفاق</span>
-      <span><span className="mark mark-ijaz" /> مقالات في الإعجاز العلمي من مصدر ثانوي</span>
-      <span className="note">(خط أخضر مزدوج: الاثنان معًا)</span>
-    </p>
+    <div className="map-legend mushaf-legend">
+      {toggle && (
+        <label className="switch">
+          <input type="checkbox" checked={toggle.on} onChange={(e) => toggle.set(e.target.checked)} />
+          إظهار علامات الإعجاز
+        </label>
+      )}
+      {(!toggle || toggle.on) && (
+        <>
+          <span className="mark mark-curated" title="أعدّ آفاق للآية مقارنة علمية موثّقة المصادر">مقارنة علمية موثّقة في آفاق</span>
+          <span className="mark mark-ijaz" title="تتناول الآية مقالات في الإعجاز العلمي (موقع الإعجاز العلمي، مصدر ثانوي)">مقالات في الإعجاز العلمي من مصدر ثانوي</span>
+          {toggle && <span className="note">(خط أخضر مزدوج: الاثنان معًا)</span>}
+        </>
+      )}
+    </div>
   );
 }

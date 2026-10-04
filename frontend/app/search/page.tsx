@@ -3,13 +3,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { AiLayer } from "../components/AiReport";
 import ConceptMap from "../components/ConceptMap";
+import Footer from "../components/Footer";
 import LinguisticLayer from "../components/LinguisticLayer";
 import ScienceLayer from "../components/ScienceLayer";
+import ShareVerse from "../components/ShareVerse";
 import SiteNav from "../components/SiteNav";
 import TafsirTimeline from "../components/TafsirTimeline";
-import { ayahCount, LayerHead, SurahName, TrustBadge } from "../components/common";
+import { ar, ayahCount, FoldContext, Layer, SurahName, TrustBadge } from "../components/common";
 import { addHistory } from "../components/history";
-import { DEMO, link, readParams, replaceUrl, verseParam } from "../components/links";
+import { link, readParams, replaceUrl, verseParam } from "../components/links";
 import type { Answer, SearchResult, TopicReason, TopicResult } from "../components/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
@@ -27,6 +29,8 @@ export default function SearchPage() {
   const [num, setNum] = useState<[number, number]>(START);
   const [phrase, setPhrase] = useState<string | null>(null);
   const [explore, setExplore] = useState<{ surah_number: number; ayah_number: number; surah_name: string; concepts: string[] }[]>([]);
+  // on a phone the results fold away once a verse is open, so the verse comes first (see .layout CSS)
+  const [showResults, setShowResults] = useState(false);
 
   async function load(s: number, a: number, scroll = true) {
     setError(null);
@@ -39,6 +43,7 @@ export default function SearchPage() {
     setAnswer(data);
     setNum([s, a]);
     setPhrase(data.concepts[0]?.key ?? null);
+    setShowResults(false);
     addHistory({ kind: "verse", s, a, surah: data.surah_name });
     replaceUrl(link.verse(s, a));
     if (scroll) document.getElementById("journey")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -69,6 +74,7 @@ export default function SearchPage() {
   async function runQuery(q: string) {
     setError(null);
     setSearch(null);
+    setShowResults(true);
     setSearching(true);
     try {
       const [t, p] = await Promise.all([fetchPage<SearchResult>("/search", q, 0), fetchPage<TopicResult>("/search/ai", q, 0)]);
@@ -108,6 +114,17 @@ export default function SearchPage() {
     return set;
   }, [answer, phrase]);
 
+  // back from the verse to the list it was chosen from, at that verse
+  function backToResults() {
+    setShowResults(true);
+    requestAnimationFrame(() => {
+      const el = document.querySelector<HTMLElement>(".results .hit[aria-pressed=true]") ?? document.querySelector<HTMLElement>(".results");
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      el?.focus({ preventScroll: true });
+    });
+  }
+  const shownCount = search ? search[tab]?.total ?? 0 : explore.length;
+
   return (
     <div className="shell">
       <SiteNav current="search" />
@@ -133,18 +150,18 @@ export default function SearchPage() {
       </details>
       <p className="error" role="alert">{error}</p>
 
-      <div className="layout">
+      <div className={`layout${answer ? " has-answer" : " no-answer"}${showResults ? " show-results" : ""}`}>
         <aside className="results" aria-label="نتائج البحث">
           <h2>{search ? "نتائج البحث" : "آيات نموذجية"}</h2>
           {!search ? (
             <>
-              <p className="empty">ابحث بجزء من آية أو بموضوع، ثم اختر الآية لتبدأ رحلتها. أو ابدأ بآية من الآيات النموذجية التي أُعدّت لها خريطة مفاهيم:</p>
+              <p className="empty">ابحث بجزء من آية أو بموضوع، ثم اختر الآية لتظهر طبقاتها: التحليل اللغوي، والتفسير عبر العصور، والمفاهيم، والمعرفة العلمية، والذكاء الاصطناعي في الإعجاز العلمي. أو ابدأ بآية من الآيات النموذجية التي أُعدّت لها خريطة مفاهيم:</p>
               <ol>
                 {explore.map((v) => (
                   <li key={`${v.surah_number}:${v.ayah_number}`}>
                     <button type="button" className="hit" onClick={() => load(v.surah_number, v.ayah_number)}
                       aria-pressed={answer?.surah_number === v.surah_number && answer?.ayah_number === v.ayah_number}>
-                      <span className="ref">سورة <SurahName name={v.surah_name} /> — <b>الآية {v.ayah_number}</b></span>
+                      <span className="ref">سورة <SurahName name={v.surah_name} /> — <b>الآية {ar(v.ayah_number)}</b></span>
                       <span className="note">{v.concepts.join("، ")}</span>
                     </button>
                   </li>
@@ -155,10 +172,10 @@ export default function SearchPage() {
             <>
               <div className="tabs result-tabs" role="tablist" aria-label="نوع النتائج">
                 <button type="button" role="tab" className="btn-ghost" aria-selected={tab === "topic"} onClick={() => setTab("topic")}>
-                  ✦ بالذكاء الاصطناعي ({search.topic?.total ?? 0})
+                  ✦ بالذكاء الاصطناعي ({ar(search.topic?.total ?? 0)})
                 </button>
                 <button type="button" role="tab" className="btn-ghost" aria-selected={tab === "text"} onClick={() => setTab("text")}>
-                  نص الآية ({search.text?.total ?? 0})
+                  نص الآية ({ar(search.text?.total ?? 0)})
                 </button>
               </div>
               {tab === "topic" ? <TopicHits r={search.topic} answer={answer} load={load} />
@@ -167,7 +184,7 @@ export default function SearchPage() {
                 const cur = search[tab];
                 return cur && cur.results.length < cur.total && (
                   <button type="button" className="btn-ghost more" onClick={loadMore} disabled={searching}>
-                    {searching ? "جارٍ التحميل..." : `عرض المزيد (المتبقي ${cur.total - cur.results.length})`}
+                    {searching ? "جارٍ التحميل..." : `عرض المزيد (المتبقي ${ar(cur.total - cur.results.length)})`}
                   </button>
                 );
               })()}
@@ -175,54 +192,65 @@ export default function SearchPage() {
           )}
         </aside>
 
-        {answer ? <Journey a={answer} highlight={highlight} onPhrase={setPhrase} open={(s, a) => load(s, a)} />
-          : (
-            <main className="journey">
-              <section className="card">
-                <LayerHead title="ابدأ رحلة الآية" />
-                <p className="lead">اكتب جزءًا من آية أو موضوعًا مثل «ذكاء الإنسان» في مربع البحث، ثم اختر الآية من النتائج لتظهر طبقاتها: التحليل اللغوي، والتفسير عبر العصور، والمفاهيم، والمعرفة العلمية.</p>
-                <p className="note">أو تصفّح المصحف من <a href={link.quran()}>القرآن الكريم</a>، أو عُد إلى بحث سابق من <a href={link.history()}>سجل البحث</a>.</p>
-              </section>
-            </main>
-          )}
+        {answer && (
+          <Journey a={answer} highlight={highlight} onPhrase={setPhrase} open={(s, a) => load(s, a)}
+            back={{ label: search ? `العودة إلى النتائج (${ar(shownCount)})` : "الآيات النموذجية", go: backToResults }} />
+        )}
       </div>
 
-      <footer className="foot">
-        نص المصحف: مجمع الملك فهد لطباعة المصحف الشريف (رواية حفص، الإصدار 3.0).
-        <br />
-        آفاق لا يطلب من الذكاء الاصطناعي تفسير القرآن، بل يستعمله للتنقل في المعرفة الموثقة حوله.
-        {!DEMO && <><br /><a href="/review">مراجعة المقارنات (للباحثين)</a></>}
-      </footer>
+      <Footer review />
     </div>
   );
 }
 
-function Journey({ a, highlight, onPhrase, open }: {
+// Folded when a verse first opens, to keep the page short: the long, detailed layers. The reader
+// opens them from their heading or from the layer bar, and the choice holds for the next verse.
+const FOLDED = ["language", "concepts", "hadith"];
+
+function Journey({ a, highlight, onPhrase, open, back }: {
   a: Answer; highlight: Set<number>; onPhrase: (k: string | null) => void; open: (s: number, a: number) => void;
+  back: { label: string; go: () => void };
 }) {
+  const [closed, setClosed] = useState<Set<string>>(() => new Set(FOLDED));
+  const fold = useMemo(() => ({
+    closed,
+    toggle: (id: string) => setClosed((c) => { const n = new Set(c); if (n.has(id)) n.delete(id); else n.add(id); return n; }),
+  }), [closed]);
+  const unfold = (id: string) => setClosed((c) => { if (!c.has(id)) return c; const n = new Set(c); n.delete(id); return n; });
+  const steps: [string, string, string?][] = [
+    ["language", "التحليل اللغوي", "١"], ["tafsir", "التفسير عبر العصور", "٢"], ["concepts", "المفاهيم والظواهر", "٣"],
+    ["science", "المعرفة العلمية", "٤"], ["ai-layer", "الذكاء الاصطناعي في الإعجاز العلمي", "٥"],
+    ...(a.hadith_matches.length > 0 ? [["hadith", "الأحاديث"] as [string, string]] : []), ["limits", "ما لا تثبته المصادر"],
+  ];
+
   return (
+    <FoldContext.Provider value={fold}>
     <main className="journey" id="journey">
+      <button type="button" className="btn-ghost back" onClick={back.go}>→ {back.label}</button>
       <section className="card verse-card" aria-label="الآية">
         <div className="layer-head"><h2 style={{ margin: 0 }}>الآية</h2><TrustBadge trust="QURANIC_TEXT" /></div>
         <p className="verse">{a.quranic_text}</p>
         <div className="meta">
-          <span>سورة <SurahName name={a.surah_name} /></span><span>الآية <b>{a.ayah_number}</b></span>
-          {a.page_number != null && <span>الصفحة <b>{a.page_number}</b></span>}
-          {a.juz_number != null && <span>الجزء <b>{a.juz_number}</b></span>}
+          <span>سورة <SurahName name={a.surah_name} /></span><span>الآية <b>{ar(a.ayah_number)}</b></span>
+          {a.page_number != null && <span>الصفحة <a href={link.mushafPage(a.page_number, a.surah_number, a.ayah_number)}><b>{ar(a.page_number)}</b></a></span>}
+          {a.juz_number != null && <span>الجزء <b>{ar(a.juz_number)}</b></span>}
         </div>
-        <div className="legend" aria-label="فئات الثقة">
-          {a.trust_legend.map((t) => <TrustBadge key={t.category} trust={t.category} title={t.description} />)}
-        </div>
+        <ShareVerse s={a.surah_number} a={a.ayah_number} surah={a.surah_name} text={a.quranic_text} />
+        <details className="legend-fold">
+          <summary>ما معنى الألوان؟</summary>
+          <p className="note">لكل معلومة في الرحلة شارة بلون فئة ثقتها:</p>
+          <dl className="legend">
+            {a.trust_legend.map((t) => (
+              <div key={t.category}><dt><TrustBadge trust={t.category} /></dt><dd>{t.description}</dd></div>
+            ))}
+          </dl>
+        </details>
       </section>
 
       <nav className="stepnav" aria-label="طبقات الرحلة">
-        <a href="#language"><b>١</b>التحليل اللغوي</a>
-        <a href="#tafsir"><b>٢</b>التفسير عبر العصور</a>
-        <a href="#concepts"><b>٣</b>المفاهيم والظواهر</a>
-        <a href="#science"><b>٤</b>المعرفة العلمية</a>
-        <a href="#ai-layer"><b>٥</b>الذكاء الاصطناعي في الإعجاز العلمي</a>
-        {a.hadith_matches.length > 0 && <a href="#hadith">الأحاديث</a>}
-        <a href="#limits">ما لا تثبته المصادر</a>
+        {steps.map(([id, label, n]) => (
+          <a key={id} href={`#${id}`} onClick={() => unfold(id)}>{n && <b>{n}</b>}{label}</a>
+        ))}
       </nav>
 
       <LinguisticLayer key={`l-${a.surah_number}-${a.ayah_number}`} a={a} highlight={highlight} />
@@ -232,10 +260,8 @@ function Journey({ a, highlight, onPhrase, open }: {
       <AiLayer key={`ai-${a.surah_number}-${a.ayah_number}`} s={a.surah_number} a={a.ayah_number} />
 
       {a.hadith_matches.length > 0 && (
-        <section className="card" id="hadith">
-          <LayerHead title="أحاديث مرتبطة بالبحث النصي" trust="POSSIBLE_CONNECTION">
-            {a.hadith_matches[0].label} كلمات البحث: «{a.hadith_matches[0].search_query}». تحقق من حكم كل حديث.
-          </LayerHead>
+        <Layer id="hadith" title="أحاديث مرتبطة بالبحث النصي" trust="POSSIBLE_CONNECTION"
+          lead={<>{a.hadith_matches[0].label} كلمات البحث: «{a.hadith_matches[0].search_query}». تحقق من حكم كل حديث.</>}>
           {a.hadith_matches.map((h, i) => (
             <div className="hadith" key={i}>
               <p className="read" style={{ margin: 0 }}>{h.text}</p>
@@ -243,11 +269,10 @@ function Journey({ a, highlight, onPhrase, open }: {
               <span className="note">الراوي: {h.narrator || "غير مذكور"} — المحدث: {h.muhaddith || "غير مذكور"} — المصدر: {h.book || "غير مذكور"}{h.reference && ` (${h.reference})`}</span>
             </div>
           ))}
-        </section>
+        </Layer>
       )}
 
-      <section className="card" id="limits">
-        <LayerHead title="ما لا تثبته المصادر" />
+      <Layer id="limits" title="ما لا تثبته المصادر">
         {a.not_established.length === 0 ? <p className="empty">لا توجد ملاحظات.</p>
           : <ul className="notes">{a.not_established.map((m, i) => <li key={i}>{m}</li>)}</ul>}
         <h3 className="subhead">المصادر</h3>
@@ -260,8 +285,9 @@ function Journey({ a, highlight, onPhrase, open }: {
             </li>
           ))}
         </ul>
-      </section>
+      </Layer>
     </main>
+    </FoldContext.Provider>
   );
 }
 
@@ -274,8 +300,8 @@ function VerseHit({ r, answer, load, children }: Hits & {
     <li>
       <button type="button" className="hit" onClick={() => load(r.surah_number, r.ayah_number)}
         aria-pressed={answer?.surah_number === r.surah_number && answer?.ayah_number === r.ayah_number}>
-        <span className="ref">سورة <SurahName name={r.surah_name} /> — <b>الآية {r.ayah_number}</b></span>
-        <span className="ayah">{r.text}</span>
+        <span className="ref">سورة <SurahName name={r.surah_name} /> — <b>الآية {ar(r.ayah_number)}</b></span>
+        <span className="ayah clamp2">{r.text}</span>
         {children}
       </button>
     </li>
@@ -289,7 +315,7 @@ function TextHits({ r, ...h }: Hits & { r: SearchResult | null }) {
       <p>
         {r.total === 0 ? "لا توجد آيات تحتوي هذا النص."
           : r.total > r.results.length
-            ? `وُجدت ${ayahCount(r.total)} تحتوي هذا النص، يُعرض منها ${r.results.length}. اختر الآية:`
+            ? `وُجدت ${ayahCount(r.total)} تحتوي هذا النص، يُعرض منها ${ar(r.results.length)}. اختر الآية:`
             : `وُجدت ${ayahCount(r.total)} تحتوي هذا النص. اختر الآية:`}
       </p>
       <ol>{r.results.map((x) => <VerseHit key={`${x.surah_number}:${x.ayah_number}`} r={x} {...h} />)}</ol>
@@ -323,7 +349,7 @@ function TopicHits({ r, ...h }: Hits & { r: TopicResult | null }) {
                   {rs.synonyms?.length ? <em className="via"> — بمرادف «{rs.synonyms.join("»، «")}»</em> : null}
                 </span>
               ))}
-              {x.more_reasons > 0 && <span className="note">و{x.more_reasons} غيرها</span>}
+              {x.more_reasons > 0 && <span className="note">و{ar(x.more_reasons)} غيرها</span>}
               {x.corrected && <span className="note">صُحّح رقم الآية من الاقتباس</span>}
             </span>
           </VerseHit>

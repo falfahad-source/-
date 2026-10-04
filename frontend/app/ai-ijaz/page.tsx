@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { AiReportBody, type AiReportData } from "../components/AiReport";
+import Footer from "../components/Footer";
 import SiteNav from "../components/SiteNav";
-import { SurahName, TrustBadge } from "../components/common";
+import { ar, SurahName, TrustBadge } from "../components/common";
 import { addHistory } from "../components/history";
 import { link, readParams, replaceUrl, verseParam } from "../components/links";
 
@@ -92,7 +93,7 @@ export default function AiIjazPage() {
             <div className="layer-head"><h2 style={{ margin: 0 }}>الآية</h2><TrustBadge trust="QURANIC_TEXT" /></div>
             <p className="verse">{report.verse.text}</p>
             <div className="meta">
-              <span>سورة <SurahName name={report.verse.surah_name} /></span><span>الآية <b>{report.verse.ayah_number}</b></span>
+              <span>سورة <SurahName name={report.verse.surah_name} /></span><span>الآية <b>{ar(report.verse.ayah_number)}</b></span>
             </div>
           </section>
 
@@ -113,6 +114,7 @@ export default function AiIjazPage() {
           <p className="read">{status.prompt}</p>
         </details>
       )}
+      <Footer />
     </div>
   );
 }

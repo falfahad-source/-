@@ -256,6 +256,11 @@ def _get_index(db: Session) -> _Index:
     return _cache
 
 
+def warm_index(db: Session) -> None:
+    """Build the index now rather than on the first search (see app.main)."""
+    _get_index(db)
+
+
 FEW = 10  # below this many verses, matches on the phrase's subject (rarest word) alone are added after the rest
 
 
