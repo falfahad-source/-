@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from app import main, topic_search
 from app.curation import load_document
 from app.models import ArticleVerse, ExternalArticle, Source, TafsirEntry, Topic, Verse, VerseTopic, WordAnalysis
-from app.topic_search import core_stem, query_stems, search_topics, stem
+from app.topic_search import is_coordinated, query_stems, search_topics, stem
 from app.trust import TrustCategory
 from tests.test_layers_answer import DOC, db  # noqa: F401 - db is a fixture
 
@@ -17,8 +17,7 @@ def test_stemming_matches_forms_of_a_word():
     assert stem("مدتها") == stem("مده") == "مده"           # pronoun + taa marbuta written ت
     assert query_stems("مدة الرضاعة الطبيعية") == ["مده", "رضاع", "طبيع"]
     assert query_stems("ما هي آيات الجنين في القرآن") == ["جنين"]  # question words dropped
-    assert core_stem("مدة الرضاعة الطبيعية") == "رضاع"      # the phrase's subject, not its head or adjective
-    assert core_stem("زكاة") is None
+    assert is_coordinated("البرق والرعد") and not is_coordinated("ذكاء الإنسان")
 
 
 @pytest.fixture()
@@ -69,7 +68,10 @@ def test_sources_add_up_and_rank(seeded):
     assert kinds[(24, 40)] == {"topic", "article"}  # the fixture's topic plus the article: reasons add up
     assert r["results"][0]["surah_number"] == 24 and r["results"][0]["score"] > r["results"][1]["score"]
     # the curated comparison's concept, and the tafsir mentioning every word typed
-    assert any(rs["kind"] == "concept" for x in search_topics(seeded, "طبقات المحيط")["results"] for rs in x["reasons"])
+    assert any(rs["kind"] == "concept" for x in search_topics(seeded, "المحيط")["results"] for rs in x["reasons"])
+    # a construct phrase whose subject no source mentions finds nothing, rather than every verse
+    # about the second word: «طبقات المحيط» is not «المحيط»
+    assert search_topics(seeded, "طبقات المحيط")["total"] == 0
     assert {rs["kind"] for x in search_topics(seeded, "العذب والمالح")["results"] for rs in x["reasons"]} == {"tafsir"}
 
 
@@ -114,3 +116,20 @@ def test_lemmas_keep_clitics_apart(lexed):
 def test_synonym_matches_and_is_named(lexed):
     assert ("المطر", ("مطر",)) in labels(lexed, "الغيث")
     assert ("المطر", ()) in labels(lexed, "المطر")
+
+
+def test_construct_phrase_needs_its_subject(lexed):
+    d = lexed
+    src = d.query(Source).first()
+    v = d.query(Verse).filter_by(surah_number=24, ayah_number=40).one()
+    d.add_all([Topic(id=20, name="خلق الإنسان", source_id=src.id), Topic(id=21, name="العقل", source_id=src.id)])
+    d.flush()
+    d.add_all([VerseTopic(verse_id=v.id, topic_id=20), VerseTopic(verse_id=v.id, topic_id=21)])
+    other = d.query(Verse).filter_by(surah_number=25, ayah_number=53).one()
+    d.add_all([Topic(id=22, name="طباع الإنسان", source_id=src.id)])
+    d.flush()
+    d.add(VerseTopic(verse_id=other.id, topic_id=22))
+    d.commit()
+    hits = {(x["surah_number"], x["ayah_number"]) for x in search_topics(d, "ذكاء الإنسان")["results"]}
+    # 24:40 speaks of العقل (a synonym of ذكاء) and of الإنسان; 25:53 only of الإنسان
+    assert (24, 40) in hits and (25, 53) not in hits

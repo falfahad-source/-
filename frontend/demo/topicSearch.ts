@@ -70,18 +70,11 @@ export function textWords(text: string): Words {
   return [...seen.values()];
 }
 
-export function coreStem(q: string): string | null {
-  for (const w of norm(q).split(" ")) {
-    if (w && !STOPWORDS.has(w) && PREFIXES.some((p) => w.startsWith(p))) {
-      const s = stem(w);
-      if (s.length >= 3) return s;
-    }
-  }
-  return null;
-}
+// «البرق والرعد»: words joined by و ask for either; a construct phrase asks for its subject
+const isCoordinated = (q: string) => norm(q).split(" ").slice(1).some((w) => w.startsWith("وال"));
 
-const wordMatch = (q: string, c: string) =>
-  c === q || c.startsWith(q) || (q.length >= 4 && c.includes(q)) || (c.length >= 4 && q.length - c.length <= 1 && q.startsWith(c));
+const wordMatch = (q: string, c: string) => q.length <= 3 ? c === q
+  : c === q || c.startsWith(q) || c.includes(q) || (c.length >= 4 && q.length - c.length <= 1 && q.startsWith(c));
 const meets = (a: Set<string>, b: Set<string>) => { for (const x of a) if (b.has(x)) return true; return false; };
 const sameWord = (qs: string, ql: Set<string>, cs: string, cl: Set<string>) =>
   ql.size && cl.size ? meets(ql, cl) : wordMatch(qs, cs);
@@ -116,26 +109,36 @@ function credit(w: Word, words: Words, allowSynonyms: boolean): [number, string 
 type Reason = { kind: Kind; label: string; url: string | null; coverage: number; synonyms: string[] };
 type Hit = Map<string, [number, string | null]>;
 
-function score(entries: Entry[], words: Word[], hits: Hit[], weight: Record<string, number>, core: string | null) {
-  const sc = new Map<number, number>(), reasons = new Map<number, Reason[]>();
+function score(entries: Entry[], words: Word[], hits: Hit[], weight: Record<string, number>, either: boolean, core: string | null) {
   const total = words.reduce((a, w) => a + weight[w.stem], 0);
+  const raw = new Map<number, number>(), reasons = new Map<number, Reason[]>(), best = new Map<number, Map<string, number>>();
   entries.forEach((e, i) => {
     const h = hits[i];
     if (!h.size) return;
     let sum = 0;
     for (const [w, [c]] of h) sum += weight[w] * c;
     const cov = sum / total;
-    if (e.kind === "tafsir") { if (cov < 0.75) return; }
-    else if (cov < 0.5 && h.size / words.length < 0.5 && !(core && h.has(core))) return;
+    if (e.kind === "tafsir" && cov < 0.75) return;
     const via = [...new Set([...h.values()].map(([, v]) => v).filter((v): v is string => !!v))].sort();
     for (const v of e.verses) {
       const rs = reasons.get(v) ?? [];
       if (rs.some((r) => r.kind === e.kind && r.label === e.label)) continue;
-      sc.set(v, (sc.get(v) ?? 0) + WEIGHTS[e.kind] * cov * cov);
+      raw.set(v, (raw.get(v) ?? 0) + WEIGHTS[e.kind] * cov * cov);
       rs.push({ kind: e.kind, label: e.label, url: e.url, coverage: Math.round(cov * 100) / 100, synonyms: via });
       reasons.set(v, rs);
+      const b = best.get(v) ?? new Map<string, number>();
+      for (const [w, [c]] of h) b.set(w, Math.max(b.get(w) ?? 0, c));
+      best.set(v, b);
     }
   });
+  // a verse is judged on all its sources together (see _score in the backend)
+  const sc = new Map<number, number>();
+  for (const [v, got] of best) {
+    let s2 = 0;
+    for (const [w, c] of got) s2 += weight[w] * c;
+    const vcov = s2 / total;
+    if (vcov >= 0.5 || (either && got.size / words.length >= 0.5) || (core !== null && got.has(core))) sc.set(v, raw.get(v)! * vcov);
+  }
   return { sc, reasons };
 }
 
@@ -155,9 +158,13 @@ export function searchTopics(entries: Entry[], verse: (i: number) => [number, nu
   const n = entries.length;
   const weight: Record<string, number> = {};
   for (const w of words) weight[w.stem] = Math.log((n + 1) / (hits.filter((h) => h.has(w.stem)).length + 1)) + 1;
-  let r = score(entries, words, hits, weight, null);
-  const core = coreStem(q);
-  if (r.sc.size < FEW && words.length >= 2 && core) r = score(entries, words, hits, weight, core);
+  const either = isCoordinated(q);
+  let r = score(entries, words, hits, weight, either, null);
+  if (r.sc.size < FEW && words.length >= 2) {
+    // the phrase's subject: its rarest word in the sources (the first such, on a tie)
+    const core = words.reduce((a, w) => (weight[w.stem] > weight[a.stem] ? w : a)).stem;
+    r = score(entries, words, hits, weight, either, core);
+  }
   const ranked = [...r.sc.keys()].sort((a, b) => {
     const r6 = (x: number) => Math.round(x * 1e6) / 1e6;  // equal scores tie exactly, as in the backend
     const d = r6(r.sc.get(b)!) - r6(r.sc.get(a)!);

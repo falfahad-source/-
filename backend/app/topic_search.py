@@ -12,10 +12,10 @@ attached pronouns and common suffixes removed), so «الرضاعة» matches «
 «الإرضاع» and «مدتها» matches «مدة», but «رضا» does not match «مرضاة». Each query word
 weighs by how rare it is across the sources (inverse document frequency), so in
 «مدة الرضاعة الطبيعية» the topic word «الرضاعة» counts for more than «مدة». A source
-text counts when it matches half the query's words or words carrying half its
-weight (three quarters of the weight for the tafsir, which is long and would match
-loosely); a partial match scores by the square of its share, so verses matching the
-whole subject come first.
+text counts when its matches carry half the query's weight (three quarters for the
+tafsir, which is long and would match loosely), or, for words joined by و («البرق
+والرعد»), when it matches half of them; a partial match scores by the square of its
+share, so verses matching the whole subject come first.
 
 Two things widen a word beyond its spelling:
 - the same word in another form, broken plurals included («البحار» = «البحر»,
@@ -93,20 +93,17 @@ def query_stems(q: str) -> list[str]:
     return out
 
 
-def core_stem(q: str) -> str | None:
-    """The subject of a phrase: its first definite noun. In «مدة الرضاعة الطبيعية» the word
-    before it is a construct head (مدة) and the one after an adjective (الطبيعية), so the
-    subject is «الرضاعة»; in «تكوين الجنين في الرحم» it is «الجنين»."""
-    for w in normalize_arabic(q).split():
-        if w not in STOPWORDS and any(w.startswith(p) for p in _PREFIXES):
-            s = stem(w)
-            if len(s) >= 3:
-                return s
-    return None
+def is_coordinated(q: str) -> bool:
+    """«البرق والرعد»: words joined by و ask for either, so matching one of them is enough.
+    A construct phrase («ذكاء الإنسان», «مدة الرضاعة») asks for its subject, not any word."""
+    return any(w.startswith("وال") for w in normalize_arabic(q).split()[1:])
 
 
 def _word_match(q: str, c: str) -> bool:
-    return c == q or c.startswith(q) or (len(q) >= 4 and q in c) or (len(c) >= 4 and len(q) - len(c) <= 1 and q.startswith(c))
+    # a stem of three letters or fewer must be the whole word: «لب» is not «لبن», «ملح» not «ملحد»
+    if len(q) <= 3:
+        return c == q
+    return c == q or c.startswith(q) or q in c or (len(c) >= 4 and len(q) - len(c) <= 1 and q.startswith(c))
 
 
 Lexicon = dict[str, set[str]]  # normalized Quran word (and without its article) -> lemmas
@@ -259,7 +256,7 @@ def _get_index(db: Session) -> _Index:
     return _cache
 
 
-FEW = 10  # below this many verses, matches on the phrase's subject alone are added after the rest
+FEW = 10  # below this many verses, matches on the phrase's subject (rarest word) alone are added after the rest
 
 
 def search_topics(db: Session, q: str, limit: int = 50, offset: int = 0) -> dict:
@@ -278,10 +275,13 @@ def search_topics(db: Session, q: str, limit: int = 50, offset: int = 0) -> dict
         hits.append(h)
     n = len(idx.entries)
     weight = {w.stem: math.log((n + 1) / (sum(1 for h in hits if w.stem in h) + 1)) + 1.0 for w in words}
-    score, reasons = _score(idx, words, hits, weight)
-    core = core_stem(q)
-    if len(score) < FEW and len(words) >= 2 and core:
-        score, reasons = _score(idx, words, hits, weight, core=core)
+    either = is_coordinated(q)
+    score, reasons = _score(idx, words, hits, weight, either=either)
+    if len(score) < FEW and len(words) >= 2:
+        # the phrase's subject is its most informative word, the rarest in the sources: «الرضاعة»
+        # in «مدة الرضاعة الطبيعية», «ذكاء» in «ذكاء الإنسان» (not «الإنسان», which is everywhere)
+        core = max(words, key=lambda w: (weight[w.stem], -words.index(w))).stem
+        score, reasons = _score(idx, words, hits, weight, either=either, core=core)
     # rounded so that equal scores tie exactly (whatever order the floats were added in), then mushaf order
     ranked = sorted(score, key=lambda vid: (-round(score[vid], 6), idx.verses[vid][0], idx.verses[vid][1]))
     rows = []
@@ -293,26 +293,36 @@ def search_topics(db: Session, q: str, limit: int = 50, offset: int = 0) -> dict
     return {"query": q, "words": [w.stem for w in words], "total": len(ranked), "offset": offset, "results": rows}
 
 
-def _score(idx: _Index, words, hits, weight, core: str | None = None):
-    """Verses' scores and reasons. With `core`, entries that match only the phrase's
-    subject word are let in as well (the few-results fallback)."""
-    score: dict[int, float] = defaultdict(float)
-    reasons: dict[int, list[dict]] = defaultdict(list)
+def _score(idx: _Index, words, hits, weight, either: bool = False, core: str | None = None):
+    """Verses' scores and reasons. A verse is judged on all its sources together: the query
+    words they match between them (each at its best credit) must carry half the query's
+    weight; with `either` (coordinated words) it is enough to match half the words; with
+    `core`, to match the phrase's subject (the few-results fallback). So «حركة الشمس» keeps
+    a verse whose topics speak of «حركتهما» and of «الشمس» separately, while «ذكاء الإنسان»
+    drops the verses that only speak of «الإنسان». The verse's score, the sum of its
+    sources' scores, is then scaled by that coverage."""
     total = sum(weight.values())
+    raw: dict[int, float] = defaultdict(float)
+    reasons: dict[int, list[dict]] = defaultdict(list)
+    best: dict[int, dict[str, float]] = defaultdict(dict)
     for e, h in zip(idx.entries, hits):
         if not h:
             continue
         cov = sum(weight[w] * c for w, (c, _) in h.items()) / total
-        if e.kind == "tafsir":
-            if cov < 0.75:
-                continue
-        elif cov < 0.5 and len(h) / len(words) < 0.5 and core not in h:
+        if e.kind == "tafsir" and cov < 0.75:
             continue
         via = sorted({v for _, v in h.values() if v})
         for vid in e.verse_ids:
             if any(r["kind"] == e.kind and r["label"] == e.label for r in reasons[vid]):
                 continue  # two index entries with the same name are one reason, counted once
-            score[vid] += WEIGHTS[e.kind] * cov * cov  # a partial match ranks well below a full one
+            raw[vid] += WEIGHTS[e.kind] * cov * cov  # a partial match ranks well below a full one
             reasons[vid].append({"kind": e.kind, "label": e.label, "url": e.url, "coverage": round(cov, 2),
                                  "synonyms": via})
-    return score, reasons
+            for w, (c, _) in h.items():
+                best[vid][w] = max(best[vid].get(w, 0.0), c)
+    score: dict[int, float] = {}
+    for vid, got in best.items():
+        vcov = sum(weight[w] * c for w, c in got.items()) / total
+        if vcov >= 0.5 or (either and len(got) / len(words) >= 0.5) or core in got:
+            score[vid] = raw[vid] * vcov
+    return score, {vid: reasons[vid] for vid in score}
