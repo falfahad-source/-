@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Markdown from "../components/Markdown";
+import { AiReportBody, type AiReportData } from "../components/AiReport";
 import SiteNav from "../components/SiteNav";
 import { SurahName, TrustBadge } from "../components/common";
 import { addHistory } from "../components/history";
 import { link, readParams, replaceUrl, verseParam } from "../components/links";
-import type { Trust } from "../components/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
 
@@ -14,11 +13,7 @@ type Status = {
   mode: "mock" | "live"; provider: string; model: string | null; configured: boolean;
   missing_settings: string[]; prompt_version: string; prompt: string;
 };
-type Report = {
-  verse: { surah_number: number; ayah_number: number; surah_name: string; text: string };
-  mode: "mock" | "live"; provider: string; model: string | null; prompt_version: string;
-  generated_at: string; trust_category: Trust; disclaimer: string; report_markdown: string;
-};
+type Report = AiReportData;
 
 export default function AiIjazPage() {
   const [status, setStatus] = useState<Status | null>(null);
@@ -107,11 +102,7 @@ export default function AiIjazPage() {
               <TrustBadge trust={report.trust_category} />
               {report.mode === "mock" && <span className="pill">تجريبي</span>}
             </div>
-            <p className="ai-disclaimer">{report.disclaimer}</p>
-            <Markdown text={report.report_markdown} />
-            <p className="note">
-              {report.provider}{report.model && ` (${report.model})`} — نسخة التعليمات {report.prompt_version} — {new Date(report.generated_at).toLocaleString("ar")}
-            </p>
+            <AiReportBody r={report} />
           </section>
         </main>
       )}

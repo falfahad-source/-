@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AiLayer } from "../components/AiReport";
 import ConceptMap from "../components/ConceptMap";
 import LinguisticLayer from "../components/LinguisticLayer";
 import ScienceLayer from "../components/ScienceLayer";
@@ -219,15 +220,16 @@ function Journey({ a, highlight, onPhrase, open }: {
         <a href="#tafsir"><b>٢</b>التفسير عبر العصور</a>
         <a href="#concepts"><b>٣</b>المفاهيم والظواهر</a>
         <a href="#science"><b>٤</b>المعرفة العلمية</a>
+        <a href="#ai-layer"><b>٥</b>الذكاء الاصطناعي في الإعجاز العلمي</a>
         {a.hadith_matches.length > 0 && <a href="#hadith">الأحاديث</a>}
         <a href="#limits">ما لا تثبته المصادر</a>
-        <a href={link.ai(a.surah_number, a.ayah_number)}><b>✦</b>الذكاء الاصطناعي في الإعجاز العلمي</a>
       </nav>
 
       <LinguisticLayer key={`l-${a.surah_number}-${a.ayah_number}`} a={a} highlight={highlight} />
       <TafsirTimeline a={a} />
       <ConceptMap key={`m-${a.surah_number}-${a.ayah_number}`} a={a} open={open} onPhrase={onPhrase} />
       <ScienceLayer a={a} open={open} />
+      <AiLayer key={`ai-${a.surah_number}-${a.ayah_number}`} s={a.surah_number} a={a.ayah_number} />
 
       {a.hadith_matches.length > 0 && (
         <section className="card" id="hadith">

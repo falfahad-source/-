@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from app import main
 from app.ai_research import api, providers
 from app.ai_research.mock import PLACEHOLDER
+from app.models import AiReport
 from app.ai_research.prompt import RESEARCH_PROMPT
 from tests.test_layers_answer import db  # noqa: F401 - db is a fixture
 
@@ -82,11 +83,13 @@ def test_http_provider_sends_prompt_as_system_and_verse_as_user(client, monkeypa
     assert sent["headers"]["Authorization"] == "Bearer " + "k" * 20
 
     monkeypatch.setattr(providers.requests, "post", lambda *a, **k: FakeResponse(500, {}))
-    r = client.post("/ai-research", json={"surah_number": 24, "ayah_number": 40})
+    again = client.post("/ai-research", json={"surah_number": 24, "ayah_number": 40}).json()
+    assert again["saved"] and again["report_markdown"] == "# تقرير"  # paid once: stored, not asked again
+    r = client.post("/ai-research", json={"surah_number": 25, "ayah_number": 53})
     assert r.status_code == 502 and "k" * 20 not in r.text  # the key never leaks
 
 
-def test_live_reports_are_limited_per_client(client, monkeypatch):
+def test_live_reports_are_limited_per_client(client, db, monkeypatch):  # noqa: F811
     monkeypatch.setenv("AFAQ_AI_PROVIDER", "http")
     monkeypatch.setenv("AFAQ_AI_API_URL", "https://ai.example/v1/chat/completions")
     monkeypatch.setenv("AFAQ_AI_API_KEY", "k" * 20)
@@ -95,7 +98,31 @@ def test_live_reports_are_limited_per_client(client, monkeypatch):
     monkeypatch.setattr(api, "_recent", api.defaultdict(api.deque))
     monkeypatch.setattr(providers.requests, "post",
                         lambda *a, **k: FakeResponse(200, {"choices": [{"message": {"content": "# r"}}]}))
-    body = {"surah_number": 24, "ayah_number": 40}
-    assert [client.post("/ai-research", json=body).status_code for _ in range(3)] == [200, 200, 429]
+    body, other = {"surah_number": 24, "ayah_number": 40}, {"surah_number": 25, "ayah_number": 53}
+    assert client.post("/ai-research", json=body).status_code == 200
+    assert client.post("/ai-research", json=body).status_code == 200    # stored: not counted
+    assert client.post("/ai-research", json=other).status_code == 200
+    db.query(AiReport).delete()
+    db.commit()
+    assert client.post("/ai-research", json=body).status_code == 429    # a third paid report this hour
     monkeypatch.setenv("AFAQ_AI_PROVIDER", "mock")  # test mode is never limited
     assert client.post("/ai-research", json=body).status_code == 200
+
+
+def test_report_for_the_verse_page(client, db, monkeypatch):  # noqa: F811
+    # test mode: the free test report comes with the verse
+    r = client.get("/ai-research/report", params={"surah_number": 24, "ayah_number": 40}).json()
+    assert r["mode"] == "mock" and "تقرير تجريبي" in r["report_markdown"]
+    # connected platform: nothing is generated here; the stored report once there is one
+    for k, v in {"AFAQ_AI_PROVIDER": "http", "AFAQ_AI_API_URL": "https://ai.example/v1/chat/completions",
+                 "AFAQ_AI_API_KEY": "k" * 20, "AFAQ_AI_MODEL": "m1"}.items():
+        monkeypatch.setenv(k, v)
+    monkeypatch.setattr(providers.requests, "post", lambda *a, **k: (_ for _ in ()).throw(AssertionError("no call")))
+    params = {"surah_number": 24, "ayah_number": 40}
+    assert client.get("/ai-research/report", params=params).json()["report_markdown"] is None
+    db.add(AiReport(surah_number=24, ayah_number=40, prompt_version=api.PROMPT_VERSION, model="m1",
+                    report_markdown="# محفوظ", generated_at=api.dt.datetime(2026, 10, 4)))
+    db.commit()
+    r = client.get("/ai-research/report", params=params).json()
+    assert r["report_markdown"] == "# محفوظ" and r["saved"]
+    assert client.get("/ai-research/report", params={"surah_number": 2, "ayah_number": 255}).status_code == 404

@@ -342,3 +342,7 @@ a.btn-primary { color: var(--sheet); }
   .mushaf-page { padding: 10px 12px 8px; box-shadow: none; }
   .mushaf-page .mushaf-text { font-size: 1.45rem; }
 }
+
+/* AI layer in the verse journey */
+.ai-fold > summary { margin-bottom: 8px; }
+.ai-generate { display: grid; gap: 10px; justify-items: start; padding: 12px 14px; border: 1px dashed var(--violet); border-radius: 12px; background: var(--violet-soft); }

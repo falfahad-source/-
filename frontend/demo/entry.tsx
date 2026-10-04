@@ -155,8 +155,9 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   }
   // «الذكاء الاصطناعي في الإعجاز العلمي»: the same answers as a server in test mode (AFAQ_AI_PROVIDER=mock)
   if (url.pathname === "/ai-research/status") return json(AI.status);
-  if (url.pathname === "/ai-research" && init?.method === "POST") {
-    const { surah_number: s, ayah_number: a } = JSON.parse(String(init.body));
+  if (url.pathname === "/ai-research/report" || (url.pathname === "/ai-research" && init?.method === "POST")) {
+    const { surah_number: s, ayah_number: a } = init?.method === "POST" ? JSON.parse(String(init.body))
+      : { surah_number: +url.searchParams.get("surah_number")!, ayah_number: +url.searchParams.get("ayah_number")! };
     if (!(s >= 1 && s <= 114 && a >= 1 && a <= 286)) return json({ detail: "رقم السورة أو الآية خارج النطاق." }, 422);
     const v = DATA.verses.find((x) => x[0] === s && x[1] === a);
     if (!v) return json({ detail: "لم يتم العثور على هذه الآية في المصادر المعتمدة المستوعبة حتى الآن." }, 404);
@@ -189,6 +190,10 @@ function App() {
     // a link the reader followed: open that page afresh, as a server build would. The Quran browser
     // follows its own surah links, so it keeps its state.
     const on = () => setView((was) => {
+      // an in-page anchor of the current view («#tafsir», «#ai-layer» in the verse journey) is
+      // a jump within the page, not a route, even when it looks like one («#ai-…»)
+      const id = decodeURIComponent(location.hash.slice(1));
+      if (id && document.getElementById(id)) return was;
       const r = route();
       if (r === "quran" && was.r === "quran") return was;
       scrollTo(0, 0);
