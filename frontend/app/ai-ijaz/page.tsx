@@ -15,7 +15,6 @@ type Status = {
   missing_settings: string[]; tools?: string[]; prompt_version: string; prompt: string;
 };
 type Report = AiReportData;
-const TOOL: Record<string, string> = { web_search: "البحث على الإنترنت", file_search: "البحث في الملفات المرجعية", structured_outputs: "مخرجات منظمة" };
 
 export default function AiIjazPage() {
   const [status, setStatus] = useState<Status | null>(null);
@@ -58,13 +57,10 @@ export default function AiIjazPage() {
       </header>
       <p className="note"><a href={link.verse(num[0], num[1])}>← التفسير والمعرفة العلمية لهذه الآية</a></p>
 
-      {status && (
+      {status && (status.mode === "mock" || !status.configured) && (
         <div className={`ai-mode ${status.mode}`} role="status">
           {status.mode === "mock" ? (
             <><strong>وضع الاختبار.</strong> منصة الذكاء الاصطناعي لم تُربط بعد؛ يعمل القسم كاملًا لكن التقرير قالب تجريبي بلا نتائج.</>
-          ) : status.configured ? (
-            <><strong>متصل بـ{status.provider}</strong>{status.model && <> — النموذج: <code dir="ltr">{status.model}</code></>}
-              {status.tools && status.tools.length > 0 && <> — الأدوات: {status.tools.map((t) => TOOL[t] ?? t).join("، ")}</>}.</>
           ) : (
             <><strong>المنصة غير مكتملة الإعداد على الخادم:</strong> <code dir="ltr">{status.missing_settings.join(", ")}</code></>
           )}

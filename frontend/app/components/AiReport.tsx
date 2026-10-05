@@ -84,11 +84,6 @@ export function AiReportBody({ r }: { r: AiReportData }) {
         </p>
       )}
       {r.report_markdown && <Markdown text={r.report_markdown} />}
-      <p className="note">
-        {r.provider}{r.model && ` (${r.model})`} — نسخة التعليمات {r.prompt_version}
-        {r.generated_at && <> — {new Date(r.generated_at).toLocaleString("ar")}</>}
-        {r.saved && " — تقرير محفوظ"}
-      </p>
     </>
   );
 }
