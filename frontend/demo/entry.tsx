@@ -165,7 +165,10 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
       verse: { surah_number: v[0], ayah_number: v[1], surah_name: v[2], text: v[3] },
       mode: AI.status.mode, provider: AI.status.provider, model: AI.status.model, prompt_version: AI.status.prompt_version,
       generated_at: new Date().toISOString(), trust_category: "UNVERIFIED_CLAIM", disclaimer: AI.disclaimer,
-      report_markdown: AI.report_template.replace("{surah_name}", v[2]).replace("{ayah_number}", String(v[1])),
+      // every occurrence: the template names the verse in the title, the verse section and the reference
+      report_markdown: AI.report_template.split("{surah_name}").join(v[2]).split("{ayah_number}").join(String(v[1]).replace(/\d/g, (d) => "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669"[+d]))
+        .split("{text}").join(v[3]),
+      confidence_level: null, confidence_label: null, checks: null, report: null,
     });
   }
   return json({ detail: "غير متاح في النسخة التجريبية." }, 404);

@@ -23,7 +23,8 @@ const data = readFileSync(join(here, "data.json"), "utf8").replace(/<\//g, "<\\/
 // «الذكاء الاصطناعي في الإعجاز العلمي» in test mode: prompt, disclaimer and report template from the backend
 const ai = execFileSync("python", ["-m", "app.ai_research.demo_data"], { cwd: join(here, "..", "..", "backend") })
   .toString().replace(/<\//g, "<\\/");
-const html = `<title>آفاق</title>
+const html = `<meta charset="utf-8">
+<title>آفاق</title>
 <link rel="icon" href="data:image/svg+xml;base64,${readFileSync(join(here, "..", "app", "icon.svg")).toString("base64")}">
 <style>${css}</style>
 <div id="root" dir="rtl" lang="ar"></div>

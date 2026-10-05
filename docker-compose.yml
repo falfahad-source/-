@@ -14,7 +14,7 @@ services:
 
   backend:
     build: ./backend
-    # AFAQ_AI_* (AI platform) and AFAQ_REVIEWERS come from .env when it exists;
+    # AFAQ_AI_* and OPENAI_* (AI platform) and AFAQ_REVIEWERS come from .env when it exists;
     # DATABASE_URL below wins over the .env one, which points at localhost.
     env_file:
       - path: .env

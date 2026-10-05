@@ -15,7 +15,8 @@ type MushafPage = { page: number; pages: number; juz: number[]; basmala: string 
 type Sel = { p: number | null; s: number | null; a: number | null };
 
 // Surah names are stored in Uthmani script; strip the marks so the index filter matches plain typing.
-const plain = (t: string) => t.replace(/[ؐ-ًؚ-ٰٟۖ-ۭ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي");
+// \u escapes: literal Arabic in a character class is reordered by right-to-left editors
+const plain = (t: string) => t.replace(/[\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed]/g, "").replace(/[\u0623\u0625\u0622\u0671]/g, "\u0627").replace(/\u0629/g, "\u0647").replace(/\u0649/g, "\u064a");
 const MARKS_KEY = "afaq-mushaf-marks";
 
 function current(): Sel {

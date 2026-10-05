@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AiReportBody, type AiReportData } from "../components/AiReport";
+import { AiReportBody, type AiReportData, type ResearchJob, ResearchProgress, startResearch } from "../components/AiReport";
 import Footer from "../components/Footer";
 import SiteNav from "../components/SiteNav";
 import { ar, SurahName, TrustBadge } from "../components/common";
@@ -12,15 +12,17 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
 
 type Status = {
   mode: "mock" | "live"; provider: string; model: string | null; configured: boolean;
-  missing_settings: string[]; prompt_version: string; prompt: string;
+  missing_settings: string[]; tools?: string[]; prompt_version: string; prompt: string;
 };
 type Report = AiReportData;
+const TOOL: Record<string, string> = { web_search: "البحث على الإنترنت", file_search: "البحث في الملفات المرجعية", structured_outputs: "مخرجات منظمة" };
 
 export default function AiIjazPage() {
   const [status, setStatus] = useState<Status | null>(null);
   const [num, setNum] = useState<[number, number]>([24, 40]);
   const [report, setReport] = useState<Report | null>(null);
   const [busy, setBusy] = useState(false);
+  const [job, setJob] = useState<ResearchJob | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -35,23 +37,15 @@ export default function AiIjazPage() {
     e.preventDefault();
     setError(null);
     setReport(null);
+    setJob(null);
     setBusy(true);
     try {
-      const res = await fetch(`${API_BASE}/ai-research`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ surah_number: num[0], ayah_number: num[1] }),
-      });
-      const body = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        const d = body.detail;
-        setError(typeof d === "string" ? d : "تعذّر إنشاء التقرير. تحقق من رقم السورة والآية.");
-        return;
-      }
+      const body = await startResearch(num[0], num[1], setJob);
       setReport(body);
       addHistory({ kind: "ai", s: num[0], a: num[1], surah: body.verse.surah_name, mode: body.mode });
       replaceUrl(link.ai(num[0], num[1]));
-    } catch {
-      setError("تعذّر الاتصال بالخادم.");
+    } catch (e) {
+      setError(e instanceof TypeError ? "تعذّر الاتصال بالخادم." : (e as Error).message || "تعذّر إنشاء التقرير. تحقق من رقم السورة والآية.");
     } finally { setBusy(false); }
   }
 
@@ -69,7 +63,8 @@ export default function AiIjazPage() {
           {status.mode === "mock" ? (
             <><strong>وضع الاختبار.</strong> منصة الذكاء الاصطناعي لم تُربط بعد؛ يعمل القسم كاملًا لكن التقرير قالب تجريبي بلا نتائج.</>
           ) : status.configured ? (
-            <><strong>متصل بمنصة الذكاء الاصطناعي</strong>{status.model && <> — النموذج: <code dir="ltr">{status.model}</code></>}.</>
+            <><strong>متصل بـ{status.provider}</strong>{status.model && <> — النموذج: <code dir="ltr">{status.model}</code></>}
+              {status.tools && status.tools.length > 0 && <> — الأدوات: {status.tools.map((t) => TOOL[t] ?? t).join("، ")}</>}.</>
           ) : (
             <><strong>المنصة غير مكتملة الإعداد على الخادم:</strong> <code dir="ltr">{status.missing_settings.join(", ")}</code></>
           )}
@@ -85,6 +80,7 @@ export default function AiIjazPage() {
         </label>
         <button className="btn-primary" type="submit" disabled={busy}>{busy ? "جارٍ البحث والتحليل..." : "ابدأ البحث"}</button>
       </form>
+      {busy && <ResearchProgress job={job} />}
       <p className="error" role="alert">{error}</p>
 
       {report && (

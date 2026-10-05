@@ -1,84 +1,24 @@
-"""Test-mode report. It has the exact layout the researcher prompt asks for, so the page
-can be checked end to end, but every finding is a placeholder: test mode must never put
-a scientific claim, a tafsir attribution or a citation in front of a user."""
+"""Test-mode report. It has the exact structure of a real one (schema.py), so the page can be
+checked end to end, but every finding is a placeholder: test mode must never put a
+scientific claim, a tafsir attribution or a citation in front of a user."""
 
-PLACEHOLDER = "_[يملؤه نموذج الذكاء الاصطناعي عند ربط المنصة]_"
+PLACEHOLDER = "_[يملؤه الباحث الآلي عند ربط المنصة]_"
 
 
-def mock_report(verse: dict) -> str:
-    ref = f"سورة {verse['surah_name']}، الآية {verse['ayah_number']}"
+def mock_data(verse: dict) -> dict:
     p = PLACEHOLDER
-    return f"""# تقرير تجريبي — {ref}
-
-> **هذا تقرير تجريبي وليس بحثًا.** منصة الذكاء الاصطناعي لم تُربط بعد، فهذا القالب يبيّن شكل التقرير الذي سيصل منها فقط. لا يحتوي على أي نتيجة علمية أو تفسيرية أو مصدر حقيقي.
-
----
-
-## ١. فهم الآية
-
-{p}
-
-## ٢. ما يمكن اختباره علميًا في الآية
-
-- {p}
-
-## ٣–٧. البحث العلمي والاختبار ومحاولة الدحض والصورة الكاملة
-
-{p}
-
----
-
-### 🔬 [عنوان الظاهرة]
-
-**الآية:** {p}
-
-**الاكتشاف العلمي:** {p}
-
-**وجه العلاقة:** {p}
-
-**الدليل العلمي:** {p}
-
-**التاريخ العلمي:** {p}
-
-**المعرفة السابقة:** {p}
-
-**المصادر التفسيرية المستخدمة:** {p}
-
-**أقوى اعتراض:** {p}
-
-**الحكم:** {p}
-
-**التقييم:** —/10
-
----
-
-## المصادر
-
-لا توجد مصادر في وضع الاختبار.
-
----
-
-## النتيجة النهائية
-
-### ١. أقوى أوجه الإعجاز أو التوافق العلمي
-
-{p}
-
-### ٢. جدول مختصر
-
-| الآية/الجزء | الظاهرة العلمية | قوة الدليل العلمي | قوة العلاقة بالآية | المعرفة السابقة | التقييم |
-|---|---|---|---|---|---|
-| — | — | — | — | — | —/10 |
-
-### ٣. أقوى اكتشاف
-
-{p}
-
-### ٤. أقوى اعتراض عليه
-
-{p}
-
-### ٥. الحكم النهائي
-
-{p}
-"""
+    return {
+        "verse_reference": f"سورة {verse['surah_name']}، الآية {verse['ayah_number']}",
+        "scientific_topic": p, "potential_claim": p, "related_text": p, "link_kind": None,
+        "quranic_context": p, "key_words": [{"word": "[كلمة]", "meaning": p, "source_ids": ["Q1"]}],
+        "interpretive_boundaries": p, "alternative_readings": [p],
+        "scientific_background": p, "scientific_consensus": None, "consensus_note": "",
+        "historical_background": p, "known_before_revelation": None, "comparison": p,
+        "supporting_evidence": [{"point": p, "source_ids": ["S1"]}],
+        "counter_evidence": [{"point": p, "source_ids": ["S2"]}],
+        "alternative_explanations": [p], "critical_analysis": [{"issue": "other", "note": p}],
+        "scientific_claim_assessment": {"verdict": None, "reason": p},
+        "correspondence_assessment": {"verdict": None, "reason": p},
+        "confidence_level": None, "final_assessment": p, "hypotheses": [], "research_gaps": [],
+        "quranic_sources": [], "scientific_sources": [], "checks": None,
+    }

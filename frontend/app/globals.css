@@ -415,3 +415,17 @@ a.btn-primary { color: var(--sheet); }
 /* AI layer in the verse journey */
 .ai-fold > summary { margin-bottom: 8px; }
 .ai-generate { display: grid; gap: 10px; justify-items: start; padding: 12px 14px; border: 1px dashed var(--accent); border-radius: 12px; background: var(--accent-soft); }
+
+/* AI research: the stages of a running research, and the verdict line of a report */
+.research-progress { display: grid; gap: 6px; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 12px; background: var(--sheet); margin: 10px 0; }
+.research-progress ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.stage { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.stage-mark { width: 18px; height: 18px; flex: none; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid var(--rule); font-size: .75rem; }
+.stage-done { color: var(--text); }
+.stage-done .stage-mark { border-color: var(--t-quran); color: var(--t-quran); }
+.stage-active { color: var(--ink); font-weight: 600; }
+.stage-active .stage-mark { border-color: var(--accent); border-top-color: transparent; animation: spin 1s linear infinite; }
+.stage-skipped { opacity: .7; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .stage-active .stage-mark { animation: none; border-top-color: var(--accent); } }
+.ai-verdict { margin: 0 0 12px; padding: 8px 12px; border-radius: 10px; background: var(--accent-soft); }

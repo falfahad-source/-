@@ -347,4 +347,5 @@ class AiReport(Base):
     prompt_version = Column(String, nullable=False)
     model = Column(String, nullable=False)
     report_markdown = Column(Text, nullable=False)
+    report_json = Column(Text, nullable=True)   # the checked report (ai_research/report.py), for display and reuse
     generated_at = Column(DateTime, nullable=False)
