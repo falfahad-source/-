@@ -16,6 +16,7 @@ const DATA = JSON.parse(document.getElementById("afaq-data")!.textContent!) as {
 
 const AI = JSON.parse(document.getElementById("afaq-ai")!.textContent!) as {
   status: Record<string, unknown>; disclaimer: string; report_template: string; topic_note?: string;
+  saved?: { verse: { surah_number: number; ayah_number: number } }[];   // real reports stored by a connected platform
 };
 const AI_TOPIC_NOTE = AI.topic_note ?? "منصة الذكاء الاصطناعي لم تُربط بعد، فالنتائج مؤقتًا من البحث في مصادر آفاق.";
 // Curated verses are the ones with a full answer; i'jaz counts come with the verse in newer exports,
@@ -161,6 +162,8 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     if (!(s >= 1 && s <= 114 && a >= 1 && a <= 286)) return json({ detail: "رقم السورة أو الآية خارج النطاق." }, 422);
     const v = DATA.verses.find((x) => x[0] === s && x[1] === a);
     if (!v) return json({ detail: "لم يتم العثور على هذه الآية في المصادر المعتمدة المستوعبة حتى الآن." }, 404);
+    const saved = AI.saved?.find((r) => r.verse.surah_number === s && r.verse.ayah_number === a);
+    if (saved) return json(saved);
     return json({
       verse: { surah_number: v[0], ayah_number: v[1], surah_name: v[2], text: v[3] },
       mode: AI.status.mode, provider: AI.status.provider, model: AI.status.model, prompt_version: AI.status.prompt_version,
