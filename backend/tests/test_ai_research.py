@@ -123,13 +123,13 @@ EVENTS = [{"type": "response.created"}, {"type": "response.web_search_call.in_pr
 
 
 # -- test mode ------------------------------------------------------------------------------
-def test_status_defaults_to_test_mode_and_exposes_the_prompt(client):
+def test_status_defaults_to_test_mode_and_keeps_the_prompt_private(client):
     r = client.get("/ai-research/status").json()
     assert r["mode"] == "mock" and r["configured"] and r["tools"] == []
-    assert r["prompt"] == RESEARCH_PROMPT
+    assert "prompt" not in r and RESEARCH_PROMPT[:40] not in json.dumps(r, ensure_ascii=False)
     for rule in ("لا تبدأ أبدًا من فرضية أن الآية تحتوي على إعجاز علمي", "لا تختلق مصدرًا ولا دراسة ولا DOI",
                  "مقاومة الانحياز التأكيدي", "contradicted", "التفسير لا يثبت حقيقة علمية"):
-        assert rule in r["prompt"]
+        assert rule in RESEARCH_PROMPT
 
 
 def test_mock_report_has_the_report_structure_and_no_findings(client):

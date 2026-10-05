@@ -9,7 +9,7 @@ import json
 
 from .api import DISCLAIMER
 from .mock import mock_data
-from .prompt import PROMPT_VERSION, RESEARCH_PROMPT
+from .prompt import PROMPT_VERSION
 from .providers import MockProvider
 from .report import render
 from .topic import MOCK_NOTE
@@ -42,8 +42,7 @@ if __name__ == "__main__":
     info = MockProvider().info()
     print(json.dumps({
         "status": {"mode": info.mode, "provider": info.name, "model": info.model, "configured": info.configured,
-                   "missing_settings": info.missing, "tools": info.tools, "prompt_version": PROMPT_VERSION,
-                   "prompt": RESEARCH_PROMPT},
+                   "missing_settings": info.missing, "tools": info.tools, "prompt_version": PROMPT_VERSION},
         "disclaimer": DISCLAIMER,
         "topic_note": MOCK_NOTE,
         "saved": saved_reports(),

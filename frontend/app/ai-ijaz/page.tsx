@@ -12,7 +12,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
 
 type Status = {
   mode: "mock" | "live"; provider: string; model: string | null; configured: boolean;
-  missing_settings: string[]; tools?: string[]; prompt_version: string; prompt: string;
+  missing_settings: string[]; tools?: string[]; prompt_version: string;
 };
 type Report = AiReportData;
 
@@ -100,12 +100,6 @@ export default function AiIjazPage() {
         </main>
       )}
 
-      {status && (
-        <details className="fold" style={{ marginTop: 16 }}>
-          <summary><strong>التعليمات المرسلة إلى الذكاء الاصطناعي</strong><span className="note">نسخة {status.prompt_version}</span></summary>
-          <p className="read">{status.prompt}</p>
-        </details>
-      )}
       <Footer />
     </div>
   );

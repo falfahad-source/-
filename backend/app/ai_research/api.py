@@ -78,12 +78,11 @@ def _provider():
 
 @router.get("/status")
 def status():
-    """Which platform the section uses (test mode until one is connected), its tools, and the
-    instructions it sends."""
+    """Which platform the section uses (test mode until one is connected) and its tools. The
+    instructions sent to the model are not published."""
     info = _provider().info()
     return {"mode": info.mode, "provider": info.name, "model": info.model, "configured": info.configured,
-            "missing_settings": info.missing, "tools": info.tools, "prompt_version": PROMPT_VERSION,
-            "prompt": RESEARCH_PROMPT}
+            "missing_settings": info.missing, "tools": info.tools, "prompt_version": PROMPT_VERSION}
 
 
 def _verse(db, surah_number: int, ayah_number: int) -> dict:
