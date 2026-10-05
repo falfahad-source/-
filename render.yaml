@@ -23,7 +23,7 @@ services:
         fromDatabase:
           name: afaq-db
           property: connectionString
-      - key: AFAQ_CORS_ORIGINS          # the site's address (https:// is added by the API)
+      - key: AFAQ_CORS_ORIGINS          # the site's internal name; the API makes it https://<name>.onrender.com
         fromService:
           type: web
           name: afaq-web
@@ -49,7 +49,8 @@ services:
     name: afaq-web
     runtime: static
     rootDir: frontend
-    buildCommand: npm ci && node scripts/fetch-font.mjs && NEXT_OUTPUT=export NEXT_PUBLIC_API_BASE=https://$API_HOST npx next build
+    # API_HOST is the API's internal name (afaq-api-xxxx); its public address adds .onrender.com
+    buildCommand: npm ci && node scripts/fetch-font.mjs && case "$API_HOST" in *.*) H="$API_HOST";; *) H="$API_HOST.onrender.com";; esac && NEXT_OUTPUT=export NEXT_PUBLIC_API_BASE="https://$H" npx next build
     staticPublishPath: ./out
     envVars:
       - key: API_HOST

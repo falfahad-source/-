@@ -368,3 +368,27 @@ def test_daily_limit_covers_the_whole_site(client, monkeypatch):
     assert wait(client, client.post("/ai-research", json=VERSE))["status"] == "done"
     r = client.post("/ai-research", json={"surah_number": 25, "ayah_number": 53})
     assert r.status_code == 429 and "حده اليومي" in r.json()["detail"]
+
+
+@pytest.mark.parametrize("value, words", [
+    ("sk-abc def ghi jkl mno pqr", "سطر جديد"),
+    ('"proj-' + "x" * 20 + '"', "علامات تنصيص"),
+    ("proj-" + "x" * 20, "sk-"),
+])
+def test_a_mispasted_key_is_reported_without_showing_it(client, monkeypatch, value, words):
+    openai_env(monkeypatch)
+    monkeypatch.setenv("OPENAI_API_KEY", value)
+    monkeypatch.setattr(providers.requests, "post", lambda *a, **k: (_ for _ in ()).throw(AssertionError("no call")))
+    st = client.get("/ai-research/status")
+    assert not st.json()["configured"] and words in " ".join(st.json()["missing_settings"]) and KEY not in st.text
+    r = client.post("/ai-research", json=VERSE)
+    assert r.status_code == 502 and words in r.json()["detail"] and KEY not in r.text
+
+
+@pytest.mark.parametrize("value", [
+    KEY + "\n\nOPENAI_MODEL=gpt-6.1-sol", "OPENAI_API_KEY=" + KEY, '"' + KEY + '"', "  " + KEY + " \n",
+    "OPENAI_API_KEY=" + KEY + "\n\n\nOPENAI_MODEL=gpt-6.1-sol",
+])
+def test_the_key_is_taken_out_of_a_mispasted_value(value):
+    p = providers.OpenAIProvider({"OPENAI_API_KEY": value})
+    assert p.key == KEY and p.info().configured

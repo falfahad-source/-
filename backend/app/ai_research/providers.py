@@ -151,7 +151,7 @@ class OpenAIProvider:
     RETRIES = 2
 
     def __init__(self, env=os.environ):
-        self.key = env.get("OPENAI_API_KEY", "").strip()
+        self.key = clean_key(env.get("OPENAI_API_KEY", ""))
         self.model = env.get("OPENAI_MODEL", "").strip() or DEFAULT_OPENAI_MODEL
         effort = env.get("OPENAI_REASONING_EFFORT", "high").strip().lower()
         self.effort = effort if effort in EFFORTS else "high"
@@ -161,8 +161,22 @@ class OpenAIProvider:
         self.timeout = float(env.get("AFAQ_AI_TIMEOUT", "600") or 600)
         self.max_tokens = int(env.get("OPENAI_MAX_OUTPUT_TOKENS", "64000") or 64000)
 
+    def _key_problem(self) -> str | None:
+        """Why the key cannot be sent, in words that never show it (pasted with another line,
+        with spaces or quotes, or not a key at all)."""
+        if not self.key:
+            return None
+        if re.search(r"\s", self.key):
+            return "يحتوي على مسافة أو سطر جديد؛ الصق المفتاح وحده في سطر واحد"
+        if self.key[0] in "\"'" or "=" in self.key:
+            return "يحتوي على علامات تنصيص أو «=»؛ الصق المفتاح وحده دون اسم المتغير"
+        if not self.key.startswith("sk-"):
+            return "لا يبدو مفتاح OpenAI (يبدأ المفتاح بـ sk-)"
+        return None
+
     def info(self) -> ProviderInfo:
-        missing = [] if self.key else ["OPENAI_API_KEY"]
+        problem = self._key_problem()
+        missing = ([] if self.key else ["OPENAI_API_KEY"]) + ([f"OPENAI_API_KEY ({problem})"] if problem else [])
         tools = (["web_search"] if self.web else []) + (["file_search"] if self.stores else []) + ["structured_outputs"]
         return ProviderInfo(mode="live", name="OpenAI (Responses API)", model=self.model,
                             configured=not missing, missing=missing, tools=tools)
@@ -171,6 +185,8 @@ class OpenAIProvider:
     def _post(self, body: dict, stream: bool) -> requests.Response:
         if not self.key:
             raise ProviderError("منصة الذكاء الاصطناعي غير مكتملة الإعداد: OPENAI_API_KEY")
+        if problem := self._key_problem():
+            raise ProviderError(f"قيمة OPENAI_API_KEY في إعدادات الخادم {problem}.")
         for attempt in range(self.RETRIES + 1):
             try:
                 res = requests.post(f"{self.base}/responses", json=body, stream=stream,
@@ -337,6 +353,15 @@ def _sse(res: requests.Response):
                     continue
         elif line.startswith("data:"):
             data.append(line[5:].lstrip())
+
+
+def clean_key(raw: str) -> str:
+    """The key out of a pasted value: an OpenAI key is one run of letters, digits, "-" and "_"
+    starting with sk-, so a value pasted with its variable name, quotes or the next line of a .env
+    file («OPENAI_API_KEY=sk-...\\nOPENAI_MODEL=...») still yields it. Anything else is kept as
+    is, for _key_problem to explain."""
+    keys = re.findall(r"sk-[A-Za-z0-9_-]{20,}", raw or "")
+    return keys[0] if len(set(keys)) == 1 else (raw or "").strip()
 
 
 def get_provider(env=os.environ):

@@ -9,6 +9,7 @@ import re
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import func
 
+from .cache import cached_json
 from .db import SessionLocal
 from .models import ArticleVerse, Verse, VersePhrase
 
@@ -24,6 +25,10 @@ def _flags(db, verse_ids: list[int]) -> tuple[set[int], dict[int, int]]:
 
 @router.get("/surahs")
 def surahs():
+    return cached_json("surahs", _surahs, max_age=3600)
+
+
+def _surahs():
     db = SessionLocal()
     try:
         rows = (db.query(Verse.surah_number, func.min(Verse.surah_name), func.count(Verse.id), func.min(Verse.page_number))
@@ -44,6 +49,10 @@ def surahs():
 
 @router.get("/surah/{surah_number}")
 def surah(surah_number: int):
+    return cached_json(f"surah:{surah_number}", lambda: _surah(surah_number), max_age=3600)
+
+
+def _surah(surah_number: int):
     db = SessionLocal()
     try:
         verses = (db.query(Verse).filter_by(surah_number=surah_number, reading="hafs")
@@ -67,6 +76,10 @@ def page(page_number: int):
     """One mushaf page: its verses in order, with the juz, and the basmala that heads each
     surah starting on it (the stored text of al-Fatiha 1:1 without its ayah-end sign; it is
     not a verse of the other surahs, so it is shown as their heading, and not over at-Tawbah)."""
+    return cached_json(f"page:{page_number}", lambda: _page(page_number), max_age=3600)
+
+
+def _page(page_number: int):
     db = SessionLocal()
     try:
         pages = db.query(func.max(Verse.page_number)).filter(Verse.reading == "hafs").scalar() or 0

@@ -25,10 +25,11 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, futu
 def init_db() -> None:
     """Create missing tables and add missing nullable columns. Development
     convenience only — use Alembic migrations for anything touching real data."""
-    from .schema_upgrade import add_missing_columns
+    from .schema_upgrade import add_missing_columns, add_missing_indexes
 
     Base.metadata.create_all(engine)
     add_missing_columns(engine)
+    add_missing_indexes(engine)
 
 
 def get_session():

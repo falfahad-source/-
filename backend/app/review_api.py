@@ -4,6 +4,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from . import cache
 from .db import SessionLocal
 from .models import (
     Concept,
@@ -111,6 +112,7 @@ def decide(key: str, body: Decision, reviewer: str = Depends(current_reviewer)):
             submit(db, rel, reviewer, body.decision, body.comment, body.explanation)
         except ValueError as e:
             raise HTTPException(422, str(e)) from e
+        cache.clear()  # the verse pages show the review state
         return _item(db, rel)
     finally:
         db.close()
