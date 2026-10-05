@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import threading
@@ -5,12 +6,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import func
 
 from .ai_research.api import _check_rate
 from .ai_research.api import router as ai_research_router
 from .ai_research.providers import ProviderError
 from .ai_research.topic import ai_topic_search
 from .db import SessionLocal, init_db
+from .models import Verse
 from .quran_api import router as quran_router
 from .rag.answer_builder import build_answer
 from .review_api import router as review_router
@@ -68,6 +71,28 @@ app.include_router(quran_router)
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/health/seed")
+def seed_status():
+    """How this server's start-up seeding ended (app/seed.py), the verses in the database and the
+    deployed commit: enough to diagnose a deployment without the host's dashboard. No URL or
+    password is ever in it."""
+    from .seed import STATUS_FILE
+
+    try:
+        with open(STATUS_FILE, encoding="utf-8") as fh:
+            status = json.load(fh)
+    except (OSError, ValueError):
+        status = {"outcome": "unknown", "steps": ["no seeding record: this server was not started by start.sh"]}
+    db = SessionLocal()
+    try:
+        verses = db.query(func.count(Verse.id)).scalar()
+    except Exception:  # noqa: BLE001
+        verses = None
+    finally:
+        db.close()
+    return {**status, "verses": verses, "commit": (os.environ.get("RENDER_GIT_COMMIT") or "")[:7] or None}
 
 
 @app.get("/verse/{surah_number}/{ayah_number}")
