@@ -119,12 +119,25 @@ export default function QuranPage() {
     if (n >= 1 && n <= total) { go(n); setGoTo(""); }
   }
 
-  const pageForm = (
+  const pageForm = (id = "goto") => (
     <form className="page-jump" onSubmit={jump}>
-      <label htmlFor="goto">اذهب إلى الصفحة</label>
-      <input id="goto" type="number" min={1} max={total} value={goTo} onChange={(e) => setGoTo(e.target.value)} placeholder={`${ar(1)}–${ar(total)}`} />
+      <label htmlFor={id}>اذهب إلى الصفحة</label>
+      <input id={id} type="number" min={1} max={total} value={goTo} onChange={(e) => setGoTo(e.target.value)} placeholder={`${ar(1)}–${ar(total)}`} />
       <button type="submit" className="btn-ghost">اذهب</button>
     </form>
+  );
+
+  // the same bar above and below the page, so a reader at the foot of the page turns it there
+  const pageNav = (bottom = false) => sel.p && (
+    <nav className={`page-nav${bottom ? " page-nav-bottom" : ""}`} aria-label={bottom ? "التنقل بين الصفحات (أسفل الصفحة)" : "التنقل بين الصفحات"}>
+      <a href={link.quran()} onClick={(e) => { e.preventDefault(); go(null); }}>فهرس السور</a>
+      <span className="page-nav-turn">
+        <button type="button" className="btn-ghost" disabled={sel.p <= 1} onClick={() => go(sel.p! - 1)}>→ السابقة</button>
+        <span className="page-of">صفحة {ar(sel.p)} من {ar(total)}</span>
+        <button type="button" className="btn-ghost" disabled={sel.p >= total} onClick={() => go(sel.p! + 1)}>التالية ←</button>
+      </span>
+      {pageForm(bottom ? "goto-bottom" : "goto")}
+    </nav>
   );
 
   return (
@@ -141,7 +154,7 @@ export default function QuranPage() {
           <div className="index-tools">
             <input className="filter" type="search" value={filter} onChange={(e) => setFilter(e.target.value)}
               placeholder="ابحث عن سورة بالاسم أو الرقم" aria-label="ابحث عن سورة" />
-            {pageForm}
+            {pageForm()}
           </div>
           <Legend />
           <ol className="surah-grid">
@@ -176,15 +189,7 @@ export default function QuranPage() {
 
       {sel.p && (
         <>
-          <nav className="page-nav" aria-label="التنقل بين الصفحات">
-            <a href={link.quran()} onClick={(e) => { e.preventDefault(); go(null); }}>فهرس السور</a>
-            <span className="page-nav-turn">
-              <button type="button" className="btn-ghost" disabled={sel.p <= 1} onClick={() => go(sel.p! - 1)}>→ السابقة</button>
-              <span className="page-of">صفحة {ar(sel.p)} من {ar(total)}</span>
-              <button type="button" className="btn-ghost" disabled={sel.p >= total} onClick={() => go(sel.p! + 1)}>التالية ←</button>
-            </span>
-            {pageForm}
-          </nav>
+          {pageNav()}
           <Legend toggle={{ on: marks, set: showMarks }} />
 
           <main className="mushaf-page" aria-label={`صفحة ${sel.p}`}>
@@ -223,6 +228,7 @@ export default function QuranPage() {
               </>
             )}
           </main>
+          {pageNav(true)}
         </>
       )}
 

@@ -395,9 +395,10 @@ a.btn-primary { color: var(--sheet); }
 .juz-list a:hover { border-color: var(--accent); }
 .juz-list small { color: var(--muted); font-size: .8rem; }
 .page-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 10px; }
+.page-nav-bottom { max-width: 780px; margin: 18px auto 120px; } /* the space below clears the phone tab bar */
 .page-nav-turn { display: flex; align-items: center; gap: 10px; }
 .page-of { color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.mushaf-page { max-width: 780px; margin: 0 auto 120px; background: var(--sheet); border: 3px double var(--gold); border-radius: 4px;
+.mushaf-page { max-width: 780px; margin: 0 auto; background: var(--sheet); border: 3px double var(--gold); border-radius: 4px;
   padding: 16px 26px 12px; outline: 1px solid color-mix(in srgb, var(--gold) 45%, transparent); outline-offset: 5px; }
 .mushaf-top { display: flex; justify-content: space-between; gap: 12px; font-size: .85rem; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 6px; margin-bottom: 8px; }
 .mushaf-page .mushaf-text { text-align: justify; text-align-last: center; }
