@@ -151,7 +151,7 @@ class OpenAIProvider:
     RETRIES = 2
 
     def __init__(self, env=os.environ):
-        self.key = env.get("OPENAI_API_KEY", "").strip()
+        self.key = clean_key(env.get("OPENAI_API_KEY", ""))
         self.model = env.get("OPENAI_MODEL", "").strip() or DEFAULT_OPENAI_MODEL
         effort = env.get("OPENAI_REASONING_EFFORT", "high").strip().lower()
         self.effort = effort if effort in EFFORTS else "high"
@@ -353,6 +353,15 @@ def _sse(res: requests.Response):
                     continue
         elif line.startswith("data:"):
             data.append(line[5:].lstrip())
+
+
+def clean_key(raw: str) -> str:
+    """The key out of a pasted value: an OpenAI key is one run of letters, digits, "-" and "_"
+    starting with sk-, so a value pasted with its variable name, quotes or the next line of a .env
+    file («OPENAI_API_KEY=sk-...\\nOPENAI_MODEL=...») still yields it. Anything else is kept as
+    is, for _key_problem to explain."""
+    keys = re.findall(r"sk-[A-Za-z0-9_-]{20,}", raw or "")
+    return keys[0] if len(set(keys)) == 1 else (raw or "").strip()
 
 
 def get_provider(env=os.environ):

@@ -371,9 +371,8 @@ def test_daily_limit_covers_the_whole_site(client, monkeypatch):
 
 
 @pytest.mark.parametrize("value, words", [
-    (KEY + "\n\nOPENAI_MODEL=gpt-6.1-sol", "سطر جديد"),
-    ("OPENAI_API_KEY=" + KEY, "«=»"),
-    ('"' + KEY + '"', "علامات تنصيص"),
+    ("sk-abc def ghi jkl mno pqr", "سطر جديد"),
+    ('"proj-' + "x" * 20 + '"', "علامات تنصيص"),
     ("proj-" + "x" * 20, "sk-"),
 ])
 def test_a_mispasted_key_is_reported_without_showing_it(client, monkeypatch, value, words):
@@ -384,3 +383,12 @@ def test_a_mispasted_key_is_reported_without_showing_it(client, monkeypatch, val
     assert not st.json()["configured"] and words in " ".join(st.json()["missing_settings"]) and KEY not in st.text
     r = client.post("/ai-research", json=VERSE)
     assert r.status_code == 502 and words in r.json()["detail"] and KEY not in r.text
+
+
+@pytest.mark.parametrize("value", [
+    KEY + "\n\nOPENAI_MODEL=gpt-6.1-sol", "OPENAI_API_KEY=" + KEY, '"' + KEY + '"', "  " + KEY + " \n",
+    "OPENAI_API_KEY=" + KEY + "\n\n\nOPENAI_MODEL=gpt-6.1-sol",
+])
+def test_the_key_is_taken_out_of_a_mispasted_value(value):
+    p = providers.OpenAIProvider({"OPENAI_API_KEY": value})
+    assert p.key == KEY and p.info().configured
