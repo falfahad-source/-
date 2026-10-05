@@ -83,12 +83,16 @@ def main() -> int:
             _log("the file is not a pg_dump backup (is the link a direct download?); the site will run without data.")
             return 0
     libpq = re.sub(r"^postgresql\+\w+://", "postgresql://", db_url)
-    done = subprocess.run(["pg_restore", "--no-owner", "--no-acl", "--exit-on-error", "-d", libpq, path],
-                          capture_output=True, text=True)
+    # --clean --if-exists: a server that once started without data has created the (empty)
+    # tables; they are dropped and restored from the backup. Only reached with no verses.
+    done = subprocess.run(["pg_restore", "--clean", "--if-exists", "--no-owner", "--no-acl", "--exit-on-error",
+                           "-d", libpq, path], capture_output=True, text=True)
     os.unlink(path)
     if done.returncode != 0:
-        # never print the command or the URL: they hold the database password
-        _log("restore failed: " + done.stderr.strip().splitlines()[-1][:300] if done.stderr.strip() else "restore failed.")
+        # the first error line, never the command or the URL: they hold the database password
+        lines = done.stderr.strip().splitlines()
+        err = next((ln for ln in lines if "error" in ln.lower()), lines[-1] if lines else "")
+        _log(f"restore failed: {err[:300]}")
         return 0
     _log("restored." if has_data(db_url) else "restore finished but no verses were found.")
     return 0
