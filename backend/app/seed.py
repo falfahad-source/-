@@ -53,7 +53,10 @@ def _finish(outcome: str) -> int:
 
 
 def direct_link(url: str) -> str:
-    """A share link as a direct download (Dropbox: dl=1)."""
+    """A share link as a direct download (Dropbox: dl=1; Google Drive: the download address)."""
+    drive = re.search(r"drive\.google\.com/(?:file/d/|open\?id=|uc\?(?:.*&)?id=)([\w-]{20,})", url)
+    if drive:
+        return f"https://drive.usercontent.google.com/download?id={drive.group(1)}&export=download&confirm=t"
     if "dropbox.com" in url:
         url = re.sub(r"([?&])dl=0", r"\1dl=1", url)
         if "dl=1" not in url and "raw=1" not in url:

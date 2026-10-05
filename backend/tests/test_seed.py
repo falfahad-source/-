@@ -9,6 +9,13 @@ def test_dropbox_share_links_become_direct_downloads():
     assert direct_link("https://example.com/afaq.dump") == "https://example.com/afaq.dump"
 
 
+def test_google_drive_view_links_become_direct_downloads():
+    direct = "https://drive.usercontent.google.com/download?id=1BrnV7GPkgSJ0QO7oiOBuVeYVfMCEP7Xu&export=download&confirm=t"
+    assert direct_link("https://drive.google.com/file/d/1BrnV7GPkgSJ0QO7oiOBuVeYVfMCEP7Xu/view?usp=sharing") == direct
+    assert direct_link("https://drive.google.com/open?id=1BrnV7GPkgSJ0QO7oiOBuVeYVfMCEP7Xu") == direct
+    assert direct_link(direct) == direct
+
+
 def test_cors_origin_bare_host_gets_https(monkeypatch):
     import importlib
     monkeypatch.setenv("AFAQ_CORS_ORIGINS", "afaq-web.onrender.com, http://localhost:3000/, afaq-web")
