@@ -94,6 +94,38 @@ def _get(url: str) -> requests.Response:
     return r
 
 
+# Settings a newer pg_restore writes that an older server rejects (pg_restore 17, from the
+# image's Debian, against PostgreSQL 16 on the host): dropped from the script.
+_NEWER_SETTINGS = (b"SET transaction_timeout",)
+
+
+def restore(path: str, libpq: str) -> tuple[int, str]:
+    """Restore a pg_dump backup: pg_restore writes the SQL, psql runs it, stopping at the first
+    error. --clean --if-exists: a server that once started without data has created the (empty)
+    tables; they are dropped and restored from the backup (only reached with no verses).
+    Returns (exit code, first error line); never the command or the URL, which hold the password."""
+    dump = subprocess.Popen(["pg_restore", "--clean", "--if-exists", "--no-owner", "--no-acl", "-f", "-", path],
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    load = subprocess.Popen(["psql", "-q", "-X", "-v", "ON_ERROR_STOP=1", "-d", libpq],
+                            stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    try:
+        for line in dump.stdout:
+            if not line.startswith(_NEWER_SETTINGS):
+                load.stdin.write(line)
+    except BrokenPipeError:   # psql stopped at an error; its message says which
+        pass
+    finally:
+        try:
+            load.stdin.close()
+        except BrokenPipeError:
+            pass
+    load_err, dump_err = load.stderr.read().decode("utf-8", "replace"), dump.stderr.read().decode("utf-8", "replace")
+    load_rc, dump_rc = load.wait(), dump.wait()
+    lines = [ln for ln in (load_err + "\n" + dump_err).splitlines() if ln.strip()]
+    first = next((ln for ln in lines if "error" in ln.lower()), lines[0] if lines else "")
+    return (load_rc or dump_rc), first
+
+
 def main() -> int:
     try:
         return _main()
@@ -141,15 +173,9 @@ def _main() -> int:
             _log("the file is not a pg_dump backup (is the link a direct download?); the site will run without data.")
             return _finish("not_a_backup")
     libpq = re.sub(r"^postgresql\+\w+://", "postgresql://", db_url)
-    # --clean --if-exists: a server that once started without data has created the (empty)
-    # tables; they are dropped and restored from the backup. Only reached with no verses.
-    done = subprocess.run(["pg_restore", "--clean", "--if-exists", "--no-owner", "--no-acl", "--exit-on-error",
-                           "-d", libpq, path], capture_output=True, text=True)
+    rc, err = restore(path, libpq)
     os.unlink(path)
-    if done.returncode != 0:
-        # the first error line, never the command or the URL: they hold the database password
-        lines = done.stderr.strip().splitlines()
-        err = next((ln for ln in lines if "error" in ln.lower()), lines[-1] if lines else "")
+    if rc != 0:
         _log(f"restore failed: {err[:300]}")
         return _finish("restore_failed")
     ok = has_data(db_url)

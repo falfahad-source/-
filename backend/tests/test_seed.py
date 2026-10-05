@@ -59,7 +59,7 @@ def _seed(monkeypatch, tmp_path, responses, restore_rc=0):
     monkeypatch.setattr(seed, "_steps", [])
     monkeypatch.setattr(seed, "has_data", lambda url: next(verses))
     monkeypatch.setattr(seed.requests, "get", lambda url, **kw: (calls.append((url, kw.get("params"))), responses.pop(0))[1])
-    monkeypatch.setattr(seed.subprocess, "run", lambda *a, **k: type("R", (), {"returncode": restore_rc, "stderr": "pg_restore: error: boom\nx"})())
+    monkeypatch.setattr(seed, "restore", lambda path, url: (restore_rc, "pg_restore: error: boom" if restore_rc else ""))
     monkeypatch.setenv("DATABASE_URL", "postgresql://u:p@h/d")
     monkeypatch.setenv("AFAQ_SEED_URL", "https://drive.usercontent.google.com/download?id=F1&export=download&confirm=t")
     seed.main()
@@ -93,3 +93,27 @@ def test_seed_status_page(monkeypatch, tmp_path):
     monkeypatch.setenv("RENDER_GIT_COMMIT", "9260f9db5d970cb5ad1eac299dc3f039c596d91b")
     r = TestClient(main.app).get("/health/seed").json()
     assert r["outcome"] == "unknown" and r["commit"] == "9260f9d" and "verses" in r
+
+
+def test_restore_drops_settings_an_older_server_rejects(monkeypatch, tmp_path):
+    """pg_restore 17 writes SET transaction_timeout, which PostgreSQL 16 rejects: the line is
+    dropped and the rest reaches psql unchanged."""
+    import io
+
+    from app import seed
+    sent = io.BytesIO()
+
+    class Proc:
+        def __init__(self, args, **kw):
+            self.args = args
+            self.stdout = io.BytesIO(b"SET statement_timeout = 0;\nSET transaction_timeout = 0;\nCREATE TABLE verses ();\n")
+            self.stderr = io.BytesIO(b"")
+            self.stdin = sent if args[0] == "psql" else None
+
+        def wait(self):
+            return 0
+
+    monkeypatch.setattr(sent, "close", lambda: None)
+    monkeypatch.setattr(seed.subprocess, "Popen", Proc)
+    assert seed.restore("x.dump", "postgresql://u:p@h/d") == (0, "")
+    assert sent.getvalue() == b"SET statement_timeout = 0;\nCREATE TABLE verses ();\n"
