@@ -56,6 +56,7 @@ class ResearchResult:
     searches: int = 0
     failed_searches: int = 0
     web_search: bool = False                     # whether the platform could search the web at all
+    usage: dict | None = None                    # tokens, as the platform reports them (cost)
 
 
 # progress callback: on_event(kind, detail) with kind in started | web_search | file_search | writing
@@ -258,7 +259,7 @@ class OpenAIProvider:
         return self._result(final)
 
     def _result(self, response: dict) -> ResearchResult:
-        out = ResearchResult(data={}, web_search=self.web)
+        out = ResearchResult(data={}, web_search=self.web, usage=response.get("usage"))
         texts, refusal = [], None
         for item in response.get("output") or []:
             t = item.get("type")

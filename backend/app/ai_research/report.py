@@ -189,15 +189,25 @@ def check(data: dict, result: ResearchResult, pack: list[dict]) -> dict:
 
     r["checks"] = {"web_search": result.web_search, "searches": result.searches, "failed_searches": result.failed_searches,
                    "pages_consulted": len(consulted), "verified_sources": verified_count, "unverified_sources": len(unverified),
-                   "downgraded_from": downgraded, "warnings": warnings, "verified_links": sorted(verified_links)}
+                   "downgraded_from": downgraded, "warnings": warnings, "verified_links": sorted(verified_links),
+                   "usage": _usage(result.usage)}
     return r
+
+
+def _usage(u: dict | None) -> dict | None:
+    """Token counts of the research (input, cached input, output, of which reasoning), for cost."""
+    if not isinstance(u, dict):
+        return None
+    return {"input_tokens": u.get("input_tokens"), "cached_input_tokens": (u.get("input_tokens_details") or {}).get("cached_tokens"),
+            "output_tokens": u.get("output_tokens"), "reasoning_tokens": (u.get("output_tokens_details") or {}).get("reasoning_tokens")}
 
 
 # -- rendering --------------------------------------------------------------------------
 def _clean(text, allowed: set[str]) -> str:
     """Model text as safe Markdown: links it did not visit removed, one paragraph per block,
     no line read as a heading, list, table or quote."""
-    text = URL.sub(lambda m: m.group(0) if norm_url(m.group(0)) in allowed else "[رابط غير متحقق حُذف]", str(text or ""))
+    text = URL.sub(lambda m: display_url(m.group(0), full=True) if norm_url(m.group(0)) in allowed
+                   else "[رابط غير متحقق حُذف]", str(text or ""))
     lines = [re.sub(r"^\s*(#+|>|[-*•]|\d+[.)]|\|)\s*", "", ln).strip() for ln in text.splitlines()]
     return "\n".join(ln for ln in lines if ln) or "—"
 
