@@ -42,19 +42,26 @@ STAGES = [("context", "مراجعة المصادر القرآنية والتفس
 # A connected platform is paid per report, so each client address gets a few reports per
 # hour (AFAQ_AI_HOURLY_LIMIT, default 10; 0 = unlimited). Test mode is free and unlimited.
 # Kept in memory: per process, reset on restart; enough to stop a script draining the account.
+# On a public site the key's owner also needs a ceiling for everyone together:
+# AFAQ_AI_DAILY_LIMIT reports per 24 hours for the whole site (default 50; 0 = unlimited).
 _recent: dict[str, deque] = defaultdict(deque)
+_ALL = "*all*"
 
 
 def _check_rate(client: str) -> None:
-    limit = int(os.environ.get("AFAQ_AI_HOURLY_LIMIT", "10") or 0)
-    if limit <= 0:
-        return
-    now, q = time.monotonic(), _recent[client]
+    hourly = int(os.environ.get("AFAQ_AI_HOURLY_LIMIT", "10") or 0)
+    daily = int(os.environ.get("AFAQ_AI_DAILY_LIMIT", "50") or 0)
+    now, q, everyone = time.monotonic(), _recent[client], _recent[_ALL]
     while q and now - q[0] > 3600:
         q.popleft()
-    if len(q) >= limit:
-        raise HTTPException(429, f"بلغت حد التقارير لهذه الساعة ({limit}). حاول لاحقًا.")
+    while everyone and now - everyone[0] > 86400:
+        everyone.popleft()
+    if hourly > 0 and len(q) >= hourly:
+        raise HTTPException(429, f"بلغت حد التقارير لهذه الساعة ({hourly}). حاول لاحقًا.")
+    if daily > 0 and len(everyone) >= daily:
+        raise HTTPException(429, "بلغ الموقع حده اليومي من تقارير الذكاء الاصطناعي. حاول غدًا.")
     q.append(now)
+    everyone.append(now)
 
 
 class ResearchRequest(BaseModel):

@@ -47,7 +47,10 @@ app = FastAPI(
 
 # Sites allowed to call the API from a browser: the frontend's address. On a server set
 # AFAQ_CORS_ORIGINS="https://example.com,https://www.example.com"; locally it is the dev server.
-CORS_ORIGINS = [o.strip() for o in os.environ.get("AFAQ_CORS_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
+# A bare host name (as Render gives a service's address) means https://host.
+CORS_ORIGINS = [o if "://" in o else f"https://{o}"
+                for o in (o.strip().rstrip("/") for o in os.environ.get("AFAQ_CORS_ORIGINS", "http://localhost:3000").split(","))
+                if o]
 
 app.add_middleware(
     CORSMiddleware,
@@ -55,6 +58,8 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+
 app.include_router(review_router)
 app.include_router(ai_research_router)
 app.include_router(quran_router)

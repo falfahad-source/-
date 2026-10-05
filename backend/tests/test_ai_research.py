@@ -360,3 +360,11 @@ def test_openai_plain_text_for_topic_search(monkeypatch):
     p = providers.OpenAIProvider({"OPENAI_API_KEY": KEY})
     assert p.generate("sys", "الموضوع: البحار", verse=None) == '{"verses": []}'
     assert sent[0]["instructions"] == "sys" and "tools" not in sent[0] and sent[0]["store"] is False
+
+
+def test_daily_limit_covers_the_whole_site(client, monkeypatch):
+    openai_env(monkeypatch, AFAQ_AI_HOURLY_LIMIT="0", AFAQ_AI_DAILY_LIMIT="1")
+    fake_openai(monkeypatch, Stream(EVENTS + [completed(report())]))
+    assert wait(client, client.post("/ai-research", json=VERSE))["status"] == "done"
+    r = client.post("/ai-research", json={"surah_number": 25, "ayah_number": 53})
+    assert r.status_code == 429 and "حده اليومي" in r.json()["detail"]
