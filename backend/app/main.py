@@ -6,12 +6,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from sqlalchemy import func
 
 from .ai_research.api import _check_rate
 from .ai_research.api import router as ai_research_router
 from .ai_research.providers import ProviderError
 from .ai_research.topic import ai_topic_search
+from .cache import cached_json
 from .db import SessionLocal, init_db
 from .models import Verse
 from .quran_api import router as quran_router
@@ -62,6 +64,8 @@ def _origin(o: str) -> str:
 CORS_ORIGINS = [_origin(o) for o in (o.strip().rstrip("/") for o in
                                      os.environ.get("AFAQ_CORS_ORIGINS", "http://localhost:3000").split(",")) if o]
 
+# Verse pages carry long tafsir texts (Ayat al-Kursi: 220 KB); compressed they are a fifth.
+app.add_middleware(GZipMiddleware, minimum_size=1024)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
@@ -104,6 +108,10 @@ def seed_status():
 
 @app.get("/verse/{surah_number}/{ayah_number}")
 def get_verse_answer(surah_number: int, ayah_number: int):
+    return cached_json(f"verse:{surah_number}:{ayah_number}", lambda: _verse_answer(surah_number, ayah_number))
+
+
+def _verse_answer(surah_number: int, ayah_number: int):
     db = SessionLocal()
     try:
         answer = build_answer(db, surah_number, ayah_number)
@@ -176,6 +184,10 @@ def search_by_ai(
 @app.get("/explore")
 def explore():
     """Verses that have a curated concept map, grouped by theme order of the mushaf."""
+    return cached_json("explore", _explore)
+
+
+def _explore():
     from sqlalchemy import func
 
     from .models import Concept, Relationship, Verse, VersePhrase
