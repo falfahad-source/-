@@ -7,6 +7,8 @@ download link of a backup made with
     pg_dump -Fc --no-owner --no-acl -d <local database> -f afaq.dump
 
 and start: if the database has no verses yet, the backup is downloaded and restored.
+A backup split into parts (split -b 14m afaq.dump afaq.dump.part-) is given as their links
+separated by commas, in order; the parts are joined as they download.
 Later starts find the verses and do nothing. Dropbox share links (?dl=0) are turned into
 direct downloads (?dl=1).
 
@@ -64,15 +66,17 @@ def main() -> int:
         return 0
     with tempfile.NamedTemporaryFile(suffix=".dump", delete=False) as f:
         path = f.name
-        _log("downloading the backup...")
-        with requests.get(direct_link(seed_url), stream=True, timeout=(15, 300)) as r:
-            if r.status_code != 200:
-                _log(f"download failed (HTTP {r.status_code}); the site will run without data.")
-                return 0
-            size = 0
-            for chunk in r.iter_content(1 << 20):
-                f.write(chunk)
-                size += len(chunk)
+        urls = [u.strip() for u in seed_url.split(",") if u.strip()]
+        size = 0
+        for n, url in enumerate(urls, 1):
+            _log(f"downloading the backup{f' (part {n} of {len(urls)})' if len(urls) > 1 else ''}...")
+            with requests.get(direct_link(url), stream=True, timeout=(15, 300)) as r:
+                if r.status_code != 200:
+                    _log(f"download failed (HTTP {r.status_code}); the site will run without data.")
+                    return 0
+                for chunk in r.iter_content(1 << 20):
+                    f.write(chunk)
+                    size += len(chunk)
     _log(f"downloaded {size / 1e6:.1f} MB; restoring...")
     with open(path, "rb") as fh:
         if fh.read(5) != b"PGDMP":
