@@ -243,7 +243,7 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .ai-form .btn-primary { padding: 8px 18px; }
 .ai-disclaimer { margin: 0 0 12px; padding: 8px 12px; border-radius: 10px; border-inline-start: 3px solid var(--t-unverified);
   background: color-mix(in srgb, var(--t-unverified) 8%, var(--sheet)); font-size: .9rem; }
-.md { font-family: var(--f-read); line-height: 2; max-width: 80ch; }
+.md { font-family: var(--f-read); line-height: 2; max-width: 80ch; overflow-wrap: anywhere; } /* long source links must not widen the page on phones */
 .md h2, .md h3, .md h4, .md h5, .md h6 { font-family: var(--f-display); font-weight: 600; color: var(--ink); margin: 18px 0 6px; line-height: 1.5; }
 .md h2 { font-size: 1.3rem; } .md h3 { font-size: 1.1rem; } .md h4, .md h5, .md h6 { font-size: 1rem; }
 .md p { margin: 0 0 10px; }

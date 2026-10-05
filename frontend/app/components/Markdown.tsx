@@ -3,7 +3,7 @@
 // injected as HTML, so text from the AI platform can never run script on the page.
 import { Fragment, type ReactNode } from "react";
 
-const INLINE = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\(https?:\/\/[^\s)]+\)|https?:\/\/[^\s)<]+|_[^_\s][^_]*_)/g;
+const INLINE = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\(https?:\/\/[^\s)]+\)|https?:\/\/[^\s)<]+|(?<![\p{L}\p{N}])_[^_\s][^_]*_(?![\p{L}\p{N}]))/gu;
 
 function inline(text: string): ReactNode[] {
   return text.split(INLINE).filter(Boolean).map((part, i) => {
