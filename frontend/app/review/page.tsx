@@ -70,7 +70,7 @@ export default function ReviewPage() {
     return (
       <div className="shell">
         <SiteNav current="review" />
-        <header className="masthead"><h1>آفاق <span>| مراجعة المقارنات</span></h1></header>
+        <header className="masthead"><h1>مراجعة المقارنات</h1></header>
         <p className="lead">هذه الصفحة للباحثين المعتمدين: تراجع فيها المقارنات العلمية المقترحة قبل أن تظهر معتمدة للمستخدمين.</p>
         <form className="login" onSubmit={login}>
           <label htmlFor="token">رمز المراجع</label>
@@ -88,7 +88,7 @@ export default function ReviewPage() {
     <div className="shell">
       <SiteNav current="review" />
       <header className="masthead">
-        <h1>آفاق <span>| مراجعة المقارنات</span></h1>
+        <h1>مراجعة المقارنات</h1>
         <p>المراجع: <strong>{queue.reviewer}</strong> — <button type="button" className="btn-ghost" onClick={() => { writeToken(null); setToken(""); setQueue(null); }}>خروج</button></p>
       </header>
       <div className="review-top">
