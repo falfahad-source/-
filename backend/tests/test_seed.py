@@ -11,9 +11,10 @@ def test_dropbox_share_links_become_direct_downloads():
 
 def test_cors_origin_bare_host_gets_https(monkeypatch):
     import importlib
-    monkeypatch.setenv("AFAQ_CORS_ORIGINS", "afaq-web.onrender.com, http://localhost:3000/")
+    monkeypatch.setenv("AFAQ_CORS_ORIGINS", "afaq-web.onrender.com, http://localhost:3000/, afaq-web")
     try:
-        assert importlib.reload(main).CORS_ORIGINS == ["https://afaq-web.onrender.com", "http://localhost:3000"]
+        assert importlib.reload(main).CORS_ORIGINS == ["https://afaq-web.onrender.com", "http://localhost:3000",
+                                                       "https://afaq-web.onrender.com"]
     finally:
         monkeypatch.delenv("AFAQ_CORS_ORIGINS")
         importlib.reload(main)

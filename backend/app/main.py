@@ -50,10 +50,17 @@ app = FastAPI(
 
 # Sites allowed to call the API from a browser: the frontend's address. On a server set
 # AFAQ_CORS_ORIGINS="https://example.com,https://www.example.com"; locally it is the dev server.
-# A bare host name (as Render gives a service's address) means https://host.
-CORS_ORIGINS = [o if "://" in o else f"https://{o}"
-                for o in (o.strip().rstrip("/") for o in os.environ.get("AFAQ_CORS_ORIGINS", "http://localhost:3000").split(","))
-                if o]
+# Render passes another service's internal name ("afaq-web"); its public address is
+# https://afaq-web.onrender.com. A name without a dot gets that domain, any host without a
+# scheme gets https://.
+def _origin(o: str) -> str:
+    if "://" in o:
+        return o
+    return f"https://{o}" if "." in o or o.startswith("localhost") else f"https://{o}.onrender.com"
+
+
+CORS_ORIGINS = [_origin(o) for o in (o.strip().rstrip("/") for o in
+                                     os.environ.get("AFAQ_CORS_ORIGINS", "http://localhost:3000").split(",")) if o]
 
 app.add_middleware(
     CORSMiddleware,
