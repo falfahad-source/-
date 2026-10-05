@@ -1,0 +1,58 @@
+{
+  "verse": [
+    24,
+    45
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «والله خلق كل دابة من ماء» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "min_ma",
+      "label": "والله خلق كل دابة من ماء",
+      "words": [
+        1,
+        6
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "water_life",
+      "name_ar": "الماء شرط للحياة",
+      "name_en": "Water and life"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "water_life",
+      "source": "nasa",
+      "domain": "علم الأحياء الفلكي",
+      "claim": "وجد العلماء أن كل الكائنات الحية تحتاج إلى الماء؛ ولذلك يُبحث عن الحياة خارج الأرض في الأماكن التي فيها ماء.",
+      "url": "https://astrobiology.nasa.gov/education/alp/water-so-important-for-life/",
+      "quote": "Scientists have found that all living things need water.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "min_ma",
+      "concept": "water_life",
+      "source": "nasa",
+      "explanation": "فسّر بعض المفسرين الماء هنا بالنطفة (المختصر وأيسر التفاسير)، وقال آخرون: الماء أصل خلقها ومادتها كلها (التفسير الميسر والسعدي). وحاجة كل الكائنات الحية إلى الماء حقيقة علمية يقارنها المعاصرون بالآية، كما في الأنبياء 30 «وجعلنا من الماء كل شيء حي». وحاجة الأحياء إلى الماء كانت معروفة بالملاحظة، فالتوافق في الحكم العام."
+    }
+  ],
+  "related_topics": []
+}

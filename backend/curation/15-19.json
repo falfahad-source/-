@@ -1,0 +1,58 @@
+{
+  "verse": [
+    15,
+    19
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «وألقينا فيها رواسي» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "rawasi",
+      "label": "وألقينا فيها رواسي",
+      "words": [
+        3,
+        5
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "mountain_roots",
+      "name_ar": "جذور الجبال",
+      "name_en": "Mountain roots"
+    }
+  ],
+  "sources": [
+    {
+      "key": "usgs",
+      "title": "USGS — هيئة المسح الجيولوجي الأمريكية",
+      "publisher": "USGS",
+      "url": "https://www.usgs.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "domain": "الجيولوجيا",
+      "claim": "تمتد القشرة الأرضية تحت السلاسل الجبلية الكبرى إلى أعماق قد تبلغ نحو 100 كيلومتر، أعمق كثيرًا منها تحت السهول والمحيطات.",
+      "url": "https://pubs.usgs.gov/gip/dynamic/inside.html",
+      "quote": "the base of the crust can be as deep as 100 km",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "rawasi",
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "explanation": "«رواسي» جبال ثوابت كيلا تميد كما قال أهل الغريب. وامتداد القشرة تحت الجبال إلى أعماق كبيرة موضوع جيولوجي يُقارن بوصفها رواسي، كما في النحل 15 ولقمان 10."
+    }
+  ],
+  "related_topics": []
+}

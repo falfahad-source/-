@@ -1,0 +1,58 @@
+{
+  "verse": [
+    22,
+    5
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «من نطفة ثم من علقة ثم من مضغة» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "atwar",
+      "label": "من نطفة ثم من علقة ثم من مضغة مخلقة وغير مخلقة",
+      "words": [
+        14,
+        24
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "embryo_stages",
+      "name_ar": "مراحل التطور الجنيني",
+      "name_en": "Stages of embryonic development"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "embryo_stages",
+      "source": "nih",
+      "domain": "علم الأجنة",
+      "claim": "في الأسابيع الأولى من الحمل تنشأ أنسجة تصير لاحقًا العمود الفقري وسائر العظام.",
+      "url": "https://medlineplus.gov/ency/article/002398.htm",
+      "quote": "Tissue grows that will become your baby's spine and other bones.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "atwar",
+      "concept": "embryo_stages",
+      "source": "nih",
+      "explanation": "تذكر الآية أطوار الخلق: نطفة ثم علقة ثم مضغة مخلقة وغير مخلقة، وفسّر المفسرون المخلقة بالتامة الخلق وغير المخلقة بالسقط أو بما لم يتصوّر بعد. ووصف علم الأجنة لنشوء الأنسجة في الأسابيع الأولى يُعرض للمقارنة كما في المؤمنون 14. وأقوى اعتراض أن تقسيم الجنين إلى أطوار عرفه أبقراط وجالينوس قبل الإسلام، وأن ترجمة الأطوار إلى مراحل علمية محددة تعتمد قراءات معاصرة."
+    }
+  ],
+  "related_topics": []
+}

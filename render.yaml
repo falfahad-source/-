@@ -1,0 +1,77 @@
+# Render Blueprint for AFAQ: Dashboard → New → Blueprint → this repository.
+# Three resources: the database, the API (Docker), and the site (static files).
+# Secrets (sync: false) are asked for when the Blueprint is created; they are never in git.
+# Steps in Arabic: DEPLOY_RENDER.md.
+
+databases:
+  - name: afaq-db
+    databaseName: afaq
+    user: afaq
+    plan: free
+    postgresMajorVersion: "16"
+
+services:
+  - type: web
+    name: afaq-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: afaq-db
+          property: connectionString
+      - key: AFAQ_CORS_ORIGINS          # the site's address (https:// is added by the API)
+        fromService:
+          type: web
+          name: afaq-web
+          property: host
+      - key: AFAQ_SEED_URL              # direct link to the database backup (afaq.dump), used once
+        sync: false
+      - key: AFAQ_AI_PROVIDER
+        value: openai
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-6.1-sol
+      - key: OPENAI_REASONING_EFFORT
+        value: high
+      - key: AFAQ_AI_HOURLY_LIMIT       # reports per reader per hour
+        value: "5"
+      - key: AFAQ_AI_DAILY_LIMIT        # reports per day for the whole site: the key owner's ceiling
+        value: "30"
+      - key: AFAQ_REVIEWERS             # optional: "name:token;name:token" for /review
+        sync: false
+
+  - type: web
+    name: afaq-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && node scripts/fetch-font.mjs && NEXT_OUTPUT=export NEXT_PUBLIC_API_BASE=https://$API_HOST npx next build
+    staticPublishPath: ./out
+    envVars:
+      - key: API_HOST
+        fromService:
+          type: web
+          name: afaq-api
+          property: host
+      - key: QURAN_FONT_URL             # direct link to kfgqpc_hafs_v30.ttf
+        sync: false
+    routes:                             # /search → search.html, ... (the site's pages are static files)
+      - type: rewrite
+        source: /search
+        destination: /search.html
+      - type: rewrite
+        source: /history
+        destination: /history.html
+      - type: rewrite
+        source: /quran
+        destination: /quran.html
+      - type: rewrite
+        source: /ai-ijaz
+        destination: /ai-ijaz.html
+      - type: rewrite
+        source: /review
+        destination: /review.html

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { LayerHead, ReviewPill, SurahName, TrustBadge } from "./common";
+import { ar, Layer, ReviewPill, SurahName, TrustBadge } from "./common";
 import type { Answer, GraphNode, OpenVerse } from "./types";
 
 type Placed = GraphNode & { x: number; y: number; r: number };
@@ -61,10 +61,8 @@ export default function ConceptMap({ a, open, onPhrase }: { a: Answer; open: Ope
   }
 
   return (
-    <section className="card" id="concepts">
-      <LayerHead step="٣" title="المفاهيم والظواهر ذات الصلة" trust="TAFSIR_VERIFIED">
-        خريطة تربط ألفاظ الآية بموضوعاتها القرآنية وبالمفاهيم العلمية التي يمكن مقارنتها بها. اضغط على أي عقدة لعرض تفاصيلها ومصادرها.
-      </LayerHead>
+    <Layer id="concepts" step="٣" title="المفاهيم والظواهر ذات الصلة" trust="TAFSIR_VERIFIED"
+      lead="خريطة تربط ألفاظ الآية بموضوعاتها القرآنية وبالمفاهيم العلمية التي يمكن مقارنتها بها. اضغط على أي عقدة لعرض تفاصيلها ومصادرها.">
       <div className="map-wrap">
         <svg className="map" viewBox={viewBox} role="group" aria-label="خريطة المفاهيم">
           {edges.map((e) => {
@@ -97,7 +95,7 @@ export default function ConceptMap({ a, open, onPhrase }: { a: Answer; open: Ope
         <span>لون إطار العقدة = فئة الثقة</span>
       </div>
       {node && <NodeDetail a={a} node={node} open={open} />}
-    </section>
+    </Layer>
   );
 }
 
@@ -108,7 +106,7 @@ function NodeDetail({ a, node, open }: { a: Answer; node: GraphNode; open: OpenV
     return (
       <div className="node-detail" aria-live="polite">
         <div className="layer-head"><h3 style={{ margin: 0, fontFamily: "var(--f-quran)", fontSize: "1.4rem" }}>{p.text}</h3><TrustBadge trust="QURANIC_TEXT" /></div>
-        <p className="note">الكلمات {p.words[0]}–{p.words[1]} من الآية</p>
+        <p className="note">الكلمات {ar(p.words[0])}–{ar(p.words[1])} من الآية</p>
         {p.meanings.length > 0 ? (
           <>
             <div className="layer-head"><strong>معناها عند أهل الغريب</strong><TrustBadge trust="TAFSIR_VERIFIED" /></div>
@@ -153,14 +151,14 @@ function NodeDetail({ a, node, open }: { a: Answer; node: GraphNode; open: OpenV
       <div className="node-detail" aria-live="polite">
         <div className="layer-head"><h3 style={{ margin: 0 }}>موضوع: {t.name}</h3><TrustBadge trust="TAFSIR_VERIFIED" /></div>
         {t.parent && <p className="note">ضمن موضوع: {t.parent}</p>}
-        <p>{t.related_total === 0 ? "لا توجد آيات أخرى في هذا الموضوع." : `آيات أخرى في هذا الموضوع (${t.related_total}):`}</p>
+        <p>{t.related_total === 0 ? "لا توجد آيات أخرى في هذا الموضوع." : `آيات أخرى في هذا الموضوع (${ar(t.related_total)}):`}</p>
         <div className="topic-list"><div className="verses">
           {t.related.map((r) => (
             <button key={`${r.surah_number}:${r.ayah_number}`} type="button" className="btn-ghost" onClick={() => open(r.surah_number, r.ayah_number)}>
-              <SurahName name={r.surah_name} /> {r.ayah_number}
+              <SurahName name={r.surah_name} /> {ar(r.ayah_number)}
             </button>
           ))}
-          {t.related_total > t.related.length && <span className="note">و{t.related_total - t.related.length} غيرها</span>}
+          {t.related_total > t.related.length && <span className="note">و{ar(t.related_total - t.related.length)} غيرها</span>}
         </div></div>
         <p className="note">{t.source}</p>
       </div>
@@ -168,7 +166,7 @@ function NodeDetail({ a, node, open }: { a: Answer; node: GraphNode; open: OpenV
   }
   return (
     <div className="node-detail" aria-live="polite">
-      <p style={{ margin: 0 }}>سورة <SurahName name={a.surah_name} />، الآية {a.ayah_number}. اختر لفظًا أو موضوعًا من الخريطة.</p>
+      <p style={{ margin: 0 }}>سورة <SurahName name={a.surah_name} />، الآية {ar(a.ayah_number)}. اختر لفظًا أو موضوعًا من الخريطة.</p>
     </div>
   );
 }

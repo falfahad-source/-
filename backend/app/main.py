@@ -1,18 +1,40 @@
+import logging
+import os
+import threading
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from .ai_research.api import _check_rate
+from .ai_research.api import router as ai_research_router
+from .ai_research.providers import ProviderError
+from .ai_research.topic import ai_topic_search
 from .db import SessionLocal, init_db
+from .quran_api import router as quran_router
 from .rag.answer_builder import build_answer
 from .review_api import router as review_router
 from .search import search_verses
+from .topic_search import search_topics, warm_index
+
+
+def _warm():
+    """Build the search indexes once at startup, so the first reader's topic search does not
+    wait for them (several seconds on the full data). They are rebuilt later only if the data changes."""
+    try:
+        with SessionLocal() as db:
+            warm_index(db)
+            search_verses(db, "الله", limit=1)
+    except Exception:  # an empty or unreachable database: the first search builds them instead
+        logging.getLogger(__name__).warning("search indexes not warmed at startup", exc_info=True)
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # bring an existing database up to the current schema (new tables, new nullable columns)
     init_db()
+    if os.environ.get("AFAQ_WARM_INDEX", "1") != "0":
+        threading.Thread(target=_warm, name="warm-search-index", daemon=True).start()
     yield
 
 
@@ -23,13 +45,24 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Sites allowed to call the API from a browser: the frontend's address. On a server set
+# AFAQ_CORS_ORIGINS="https://example.com,https://www.example.com"; locally it is the dev server.
+# A bare host name (as Render gives a service's address) means https://host.
+CORS_ORIGINS = [o if "://" in o else f"https://{o}"
+                for o in (o.strip().rstrip("/") for o in os.environ.get("AFAQ_CORS_ORIGINS", "http://localhost:3000").split(","))
+                if o]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+
 app.include_router(review_router)
+app.include_router(ai_research_router)
+app.include_router(quran_router)
 
 
 @app.get("/health")
@@ -65,6 +98,45 @@ def search(
         return search_verses(db, q, limit, offset)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e)) from e
+    finally:
+        db.close()
+
+
+@app.get("/search/topics")
+def search_by_topic(
+    q: str = Query(..., max_length=200),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """Verses linked to a subject the user typed («مدة الرضاعة الطبيعية»), each with the
+    sources that link it: curated comparisons, Quranpedia topics, i'jaz article titles,
+    التفسير الميسر. See app.topic_search."""
+    db = SessionLocal()
+    try:
+        return search_topics(db, q, limit, offset)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    finally:
+        db.close()
+
+
+@app.get("/search/ai")
+def search_by_ai(
+    request: Request,
+    q: str = Query(..., max_length=200),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """Verses related to a subject, proposed by the AI platform and checked against the stored
+    text (app.ai_research.topic). In test mode, the source-based topic search answers instead."""
+    db = SessionLocal()
+    try:
+        client = request.client.host if request.client else "unknown"
+        return ai_topic_search(db, q, limit, offset, rate_check=lambda: _check_rate(client))
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    except ProviderError as e:
+        raise HTTPException(status_code=502, detail=str(e)) from e
     finally:
         db.close()
 

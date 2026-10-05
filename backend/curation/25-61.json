@@ -1,0 +1,58 @@
+{
+  "verse": [
+    25,
+    61
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «سراجا وقمرا منيرا» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "siraj_munir",
+      "label": "سراجا وقمرا منيرا",
+      "words": [
+        9,
+        11
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "moonlight",
+      "name_ar": "ضوء القمر المنعكس",
+      "name_en": "Moonlight as reflected sunlight"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "moonlight",
+      "source": "nasa",
+      "domain": "علم الفلك",
+      "claim": "ضوء القمر ليس ضوءًا ذاتيًا، بل هو ضوء الشمس منعكسًا عن سطحه.",
+      "url": "https://science.nasa.gov/moon/moonlight/",
+      "quote": "\"Moonlight\" is actually reflected sunlight.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "siraj_munir",
+      "concept": "moonlight",
+      "source": "nasa",
+      "explanation": "قال قتادة فيما رواه الطبري: السراج الشمس. ففرّقت الآية بين الشمس سراجًا يتّقد بذاته والقمر منيرًا، كما فرّقت يونس 5 بين الضياء والنور. وكون الشمس مصدر الضوء والقمر عاكسًا له موضوع فلكي يمكن مقارنته بهذا التفريق. وأقوى اعتراض أن انعكاس ضوء الشمس على القمر عُرف عند فلكيين يونانيين قبل الإسلام، وأن «منير» لا يصرّح بالانعكاس."
+    }
+  ],
+  "related_topics": []
+}

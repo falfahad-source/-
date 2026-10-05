@@ -1,13 +1,22 @@
 import os
+import re
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from .models import Base
 
-DATABASE_URL = os.environ.get(
+
+
+def sqlalchemy_url(url: str) -> str:
+    """Hosts (Render, Heroku...) give postgres:// or postgresql:// URLs; SQLAlchemy would pick
+    a driver that is not installed for those, so name psycopg2 explicitly."""
+    return re.sub(r"^postgres(?:ql)?://", "postgresql+psycopg2://", url.strip())
+
+
+DATABASE_URL = sqlalchemy_url(os.environ.get(
     "DATABASE_URL", "postgresql+psycopg2://afaq:afaq@localhost:5432/afaq"
-)
+))
 
 engine = create_engine(DATABASE_URL, future=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)

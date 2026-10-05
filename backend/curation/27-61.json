@@ -1,0 +1,116 @@
+{
+  "verse": [
+    27,
+    61
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «وجعل بين البحرين حاجزا» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "hajiz",
+      "label": "وجعل بين البحرين حاجزا",
+      "words": [
+        11,
+        14
+      ]
+    },
+    {
+      "key": "rawasi",
+      "label": "وجعل لها رواسي",
+      "words": [
+        8,
+        10
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "estuary",
+      "name_ar": "مصبات الأنهار وتلاقي العذب بالمالح",
+      "name_en": "Estuary"
+    },
+    {
+      "key": "salt_wedge",
+      "name_ar": "الإسفين الملحي وطبقية الماء",
+      "name_en": "Salt wedge"
+    },
+    {
+      "key": "mountain_roots",
+      "name_ar": "جذور الجبال",
+      "name_en": "Mountain roots"
+    }
+  ],
+  "sources": [
+    {
+      "key": "noaa",
+      "title": "NOAA — الإدارة الوطنية للمحيطات والغلاف الجوي",
+      "publisher": "NOAA",
+      "url": "https://www.noaa.gov"
+    },
+    {
+      "key": "usgs",
+      "title": "USGS — هيئة المسح الجيولوجي الأمريكية",
+      "publisher": "USGS",
+      "url": "https://www.usgs.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "estuary",
+      "source": "noaa",
+      "domain": "علم المحيطات",
+      "claim": "مصبات الأنهار موطن لكائنات تكيّفت مع الماء قليل الملوحة، وهو مزيج من الماء العذب المنحدر من اليابسة وماء البحر المالح.",
+      "url": "https://oceanservice.noaa.gov/facts/estuary.html",
+      "quote": "a mixture of fresh water draining from the land and salty seawater",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    },
+    {
+      "concept": "salt_wedge",
+      "source": "noaa",
+      "domain": "علم المحيطات",
+      "claim": "لأن الماء العذب أقل كثافة من الماء المالح فإنه يطفو فوقه، فتتكوّن حدود حادة بين الكتلتين: عذب في الأعلى وإسفين مالح في الأسفل.",
+      "url": "https://oceanservice.noaa.gov/education/tutorial_estuaries/est05_circulation.html",
+      "quote": "fresh water is less dense than saltwater",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    },
+    {
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "domain": "الجيولوجيا",
+      "claim": "تمتد القشرة الأرضية تحت السلاسل الجبلية الكبرى إلى أعماق قد تبلغ نحو 100 كيلومتر، أعمق كثيرًا منها تحت السهول والمحيطات.",
+      "url": "https://pubs.usgs.gov/gip/dynamic/inside.html",
+      "quote": "the base of the crust can be as deep as 100 km",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "hajiz",
+      "concept": "salt_wedge",
+      "source": "noaa",
+      "explanation": "فسّر التفسير الميسر البحرين بالعذب والملح، وفسّر أهل الغريب «حاجزا» بفاصل يمنع اختلاطهما. وطبقية الماء العذب فوق المالح بحدّ فاصل يقل عنده الاختلاط موضوع علمي للمقارنة، مع أن المصدر يذكر حدوث بعض الاختلاط عند الحد. والآية نظيرة «مرج البحرين» في الفرقان 53 والرحمن 20."
+    },
+    {
+      "phrase": "hajiz",
+      "concept": "estuary",
+      "source": "noaa",
+      "explanation": "تلاقي النهر بالبحر في المصبات يجمع الماءين العذب والمالح، ويمكن مقارنته بذكر البحرين والحاجز بينهما."
+    },
+    {
+      "phrase": "rawasi",
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "explanation": "«رواسي» الجبال الثوابت. وامتداد القشرة تحت الجبال إلى أعماق كبيرة موضوع جيولوجي يُقارن بوصفها رواسي، كما في النحل 15 والنبأ 7."
+    }
+  ],
+  "related_topics": []
+}

@@ -1,4 +1,10 @@
+import { createContext, useContext } from "react";
 import type { ReviewStatus, Trust } from "./types";
+
+/** A number in Arabic-Indic digits (٢٤), as everywhere in the interface. */
+export function ar(n: number | string): string {
+  return String(n).replace(/\d/g, (d) => "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669"[+d]);
+}
 
 const TRUST_LABEL: Record<Trust, string> = {
   QURANIC_TEXT: "نص قرآني",
@@ -30,7 +36,7 @@ export function toPlainText(html: string): string {
 export function ayahCount(n: number): string {
   if (n === 1) return "آية واحدة";
   if (n === 2) return "آيتان";
-  return n % 100 >= 3 && n % 100 <= 10 ? `${n} آيات` : `${n} آية`;
+  return n % 100 >= 3 && n % 100 <= 10 ? `${ar(n)} آيات` : `${ar(n)} آية`;
 }
 
 export function LayerHead({ step, title, trust, children }: {
@@ -44,6 +50,32 @@ export function LayerHead({ step, title, trust, children }: {
       </div>
       {children && <p className="lead">{children}</p>}
     </>
+  );
+}
+
+/** Which layers of the verse journey are folded (see Layer). Without a provider every layer is open. */
+export const FoldContext = createContext<{ closed: Set<string>; toggle: (id: string) => void } | null>(null);
+
+/** One layer of the verse journey: its heading and lead are always shown; the content folds
+ * away under the heading's button, so the reader can keep the page to the layers they read. */
+export function Layer({ id, step, title, trust, lead, children }: {
+  id: string; step?: string; title: string; trust?: Trust; lead?: React.ReactNode; children: React.ReactNode;
+}) {
+  const fold = useContext(FoldContext);
+  const closed = fold?.closed.has(id) ?? false;
+  return (
+    <section className={`card layer${closed ? " folded" : ""}`} id={id}>
+      <div className="layer-head">
+        <h2>{step && <span className="step">{step} </span>}{title}</h2>
+        {trust && <TrustBadge trust={trust} />}
+        {fold && (
+          <button type="button" className="btn-ghost fold-toggle" aria-expanded={!closed} aria-controls={`${id}-body`}
+            onClick={() => fold.toggle(id)}>{closed ? "عرض" : "طيّ"}</button>
+        )}
+      </div>
+      {lead && <p className="lead">{lead}</p>}
+      <div id={`${id}-body`} hidden={closed}>{children}</div>
+    </section>
   );
 }
 

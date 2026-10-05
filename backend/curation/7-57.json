@@ -1,0 +1,58 @@
+{
+  "verse": [
+    7,
+    57
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «حتى إذا أقلت سحابا ثقالا» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "thiqal",
+      "label": "يرسل الرياح ... حتى إذا أقلت سحابا ثقالا سقناه لبلد ميت فأنزلنا به الماء",
+      "words": [
+        3,
+        19
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "water_cycle",
+      "name_ar": "دورة الماء في الغلاف الجوي",
+      "name_en": "Atmospheric water cycle"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "water_cycle",
+      "source": "nasa",
+      "domain": "علوم الأرض",
+      "claim": "يتبخر الماء من سطح الأرض ويصعد إلى الغلاف الجوي، فيتكاثف سحابًا تحمله الرياح، ثم يعود إلى الأرض مطرًا أو ثلجًا.",
+      "url": "https://science.nasa.gov/earth/earth-observatory/global-maps/water-vapor/",
+      "quote": "It condenses into clouds, is blown by the wind, and then falls back to the Earth as rain or snow.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "thiqal",
+      "concept": "water_cycle",
+      "source": "nasa",
+      "explanation": "فسّر أهل الغريب «أقلت» بحملت ورفعت، و«ثقالا» بالماء. وترتيب الآية: رياح ترفع السحاب المثقل بالماء، ثم تسوقه إلى بلد ميت، فينزل المطر؛ يوافق ما يصفه المصدر العلمي من تكاثف السحاب وحمل الرياح له ثم هطوله. وهو مشاهد في كل عصر؛ فالتوافق في الوصف والترتيب."
+    }
+  ],
+  "related_topics": []
+}

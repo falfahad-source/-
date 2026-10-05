@@ -1,0 +1,58 @@
+{
+  "verse": [
+    71,
+    16
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «وجعل القمر فيهن نورا وجعل الشمس سراجا» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "nur_siraj",
+      "label": "وجعل القمر فيهن نورا وجعل الشمس سراجا",
+      "words": [
+        1,
+        7
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "moonlight",
+      "name_ar": "ضوء القمر المنعكس",
+      "name_en": "Moonlight as reflected sunlight"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "moonlight",
+      "source": "nasa",
+      "domain": "علم الفلك",
+      "claim": "ضوء القمر ليس ضوءًا ذاتيًا، بل هو ضوء الشمس منعكسًا عن سطحه.",
+      "url": "https://science.nasa.gov/moon/moonlight/",
+      "quote": "\"Moonlight\" is actually reflected sunlight.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "nur_siraj",
+      "concept": "moonlight",
+      "source": "nasa",
+      "explanation": "وصفت الآية القمر بالنور والشمس بالسراج، كما في يونس 5 والفرقان 61. وكون الشمس مصدر الضوء والقمر عاكسًا له موضوع فلكي يقارنه المعاصرون بهذا التفريق. والاعتراض نفسه: انعكاس ضوء الشمس على القمر عُرف عند فلكيين يونانيين قبل الإسلام، و«نورا» لا يصرّح بالانعكاس."
+    }
+  ],
+  "related_topics": []
+}

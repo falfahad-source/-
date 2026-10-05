@@ -1,0 +1,58 @@
+{
+  "verse": [
+    39,
+    6
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «في ظلمات ثلاث» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "zulumat",
+      "label": "يخلقكم في بطون أمهاتكم خلقا من بعد خلق في ظلمات ثلاث",
+      "words": [
+        15,
+        25
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "amniotic_protection",
+      "name_ar": "حماية الجنين في الرحم",
+      "name_en": "Protection in the womb"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "amniotic_protection",
+      "source": "nih",
+      "domain": "علم الأجنة",
+      "claim": "يحيط السائل الأمنيوسي بالجنين في الرحم، فيحفظ حوله حرارة ثابتة ويحميه من الإصابات الخارجية بامتصاص الصدمات والحركات المفاجئة.",
+      "url": "https://medlineplus.gov/ency/article/002220.htm",
+      "quote": "cushioning sudden blows or movements",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "zulumat",
+      "concept": "amniotic_protection",
+      "source": "nih",
+      "explanation": "فسّر أهل الغريب الظلمات الثلاث بظلمة البطن وظلمة الرحم وظلمة المشيمة، وهو قول ابن عباس ومجاهد. وإحاطة الجنين بالسائل الأمنيوسي داخل الرحم داخل البطن طبقات حماية يصفها الطب، فتُقارن بالظلمات الثلاث. وأقوى اعتراض أن هذه الطبقات تُرى في التشريح وفي ولادة الحيوان، فكانت معروفة قبل الإسلام؛ وتعيين الطبقات الثلاث مما اختلف فيه المعاصرون."
+    }
+  ],
+  "related_topics": []
+}

@@ -12,3 +12,9 @@ backend/data/quranpedia/
 frontend/public/fonts/*.ttf
 frontend/demo/data.json
 frontend/demo/*.html
+*.tsbuildinfo
+
+# static build of the site (NEXT_OUTPUT=export)
+frontend/out/
+# a database backup for seeding a server: real KFGQPC/Quranpedia data, never in git
+*.dump

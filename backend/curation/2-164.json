@@ -1,0 +1,72 @@
+{
+  "verse": [
+    2,
+    164
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «وتصريف الرياح والسحاب المسخر» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "ma_sama",
+      "label": "وما أنزل الله من السماء من ماء فأحيا به الأرض",
+      "words": [
+        17,
+        28
+      ]
+    },
+    {
+      "key": "riyah_sahab",
+      "label": "وتصريف الرياح والسحاب المسخر بين السماء والأرض",
+      "words": [
+        34,
+        40
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "water_cycle",
+      "name_ar": "دورة الماء في الغلاف الجوي",
+      "name_en": "Atmospheric water cycle"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nasa",
+      "title": "NASA — وكالة الفضاء الأمريكية",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "water_cycle",
+      "source": "nasa",
+      "domain": "علوم الأرض",
+      "claim": "يتبخر الماء من سطح الأرض ويصعد إلى الغلاف الجوي، فيتكاثف سحابًا تحمله الرياح، ثم يعود إلى الأرض مطرًا أو ثلجًا.",
+      "url": "https://science.nasa.gov/earth/earth-observatory/global-maps/water-vapor/",
+      "quote": "It condenses into clouds, is blown by the wind, and then falls back to the Earth as rain or snow.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "riyah_sahab",
+      "concept": "water_cycle",
+      "source": "nasa",
+      "explanation": "فسّر أهل الغريب «تصريف الرياح» بتقليبها في مهابّها وأحوالها، وفسّر الطبري «السحاب المسخر» بالمذلَّل بين السماء والأرض. وحمل الرياح للسحاب جزء من دورة الماء التي يصفها المصدر العلمي، فيمكن مقارنته بذكر الآية للرياح والسحاب معًا. وهذا مشاهد للناس في كل عصر؛ فالمقارنة توافق في الوصف لا كشف لمعلومة خفية."
+    },
+    {
+      "phrase": "ma_sama",
+      "concept": "water_cycle",
+      "source": "nasa",
+      "explanation": "ترتيب الآية: سحاب تصرّفه الرياح، وماء ينزل من السماء فيحيي الأرض، يوافق مراحل دورة الماء من التكاثف إلى الهطول. والمقارنة في الترتيب العام، وهو مما يُدرك بالملاحظة."
+    }
+  ],
+  "related_topics": []
+}

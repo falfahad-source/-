@@ -1,0 +1,58 @@
+{
+  "verse": [
+    31,
+    14
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «وفصاله في عامين» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "fisal",
+      "label": "وفصاله في عامين",
+      "words": [
+        9,
+        11
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "breastfeeding_duration",
+      "name_ar": "مدة الرضاعة الطبيعية",
+      "name_en": "Breastfeeding duration"
+    }
+  ],
+  "sources": [
+    {
+      "key": "nih",
+      "title": "MedlinePlus — المكتبة الوطنية للطب (NIH)",
+      "publisher": "U.S. National Library of Medicine",
+      "url": "https://medlineplus.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "breastfeeding_duration",
+      "source": "nih",
+      "domain": "طب الأطفال",
+      "claim": "توصي الهيئات الطبية بأن يقتصر غذاء الرضيع على حليب الأم في الأشهر الستة الأولى، ثم يبقى حليب الأم جزءًا رئيسيًا من غذائه حتى عمر سنة إلى سنتين على الأقل.",
+      "url": "https://medlineplus.gov/ency/article/002452.htm",
+      "quote": "continue to have breast milk as a main part of their diet until they are at least 1 to 2 years old",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "fisal",
+      "concept": "breastfeeding_duration",
+      "source": "nih",
+      "explanation": "الفصال الفطام، والمعنى أن غاية الرضاع عامان كما في البقرة 233. وتوصية الطب الحديث بالرضاعة حتى سنة إلى سنتين على الأقل توافق هذا الحد، مع أن مدة السنتين كانت عادة معروفة قبل الإسلام؛ فالمقارنة توافق لا كشف."
+    }
+  ],
+  "related_topics": []
+}

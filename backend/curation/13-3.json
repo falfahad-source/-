@@ -1,0 +1,94 @@
+{
+  "verse": [
+    13,
+    3
+  ],
+  "provenance": {
+    "key": "afaq:research-2026-10",
+    "title": "بحث آفاق — مقارنات علمية مقترحة (أكتوبر 2026)",
+    "note": "مقارنة آية «ومن كل الثمرات جعل فيها زوجين اثنين» أعدّها آفاق للمراجعة؛ ليست تفسيرًا، وتحتاج مراجعة الباحث."
+  },
+  "phrases": [
+    {
+      "key": "zawjayn",
+      "label": "ومن كل الثمرات جعل فيها زوجين اثنين",
+      "words": [
+        9,
+        15
+      ]
+    },
+    {
+      "key": "rawasi",
+      "label": "وجعل فيها رواسي",
+      "words": [
+        5,
+        7
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "key": "plant_sexes",
+      "name_ar": "الأعضاء الذكرية والأنثوية في النبات",
+      "name_en": "Male and female parts of flowers"
+    },
+    {
+      "key": "mountain_roots",
+      "name_ar": "جذور الجبال",
+      "name_en": "Mountain roots"
+    }
+  ],
+  "sources": [
+    {
+      "key": "usda",
+      "title": "USDA Forest Service — هيئة الغابات الأمريكية",
+      "publisher": "USDA Forest Service",
+      "url": "https://www.fs.usda.gov"
+    },
+    {
+      "key": "usgs",
+      "title": "USGS — هيئة المسح الجيولوجي الأمريكية",
+      "publisher": "USGS",
+      "url": "https://www.usgs.gov"
+    }
+  ],
+  "claims": [
+    {
+      "concept": "plant_sexes",
+      "source": "usda",
+      "domain": "علم النبات",
+      "claim": "التلقيح انتقال حبوب اللقاح من الأعضاء الذكرية إلى الأعضاء الأنثوية في زهرة من النوع نفسه، وينتج عنه تكوّن البذور والثمار.",
+      "url": "https://www.fs.usda.gov/managing-land/wildflowers/kids/vocabulary",
+      "quote": "The spreading of pollen from the male parts to the female parts of a flower of the same species, resulting in the production of seeds and fruits.",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    },
+    {
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "domain": "الجيولوجيا",
+      "claim": "تمتد القشرة الأرضية تحت السلاسل الجبلية الكبرى إلى أعماق قد تبلغ نحو 100 كيلومتر، أعمق كثيرًا منها تحت السهول والمحيطات.",
+      "url": "https://pubs.usgs.gov/gip/dynamic/inside.html",
+      "quote": "the base of the crust can be as deep as 100 km",
+      "quote_origin": "page",
+      "verified_at": "2026-10-04",
+      "provenance_note": "طوبق الاقتباس حرفيًا مع نص الصفحة الأصلية بتاريخ 2026-10-04."
+    }
+  ],
+  "connections": [
+    {
+      "phrase": "zawjayn",
+      "concept": "plant_sexes",
+      "source": "usda",
+      "explanation": "فسّر أهل الغريب «زوجين» بنوعين وضربين، كالحلو والحامض والعذب والملح، وهذا هو المعنى عند جمهور المفسرين. ويقرأ بعض المعاصرين الزوجين بالذكر والأنثى في النبات، إذ تتكون الثمار من التقاء الأعضاء الذكرية بالأنثوية. وهذه القراءة تعتمد معنى للفظ غير الذي ذكره المفسرون، والتلقيح في النخل كان معروفًا للعرب؛ فالمقارنة ضعيفة الدلالة وتُعرض احتمالًا لا أكثر."
+    },
+    {
+      "phrase": "rawasi",
+      "concept": "mountain_roots",
+      "source": "usgs",
+      "explanation": "«رواسي» الجبال الثوابت، وامتداد القشرة تحت الجبال إلى أعماق كبيرة يُقارن بوصفها رواسي."
+    }
+  ],
+  "related_topics": []
+}

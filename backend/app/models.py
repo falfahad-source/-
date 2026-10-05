@@ -331,3 +331,21 @@ class ConnectionReview(Base):
     reviewed_text = Column(Text, nullable=False)       # the explanation as the reviewer saw it
     approved_text = Column(Text, nullable=True)        # what was approved (the reviewer's edit, if any)
     created_at = Column(DateTime, nullable=False)
+
+
+class AiReport(Base):
+    """A report of «الذكاء الاصطناعي في الإعجاز العلمي» from a connected (paid) AI platform,
+    kept so that the same verse, prompt and model are paid for once (app.ai_research.api).
+    UNVERIFIED_CLAIM like every AI output; test-mode reports are not stored."""
+    __tablename__ = "ai_reports"
+    __table_args__ = (UniqueConstraint("surah_number", "ayah_number", "prompt_version", "model",
+                                       name="uq_ai_report"),)
+
+    id = Column(Integer, primary_key=True)
+    surah_number = Column(Integer, nullable=False)
+    ayah_number = Column(Integer, nullable=False)
+    prompt_version = Column(String, nullable=False)
+    model = Column(String, nullable=False)
+    report_markdown = Column(Text, nullable=False)
+    report_json = Column(Text, nullable=True)   # the checked report (ai_research/report.py), for display and reuse
+    generated_at = Column(DateTime, nullable=False)
