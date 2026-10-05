@@ -141,4 +141,5 @@ def test_explore_lists_curated_verses(db_session, monkeypatch):
     db_session.commit()
     monkeypatch.setattr(main, "SessionLocal", db_session.session_factory)
     res = TestClient(main.app).get("/explore").json()
-    assert res == {"verses": [{"surah_number": 27, "ayah_number": 30, "surah_name": "النَّمۡلِ", "concepts": ["مفهوم"]}]}
+    assert res == {"verses": [{"surah_number": 27, "ayah_number": 30, "surah_name": "النَّمۡلِ", "text": v.arabic_text,
+                               "concepts": ["مفهوم"]}]}

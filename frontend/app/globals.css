@@ -298,7 +298,10 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 }
 
 /* home */
-.hero { padding: 28px 0 18px; display: grid; justify-items: center; text-align: center; gap: 10px; }
+.hero { position: relative; isolation: isolate; padding: 28px 0 18px; display: grid; justify-items: center; text-align: center; gap: 10px; }
+.hero-horizon { position: absolute; z-index: -1; inset-inline: 0; bottom: 6px; margin-inline: auto; width: min(640px, 100%); height: auto;
+  fill: none; stroke: var(--gold); stroke-width: 3; stroke-linecap: round; opacity: .16; }
+.hero-horizon .line { stroke: var(--ink); stroke-width: 2; opacity: .5; }
 .hero h1 { margin: 0; }
 .hero p { margin: 0; color: var(--muted); max-width: 60ch; font-size: 1.08rem; }
 .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
@@ -306,7 +309,16 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
   background: var(--sheet); color: var(--text); text-decoration: none; transition: border-color .15s, transform .15s; }
 .home-card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .home-card strong { font-family: var(--f-display); font-weight: 600; font-size: 1.2rem; color: var(--ink); }
-.home-card > span:last-child { color: var(--muted); font-size: .92rem; }
+.home-card-text { color: var(--muted); font-size: .92rem; }
+.title-short { display: none; }
+/* آية اليوم: a framed verse in the mushaf font, as on the mushaf pages */
+.daily-verse { max-width: 780px; margin: 0 auto 28px; padding: 16px 24px 20px; background: var(--sheet); text-align: center;
+  border: 3px double var(--gold); border-radius: 4px; outline: 1px solid color-mix(in srgb, var(--gold) 45%, transparent); outline-offset: 5px; }
+.daily-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 12px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule); padding-bottom: 6px; }
+.daily-head h2 { margin: 0; font-family: var(--f-display); font-weight: 600; font-size: 1rem; color: var(--gold); }
+.daily-text { font-family: var(--f-quran); font-size: 1.85rem; line-height: 2.2; color: var(--ink); margin: 10px 0 4px; }
+.daily-concepts { margin: 0 0 12px; }
 .home-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--accent-soft);
   color: var(--accent); }
 .home-recent { margin-top: 18px; }
@@ -317,6 +329,16 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
   background: var(--sheet); color: var(--ink); text-decoration: none; font-size: .9rem; }
 .chip:hover { border-color: var(--accent); background: var(--accent-soft); }
 @media (prefers-reduced-motion: reduce) { .home-card { transition: none; } .home-card:hover { transform: none; } }
+/* phone: the four sections as a compact 2×2 grid of icon and title */
+@media (max-width: 640px) {
+  .home-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .home-card { justify-items: center; text-align: center; padding: 14px 10px; gap: 8px; }
+  .home-card strong { font-size: 1rem; line-height: 1.5; }
+  .home-card-text, .title-full { display: none; }
+  .title-short { display: inline; }
+  .daily-verse { padding: 12px 14px 16px; }
+  .daily-text { font-size: 1.5rem; }
+}
 
 /* history */
 .history-list { list-style: none; margin: 0; padding: 0; display: grid; }

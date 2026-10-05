@@ -183,7 +183,8 @@ def search_by_ai(
 
 @app.get("/explore")
 def explore():
-    """Verses that have a curated concept map, grouped by theme order of the mushaf."""
+    """Verses that have a curated concept map, grouped by theme order of the mushaf, with their
+    text (the home page shows one of them each day)."""
     return cached_json("explore", _explore)
 
 
@@ -208,7 +209,7 @@ def _explore():
                     for r in db.query(Relationship).filter(Relationship.source_entity.like(prefix + "%"))}
             names = [c.name_ar for c in db.query(Concept).filter(Concept.key.in_(keys)).order_by(Concept.name_ar)]
             out.append({"surah_number": v.surah_number, "ayah_number": v.ayah_number,
-                        "surah_name": v.surah_name, "concepts": names})
+                        "surah_name": v.surah_name, "text": v.arabic_text, "concepts": names})
         return {"verses": out}
     finally:
         db.close()
