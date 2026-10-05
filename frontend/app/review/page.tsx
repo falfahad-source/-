@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import SiteNav from "../components/SiteNav";
 import { SurahName, TrustBadge } from "../components/common";
 import type { ReviewStatus, Trust } from "../components/types";
 
@@ -68,6 +69,7 @@ export default function ReviewPage() {
   if (!token || !queue) {
     return (
       <div className="shell">
+        <SiteNav current="review" />
         <header className="masthead"><h1>آفاق <span>| مراجعة المقارنات</span></h1></header>
         <p className="lead">هذه الصفحة للباحثين المعتمدين: تراجع فيها المقارنات العلمية المقترحة قبل أن تظهر معتمدة للمستخدمين.</p>
         <form className="login" onSubmit={login}>
@@ -84,6 +86,7 @@ export default function ReviewPage() {
   const shown = queue.items.filter((i) => filter === "all" || i.status === filter);
   return (
     <div className="shell">
+      <SiteNav current="review" />
       <header className="masthead">
         <h1>آفاق <span>| مراجعة المقارنات</span></h1>
         <p>المراجع: <strong>{queue.reviewer}</strong> — <button type="button" className="btn-ghost" onClick={() => { writeToken(null); setToken(""); setQueue(null); }}>خروج</button></p>

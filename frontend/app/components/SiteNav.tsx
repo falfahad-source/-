@@ -2,7 +2,7 @@ import Icon, { type IconName } from "./Icon";
 import Logo from "./Logo";
 import { link } from "./links";
 
-export type Section = "home" | "search" | "history" | "quran" | "ai";
+export type Section = "home" | "search" | "history" | "quran" | "ai" | "review";  // review: no tab of its own
 
 // short: the label in the phone's bottom tab bar, where the full one does not fit
 const ITEMS: { key: Section; label: string; short: string; icon: IconName; href: () => string }[] = [
