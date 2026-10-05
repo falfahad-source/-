@@ -161,8 +161,22 @@ class OpenAIProvider:
         self.timeout = float(env.get("AFAQ_AI_TIMEOUT", "600") or 600)
         self.max_tokens = int(env.get("OPENAI_MAX_OUTPUT_TOKENS", "64000") or 64000)
 
+    def _key_problem(self) -> str | None:
+        """Why the key cannot be sent, in words that never show it (pasted with another line,
+        with spaces or quotes, or not a key at all)."""
+        if not self.key:
+            return None
+        if re.search(r"\s", self.key):
+            return "يحتوي على مسافة أو سطر جديد؛ الصق المفتاح وحده في سطر واحد"
+        if self.key[0] in "\"'" or "=" in self.key:
+            return "يحتوي على علامات تنصيص أو «=»؛ الصق المفتاح وحده دون اسم المتغير"
+        if not self.key.startswith("sk-"):
+            return "لا يبدو مفتاح OpenAI (يبدأ المفتاح بـ sk-)"
+        return None
+
     def info(self) -> ProviderInfo:
-        missing = [] if self.key else ["OPENAI_API_KEY"]
+        problem = self._key_problem()
+        missing = ([] if self.key else ["OPENAI_API_KEY"]) + ([f"OPENAI_API_KEY ({problem})"] if problem else [])
         tools = (["web_search"] if self.web else []) + (["file_search"] if self.stores else []) + ["structured_outputs"]
         return ProviderInfo(mode="live", name="OpenAI (Responses API)", model=self.model,
                             configured=not missing, missing=missing, tools=tools)
@@ -171,6 +185,8 @@ class OpenAIProvider:
     def _post(self, body: dict, stream: bool) -> requests.Response:
         if not self.key:
             raise ProviderError("منصة الذكاء الاصطناعي غير مكتملة الإعداد: OPENAI_API_KEY")
+        if problem := self._key_problem():
+            raise ProviderError(f"قيمة OPENAI_API_KEY في إعدادات الخادم {problem}.")
         for attempt in range(self.RETRIES + 1):
             try:
                 res = requests.post(f"{self.base}/responses", json=body, stream=stream,
