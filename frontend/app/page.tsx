@@ -3,18 +3,20 @@
 import { useEffect, useState } from "react";
 import Footer from "./components/Footer";
 import HistoryRow from "./components/HistoryRow";
+import Icon from "./components/Icon";
+import Logo from "./components/Logo";
 import SiteNav from "./components/SiteNav";
 import { type HistoryEntry, readHistory } from "./components/history";
 import { link } from "./components/links";
 
 const CARDS = [
-  { href: () => link.search(), icon: "⌕", title: "بحث جديد",
+  { href: () => link.search(), icon: "search" as const, title: "بحث جديد",
     text: "ابحث بجزء من آية، أو بموضوع يقترح له الذكاء الاصطناعي الآيات المتصلة به، ثم استكشف رحلة الآية: اللغة، والتفسير عبر العصور، والمعرفة العلمية." },
-  { href: link.history, icon: "↺", title: "سجل البحث",
+  { href: link.history, icon: "history" as const, title: "سجل البحث",
     text: "عمليات بحثك السابقة والآيات التي فتحتها، مرتبة زمنيًا، لتعود إلى أيٍّ منها بضغطة." },
-  { href: () => link.quran(), icon: "۞", title: "القرآن الكريم",
+  { href: () => link.quran(), icon: "quran" as const, title: "القرآن الكريم",
     text: "تصفّح المصحف سورةً سورة، واضغط أي آية لتقرأ تفسيرها وما يتصل بها من الإعجاز العلمي إن وُجد." },
-  { href: () => link.ai(), icon: "✦", title: "الذكاء الاصطناعي في الإعجاز العلمي",
+  { href: () => link.ai(), icon: "ai" as const, title: "الذكاء الاصطناعي في الإعجاز العلمي",
     text: "باحث آلي ناقد يدرس الآية: يفهمها من التفاسير، ويقارنها بالعلم الحديث، ويحاول دحض كل ربط قبل أن يحكم." },
 ];
 
@@ -31,7 +33,7 @@ export default function Home() {
     <div className="shell">
       <SiteNav current="home" />
       <header className="hero">
-        <h1>آفاق <span>| AFAQ</span></h1>
+        <h1><Logo large /></h1>
         <p>حين يلتقي التفسير بالمعرفة — استكشاف الآية عبر التفسير الموثق والمعرفة العلمية، مع تصنيف واضح لكل معلومة.</p>
       </header>
 
@@ -48,7 +50,7 @@ export default function Home() {
       <div className="home-grid">
         {CARDS.map((c) => (
           <a key={c.title} className="home-card" href={c.href()}>
-            <span className="home-icon" aria-hidden="true">{c.icon}</span>
+            <span className="home-icon"><Icon name={c.icon} size={24} /></span>
             <strong>{c.title}</strong>
             <span>{c.text}</span>
           </a>

@@ -1,21 +1,22 @@
 /* Layout: search and results on the start side; the verse journey (ayah -> language -> tafsir across eras
-   -> concepts -> science) as one reading column beside it. Palette from the AFAQ deck: ink indigo, violet
-   accent on cool lavender paper, ocean teal for the map, plus the five trust-category colours. */
+   -> concepts -> science) as one reading column beside it. Palette «المِداد» (ink on paper): warm paper,
+   dark green ink, one green for actions, gold only for ornament; plus the five trust-category colours,
+   which keep their meaning everywhere and are the only other colours used. */
 :root {
-  --paper: #f5f5fb;
-  --sheet: #ffffff;
-  --ink: #1d1a4f;
-  --text: #2b2d42;
-  --muted: #646784;
-  --rule: #dcdcef;
-  --violet: #5b48d9;
-  --violet-soft: #ecebfc;
-  --teal: #1b7a8c;
-  --t-quran: #1f8a4c;
-  --t-tafsir: #2563c9;
-  --t-science: #6b7280;
-  --t-connection: #d9771b;
-  --t-unverified: #c8372d;
+  --paper: #f6f2e9;
+  --sheet: #fffdf8;
+  --ink: #12302f;
+  --text: #1f2d2b;
+  --muted: #5e6b66;
+  --rule: #e3dccb;
+  --accent: #1f5c57;
+  --accent-soft: #e7efec;
+  --gold: #a8823a;
+  --t-quran: #2e7d4f;
+  --t-tafsir: #2c5fa8;
+  --t-science: #5f6870;
+  --t-connection: #a9621a;
+  --t-unverified: #b33a2e;
   --f-quran: "KFGQPC Hafs", "Amiri", serif;
   --f-display: "Reem Kufi", "IBM Plex Sans Arabic", sans-serif;
   --f-read: "Noto Naskh Arabic", "IBM Plex Sans Arabic", serif;
@@ -24,16 +25,16 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0f1020; --sheet: #171933; --ink: #dcdafc; --text: #e3e4f0; --muted: #a2a4c2; --rule: #2c2f52;
-    --violet: #9d8fff; --violet-soft: #23224a; --teal: #4fb8c9;
-    --t-quran: #4cc283; --t-tafsir: #6aa1ff; --t-science: #b3b8c4; --t-connection: #f3a14f; --t-unverified: #ff7b70;
+    --paper: #0e1a19; --sheet: #142321; --ink: #ede6d6; --text: #e2ddd1; --muted: #a3ada8; --rule: #2a3b38;
+    --accent: #7cc0b5; --accent-soft: #1c3431; --gold: #d4b26a;
+    --t-quran: #5cc28a; --t-tafsir: #7aa7ec; --t-science: #b3bac2; --t-connection: #e7a35a; --t-unverified: #f08a7e;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #0f1020; --sheet: #171933; --ink: #dcdafc; --text: #e3e4f0; --muted: #a2a4c2; --rule: #2c2f52;
-  --violet: #9d8fff; --violet-soft: #23224a; --teal: #4fb8c9;
-  --t-quran: #4cc283; --t-tafsir: #6aa1ff; --t-science: #b3b8c4; --t-connection: #f3a14f; --t-unverified: #ff7b70;
+  --paper: #0e1a19; --sheet: #142321; --ink: #ede6d6; --text: #e2ddd1; --muted: #a3ada8; --rule: #2a3b38;
+  --accent: #7cc0b5; --accent-soft: #1c3431; --gold: #d4b26a;
+  --t-quran: #5cc28a; --t-tafsir: #7aa7ec; --t-science: #b3bac2; --t-connection: #e7a35a; --t-unverified: #f08a7e;
   color-scheme: dark;
 }
 
@@ -44,22 +45,22 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--paper); color: var(--text); font-family: var(--f-ui); font-size: 15px; line-height: 1.65; }
 button { font: inherit; cursor: pointer; color: inherit; }
-a { color: var(--violet); }
-:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 .shell { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 18px 56px; }
 .masthead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 14px; }
-.masthead h1 { font-family: var(--f-display); font-weight: 700; color: var(--ink); margin: 0; font-size: 2rem; }
-.masthead h1 span { color: var(--violet); }
+.masthead h1 { font-family: var(--f-display); font-weight: 500; color: var(--ink); margin: 0; font-size: 2rem; }
+.masthead h1 span { color: var(--accent); }
 .masthead p { margin: 0; color: var(--muted); }
 
 .searchbar { display: flex; gap: 8px; }
 .searchbar input { flex: 1; min-width: 0; font: inherit; font-size: 1.05rem; padding: 10px 12px; border-radius: 10px;
   border: 1px solid var(--rule); background: var(--sheet); color: var(--text); }
-.btn-primary { background: var(--violet); color: var(--sheet); border: 0; border-radius: 10px; padding: 0 18px; font-weight: 600; }
+.btn-primary { background: var(--accent); color: var(--sheet); border: 0; border-radius: 10px; padding: 0 18px; font-weight: 600; }
 .btn-ghost { background: transparent; border: 1px solid var(--rule); border-radius: 999px; padding: 2px 12px; }
-.btn-ghost[aria-pressed="true"], .btn-ghost[aria-selected="true"] { background: var(--violet); border-color: var(--violet); color: var(--sheet); }
+.btn-ghost[aria-pressed="true"], .btn-ghost[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--sheet); }
 .by-number { margin: 8px 0 0; color: var(--muted); font-size: .9rem; }
 .by-number div { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .by-number input { width: 7em; font: inherit; padding: 4px 8px; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); color: var(--text); }
@@ -78,10 +79,10 @@ a { color: var(--violet); }
 .results ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .hit { width: 100%; text-align: right; display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px;
   border: 1px solid var(--rule); background: var(--sheet); }
-.hit:hover { border-color: var(--violet); }
-.hit[aria-pressed="true"] { border-color: var(--violet); background: var(--violet-soft); }
+.hit:hover { border-color: var(--accent); }
+.hit[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 .hit .ref { font-size: .82rem; color: var(--muted); }
-.hit .ref b { color: var(--violet); }
+.hit .ref b { color: var(--accent); }
 .hit .ayah { font-family: var(--f-quran); font-size: 1.2rem; line-height: 2; }
 .clamp2 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
 .more { display: block; margin: 10px auto 0; }
@@ -89,19 +90,20 @@ a { color: var(--violet); }
 
 .journey { display: grid; gap: 16px; min-width: 0; }
 .card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 18px; min-width: 0; }
+.verse-card > .layer-head { padding-bottom: 8px; border-bottom: 1px solid transparent;
+  border-image: linear-gradient(to left, transparent, var(--gold), transparent) 1; }
 .verse-card .verse { font-family: var(--f-quran); font-size: 2rem; line-height: 2.2; margin: 6px 0; text-align: justify; color: var(--ink); }
 .meta { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--muted); font-size: .88rem; font-variant-numeric: tabular-nums; }
 .meta b { color: var(--text); }
 
 .legend-fold { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
-.legend-fold > summary { cursor: pointer; color: var(--violet); font-size: .9rem; width: max-content; }
+.legend-fold > summary { cursor: pointer; color: var(--accent); font-size: .9rem; width: max-content; }
 .legend { display: grid; gap: 6px; margin: 4px 0 0; }
 .legend > div { display: grid; grid-template-columns: 11.5em minmax(0, 1fr); gap: 2px 10px; align-items: start; }
 .legend dt { margin: 0; } .legend dd { margin: 0; color: var(--muted); font-size: .88rem; }
 @media (max-width: 560px) { .legend > div { grid-template-columns: minmax(0, 1fr); } }
 .share { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 10px; }
-.trust { justify-self: start; display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 600; padding: 1px 9px 1px 10px;
-  border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; background: var(--sheet); }
+.trust { justify-self: start; display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 600; white-space: nowrap; }
 .trust::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 .trust-QURANIC_TEXT { color: var(--t-quran); }
 .trust-TAFSIR_VERIFIED { color: var(--t-tafsir); }
@@ -113,11 +115,11 @@ a { color: var(--violet); }
   padding: 8px; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(6px); border-radius: 12px; }
 .stepnav a { white-space: nowrap; text-decoration: none; color: var(--ink); border: 1px solid var(--rule); background: var(--sheet);
   border-radius: 999px; padding: 3px 12px; font-size: .88rem; }
-.stepnav a b { color: var(--violet); margin-inline-end: 4px; font-variant-numeric: tabular-nums; }
+.stepnav a b { color: var(--accent); margin-inline-end: 4px; font-variant-numeric: tabular-nums; }
 
 .layer-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-bottom: 8px; }
-.layer-head h2 { font-family: var(--f-display); font-weight: 700; color: var(--ink); margin: 0; font-size: 1.25rem; text-wrap: balance; }
-.layer-head .step { color: var(--violet); font-variant-numeric: tabular-nums; }
+.layer-head h2 { font-family: var(--f-display); font-weight: 500; color: var(--ink); margin: 0; font-size: 1.25rem; text-wrap: balance; }
+.layer-head .step { color: var(--accent); font-variant-numeric: tabular-nums; }
 .lead { color: var(--muted); margin: 0 0 10px; max-width: 75ch; }
 .empty { color: var(--muted); }
 .note { color: var(--muted); font-size: .82rem; }
@@ -125,9 +127,9 @@ a { color: var(--violet); }
 
 .words { display: flex; flex-wrap: wrap; gap: 6px; direction: rtl; }
 .word { font-family: var(--f-quran); font-size: 1.25rem; padding: 2px 10px; border-radius: 8px; border: 1px solid var(--rule); background: var(--sheet); }
-.word[aria-pressed="true"] { border-color: var(--violet); background: var(--violet-soft); }
+.word[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 .word.in-phrase { border-color: var(--t-connection); }
-.word-detail { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--violet-soft); display: grid; gap: 2px; }
+.word-detail { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); display: grid; gap: 2px; }
 .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; }
 .kv dt { color: var(--muted); }
 .kv dd { margin: 0; }
@@ -147,13 +149,13 @@ details.fold > summary strong { color: var(--ink); }
 .tafsir-head strong { color: var(--ink); }
 .tafsir-entry { border: 1px solid var(--rule); border-radius: 10px; padding: 8px 12px; background: var(--sheet); }
 .read.clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; overflow: hidden; }
-.link-btn { background: none; border: 0; padding: 4px 0; color: var(--violet); font-weight: 600; }
+.link-btn { background: none; border: 0; padding: 4px 0; color: var(--accent); font-weight: 600; }
 .link-btn:hover { text-decoration: underline; }
 
 .timeline { list-style: none; margin: 0; padding: 0; position: relative; }
 .timeline::before { content: ""; position: absolute; inset-block: 6px; inset-inline-start: 74px; width: 2px; background: var(--rule); }
 .timeline > li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 22px; padding-block: 6px; position: relative; }
-.timeline .when { text-align: center; font-variant-numeric: tabular-nums; color: var(--violet); font-weight: 600; line-height: 1.3; padding-top: 10px; }
+.timeline .when { text-align: center; font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; line-height: 1.3; padding-top: 10px; }
 .timeline .when small { display: block; color: var(--muted); font-weight: 400; font-size: .8rem; }
 .timeline > li::after { content: ""; position: absolute; inset-inline-start: 69px; top: 18px; width: 12px; height: 12px; border-radius: 50%;
   background: var(--sheet); border: 2px solid var(--t-tafsir); }
@@ -172,12 +174,12 @@ details.fold > summary strong { color: var(--ink); }
 .map .edge.possible_connection { stroke: var(--t-connection); stroke-dasharray: 5 4; }
 .map .node { cursor: pointer; }
 .map .node circle { fill: var(--sheet); stroke-width: 2.5; }
-.map .node.verse circle { fill: var(--violet); stroke: var(--violet); }
+.map .node.verse circle { fill: var(--accent); stroke: var(--accent); }
 .map .node.verse text { fill: var(--sheet); }
-.map .node.topic circle { fill: var(--violet-soft); }
+.map .node.topic circle { fill: var(--accent-soft); }
 .map .node text { fill: var(--ink); font-family: var(--f-read); font-size: 13px; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
 .map .node text.en { font-family: var(--f-ui); font-size: 10px; fill: var(--muted); }
-.map .node[aria-pressed="true"] circle { stroke-width: 4; filter: drop-shadow(0 0 4px var(--violet)); }
+.map .node[aria-pressed="true"] circle { stroke-width: 4; filter: drop-shadow(0 0 4px var(--accent)); }
 .map-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .8rem; color: var(--muted); margin-top: 6px; }
 .map-legend i { display: inline-block; width: 18px; border-top: 2px solid var(--rule); vertical-align: middle; margin-inline-end: 4px; }
 .map-legend i.dash { border-top: 2px dashed var(--t-connection); }
@@ -234,32 +236,38 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .ai-mode { margin: 12px 0; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--rule); background: var(--sheet); }
 .ai-mode.mock { border-inline-start: 3px solid var(--t-connection); }
 .ai-mode.live { border-inline-start: 3px solid var(--t-quran); }
-.ai-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.ai-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
 .ai-form label { display: grid; gap: 2px; color: var(--muted); font-size: .88rem; }
 .ai-form input { width: 8em; font: inherit; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); color: var(--text); }
 .ai-form .btn-primary { padding: 8px 18px; }
 .ai-disclaimer { margin: 0 0 12px; padding: 8px 12px; border-radius: 10px; border-inline-start: 3px solid var(--t-unverified);
   background: color-mix(in srgb, var(--t-unverified) 8%, var(--sheet)); font-size: .9rem; }
 .md { font-family: var(--f-read); line-height: 2; max-width: 80ch; }
-.md h2, .md h3, .md h4, .md h5, .md h6 { font-family: var(--f-display); color: var(--ink); margin: 18px 0 6px; line-height: 1.5; }
+.md h2, .md h3, .md h4, .md h5, .md h6 { font-family: var(--f-display); font-weight: 500; color: var(--ink); margin: 18px 0 6px; line-height: 1.5; }
 .md h2 { font-size: 1.3rem; } .md h3 { font-size: 1.1rem; } .md h4, .md h5, .md h6 { font-size: 1rem; }
 .md p { margin: 0 0 10px; }
 .md ul, .md ol { margin: 0 0 10px; padding-inline-start: 22px; }
 .md hr { border: 0; border-top: 1px solid var(--rule); margin: 16px 0; }
-.md blockquote { margin: 0 0 12px; padding: 8px 12px; border-inline-start: 3px solid var(--t-connection); background: var(--violet-soft); border-radius: 8px; }
+.md blockquote { margin: 0 0 12px; padding: 8px 12px; border-inline-start: 3px solid var(--t-connection); background: var(--accent-soft); border-radius: 8px; }
 .md code { font-family: ui-monospace, monospace; font-size: .9em; }
 .md-table { overflow-x: auto; margin: 0 0 12px; }
 .md table { border-collapse: collapse; font-family: var(--f-ui); font-size: .9rem; min-width: 100%; }
 .md th, .md td { border: 1px solid var(--rule); padding: 4px 10px; text-align: start; vertical-align: top; }
-.md th { background: var(--violet-soft); color: var(--ink); }
+.md th { background: var(--accent-soft); color: var(--ink); }
 
 /* site navigation (every page) */
 .sitenav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 10px 0 12px; border-bottom: 1px solid var(--rule); margin-bottom: 18px; }
-.sitenav .brand { font-family: var(--f-display); font-weight: 700; font-size: 1.3rem; color: var(--ink); text-decoration: none; }
+.sitenav .brand { color: var(--ink); text-decoration: none; display: inline-flex; }
+.logo { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); }
+.logo-words { display: grid; line-height: 1; }
+.logo-ar { font-family: var(--f-display); font-weight: 700; font-size: 1.55rem; }
+.logo-en { font-family: var(--f-ui); font-size: .8rem; font-weight: 500; letter-spacing: .32em; color: var(--gold); margin-top: 8px; }
+.logo-large { gap: 16px; }
+.logo-large .logo-ar { font-size: clamp(2.8rem, 8vw, 3.6rem); }
 .sitenav-links { display: flex; flex-wrap: wrap; gap: 4px; }
 .sitenav-links a { text-decoration: none; color: var(--text); padding: 4px 12px; border-radius: 999px; font-size: .92rem; }
-.sitenav-links a:hover { background: var(--violet-soft); }
-.sitenav-links a[aria-current="page"] { background: var(--violet); color: var(--sheet); }
+.sitenav-links a:hover { background: var(--accent-soft); }
+.sitenav-links a[aria-current="page"] { background: var(--accent); color: var(--sheet); }
 .sitenav-links .tab-icon, .sitenav-links .tab-short, .sitenav-links .tab-home { display: none; }
 /* phones: the sections become a tab bar at the bottom of the screen */
 @media (max-width: 640px) {
@@ -272,10 +280,10 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
     box-shadow: 0 -4px 16px color-mix(in srgb, var(--ink) 8%, transparent); }
   .sitenav-links a, .sitenav-links .tab-home { display: grid; justify-items: center; align-content: center; gap: 0; min-height: 50px;
     padding: 2px; border-radius: 10px; font-size: .8rem; line-height: 1.3; }
-  .sitenav-links .tab-icon { display: block; font-size: 1.15rem; }
+  .sitenav-links .tab-icon { display: grid; place-items: center; }
   .sitenav-links .tab-full { display: none; }
   .sitenav-links .tab-short { display: block; }
-  .sitenav-links a[aria-current="page"] { background: var(--violet-soft); color: var(--violet); font-weight: 600; }
+  .sitenav-links a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
   .shell > .ayah-panel { bottom: var(--tabbar); }
 }
 /* phones: controls at least 40px high, to tap reliably */
@@ -284,30 +292,29 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
   .btn-primary { min-height: 44px; }
   .word { min-height: 40px; min-width: 40px; }
   .by-number input, .page-jump input, .ai-form input, .filter { min-height: 40px; }
-  .legend-fold > summary, .switch, .by-number > summary { min-height: 40px; display: flex; align-items: center; }
+  .legend-fold > summary, .switch, .by-number > summary, details.fold > summary { min-height: 40px; display: flex; align-items: center; }
   .meta a { display: inline-flex; align-items: center; min-height: 36px; padding-inline: 6px; }
 }
 
 /* home */
-.hero { padding: 18px 0 22px; }
-.hero h1 { font-family: var(--f-display); font-weight: 700; color: var(--ink); margin: 0; font-size: clamp(2rem, 6vw, 3rem); }
-.hero h1 span { color: var(--violet); }
-.hero p { margin: 6px 0 0; color: var(--muted); max-width: 70ch; font-size: 1.05rem; }
+.hero { padding: 28px 0 18px; display: grid; justify-items: center; text-align: center; gap: 10px; }
+.hero h1 { margin: 0; }
+.hero p { margin: 0; color: var(--muted); max-width: 60ch; font-size: 1.08rem; }
 .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .home-card { display: grid; gap: 6px; align-content: start; padding: 18px; border-radius: 16px; border: 1px solid var(--rule);
   background: var(--sheet); color: var(--text); text-decoration: none; transition: border-color .15s, transform .15s; }
-.home-card:hover { border-color: var(--violet); transform: translateY(-2px); }
-.home-card strong { font-family: var(--f-display); font-size: 1.15rem; color: var(--ink); }
+.home-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.home-card strong { font-family: var(--f-display); font-weight: 500; font-size: 1.2rem; color: var(--ink); }
 .home-card > span:last-child { color: var(--muted); font-size: .92rem; }
-.home-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--violet-soft);
-  color: var(--violet); font-size: 1.4rem; }
+.home-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--accent-soft);
+  color: var(--accent); }
 .home-recent { margin-top: 18px; }
-.home-search { max-width: 720px; }
+.home-search { max-width: 720px; margin-inline: auto; }
 .home-search input { padding: 12px 14px; }
-.examples { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0 20px; }
+.examples { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin: 12px 0 32px; }
 .chip { display: inline-flex; align-items: center; padding: 3px 12px; border: 1px solid var(--rule); border-radius: 999px;
   background: var(--sheet); color: var(--ink); text-decoration: none; font-size: .9rem; }
-.chip:hover { border-color: var(--violet); background: var(--violet-soft); }
+.chip:hover { border-color: var(--accent); background: var(--accent-soft); }
 @media (prefers-reduced-motion: reduce) { .home-card { transition: none; } .home-card:hover { transform: none; } }
 
 /* history */
@@ -321,7 +328,7 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .kind { font-size: .8rem; padding: 0 8px; border-radius: 999px; border: 1px solid currentColor; }
 .kind-search { color: var(--t-tafsir); }
 .kind-verse { color: var(--t-quran); }
-.kind-ai { color: var(--violet); }
+.kind-ai { color: var(--accent); }
 
 /* Quran browser */
 .filter { width: 100%; max-width: 420px; font: inherit; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 10px;
@@ -330,9 +337,9 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .surah-grid a { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "num name marks" "num count marks";
   align-items: center; gap: 0 10px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--rule); background: var(--sheet);
   color: var(--text); text-decoration: none; }
-.surah-grid a:hover { border-color: var(--violet); }
+.surah-grid a:hover { border-color: var(--accent); }
 .surah-grid .num { grid-area: num; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%;
-  background: var(--violet-soft); color: var(--violet); font-weight: 600; font-variant-numeric: tabular-nums; }
+  background: var(--accent-soft); color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
 .surah-grid .name { grid-area: name; font-size: 1.2rem; color: var(--ink); }
 .surah-grid .note { grid-area: count; }
 .surah-grid .marks { grid-area: marks; display: grid; gap: 2px; justify-items: end; }
@@ -344,18 +351,18 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .mushaf-legend { align-items: center; margin: 0 0 12px; }
 .mushaf-legend .mark { cursor: help; }
 .switch { display: inline-flex; align-items: center; gap: 6px; color: var(--text); cursor: pointer; }
-.switch input { width: 18px; height: 18px; accent-color: var(--violet); }
+.switch input { width: 18px; height: 18px; accent-color: var(--accent); }
 
 .mushaf-text { font-family: var(--f-quran); font-size: 1.75rem; line-height: 2.3; text-align: justify; margin: 0; color: var(--ink); }
 .ayah { font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; margin: 0; border-radius: 6px; cursor: pointer;
   display: inline; text-align: inherit; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.ayah:hover { background: var(--violet-soft); }
-.ayah:focus-visible { outline: 2px solid var(--violet); outline-offset: 1px; }
-.ayah[aria-pressed="true"] { background: color-mix(in srgb, var(--violet) 18%, transparent); }
+.ayah:hover { background: var(--accent-soft); }
+.ayah:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ayah[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 18%, transparent); }
 .ayah.has-curated { text-decoration: underline 2px var(--t-quran); text-underline-offset: 10px; }
 .ayah.has-ijaz { text-decoration: underline 2px var(--t-connection); text-underline-offset: 10px; }
 .ayah.has-curated.has-ijaz { text-decoration: underline double 3px var(--t-quran); }
-.ayah-panel { position: sticky; bottom: 0; z-index: 3; margin-top: -100px; background: var(--sheet); border: 1px solid var(--violet);
+.ayah-panel { position: sticky; bottom: 0; z-index: 3; margin-top: -100px; background: var(--sheet); border: 1px solid var(--accent);
   border-radius: 14px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 24px color-mix(in srgb, var(--ink) 14%, transparent); }
 .ayah-panel-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
 .ayah-panel-head strong { color: var(--ink); }
@@ -364,7 +371,7 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .ayah-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 a.btn-primary, a.btn-ai { display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 10px; text-decoration: none; font-weight: 600; }
 a.btn-primary { color: var(--sheet); }
-.btn-ai { border: 1px solid var(--violet); color: var(--violet); background: var(--violet-soft); }
+.btn-ai { border: 1px solid var(--accent); color: var(--accent); background: var(--accent-soft); }
 
 /* topic search */
 .result-tabs { margin: 0 0 8px; }
@@ -375,7 +382,7 @@ a.btn-primary { color: var(--sheet); }
 .reason-article { color: var(--t-connection); }
 .reason-tafsir { color: var(--muted); }
 .reason .via { font-style: normal; opacity: .8; }
-.reason-ai { color: var(--violet); }
+.reason-ai { color: var(--accent); }
 
 /* mushaf pages */
 .index-tools { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 12px; }
@@ -384,26 +391,27 @@ a.btn-primary { color: var(--sheet); }
 .page-jump input { width: 6.5em; font: inherit; padding: 4px 8px; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); color: var(--text); }
 .juz-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
 .juz-list a { display: grid; text-align: center; padding: 6px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); color: var(--ink); text-decoration: none; font-size: .9rem; }
-.juz-list a:hover { border-color: var(--violet); }
+.juz-list a:hover { border-color: var(--accent); }
 .juz-list small { color: var(--muted); font-size: .8rem; }
 .page-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 10px; }
 .page-nav-turn { display: flex; align-items: center; gap: 10px; }
 .page-of { color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.mushaf-page { max-width: 760px; margin: 0 auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px;
-  padding: 14px 22px 10px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--t-quran) 10%, var(--paper)), 0 0 0 7px var(--rule); margin-bottom: 120px; }
+.mushaf-page { max-width: 780px; margin: 0 auto 120px; background: var(--sheet); border: 3px double var(--gold); border-radius: 4px;
+  padding: 16px 26px 12px; outline: 1px solid color-mix(in srgb, var(--gold) 45%, transparent); outline-offset: 5px; }
 .mushaf-top { display: flex; justify-content: space-between; gap: 12px; font-size: .85rem; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 6px; margin-bottom: 8px; }
 .mushaf-page .mushaf-text { text-align: justify; text-align-last: center; }
 .mushaf-page .mushaf-text.opening { text-align: center; }
 .surah-head { display: block; text-align: center; margin: 10px 0 4px; }
-.surah-title { display: block; font-family: var(--f-display); font-size: 1.2rem; color: var(--ink); padding: 4px 0; margin: 0 auto 4px; max-width: 420px;
-  border: 1px solid var(--t-quran); border-radius: 999px; background: color-mix(in srgb, var(--t-quran) 8%, var(--sheet)); }
+.surah-title { display: block; font-family: var(--f-display); font-size: 1.2rem; color: var(--ink); padding: 5px 0; margin: 0 auto 4px;
+  border-block: 1px solid var(--gold); background: linear-gradient(to left, transparent, color-mix(in srgb, var(--gold) 16%, var(--sheet)) 20%,
+  color-mix(in srgb, var(--gold) 16%, var(--sheet)) 80%, transparent); }
 .basmala { display: block; font-family: var(--f-quran); font-size: 1.6rem; color: var(--ink); line-height: 2; }
 .mushaf-foot { text-align: center; color: var(--muted); border-top: 1px solid var(--rule); margin-top: 8px; padding-top: 4px; font-family: var(--f-quran); }
 @media (max-width: 560px) {
-  .mushaf-page { padding: 10px 12px 8px; box-shadow: none; }
+  .mushaf-page { padding: 10px 12px 8px; outline: 0; }
   .mushaf-page .mushaf-text { font-size: 1.45rem; }
 }
 
 /* AI layer in the verse journey */
 .ai-fold > summary { margin-bottom: 8px; }
-.ai-generate { display: grid; gap: 10px; justify-items: start; padding: 12px 14px; border: 1px dashed var(--violet); border-radius: 12px; background: var(--violet-soft); }
+.ai-generate { display: grid; gap: 10px; justify-items: start; padding: 12px 14px; border: 1px dashed var(--accent); border-radius: 12px; background: var(--accent-soft); }
