@@ -72,6 +72,10 @@ a { color: var(--accent); }
 /* no verse open: the results take the whole width, in columns */
 .layout.no-answer { grid-template-columns: minmax(0, 1fr); }
 .layout.no-answer .results ol { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+/* every card in a row as tall as the row, its «سبب الصلة» at the foot */
+.layout.no-answer .results li { display: flex; }
+.layout.no-answer .hit { align-content: start; grid-template-rows: auto auto 1fr; }
+.layout.no-answer .hit .reasons { align-self: end; }
 /* a verse open on a phone: the verse comes first, its results fold away behind «العودة إلى النتائج» */
 @media (max-width: 920px) { .layout.has-answer:not(.show-results) .results { display: none; } }
 .journey > .back { justify-self: start; }
@@ -377,14 +381,14 @@ footer.foot { margin-top: 28px; color: var(--muted); font-size: .8rem; max-width
 .switch input { width: 18px; height: 18px; accent-color: var(--accent); }
 
 .mushaf-text { font-family: var(--f-quran); font-size: 1.75rem; line-height: 2.3; text-align: justify; margin: 0; color: var(--ink); }
-.ayah { font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; margin: 0; border-radius: 6px; cursor: pointer;
+.mushaf-text .ayah { font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; margin: 0; border-radius: 6px; cursor: pointer;
   display: inline; text-align: inherit; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.ayah:hover { background: var(--accent-soft); }
-.ayah:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.ayah[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 18%, transparent); }
-.ayah.has-curated { text-decoration: underline 2px var(--t-quran); text-underline-offset: 10px; }
-.ayah.has-ijaz { text-decoration: underline 2px var(--t-connection); text-underline-offset: 10px; }
-.ayah.has-curated.has-ijaz { text-decoration: underline double 3px var(--t-quran); }
+.mushaf-text .ayah:hover { background: var(--accent-soft); }
+.mushaf-text .ayah:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.mushaf-text .ayah[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.mushaf-text .ayah.has-curated { text-decoration: underline 2px var(--t-quran); text-underline-offset: 10px; }
+.mushaf-text .ayah.has-ijaz { text-decoration: underline 2px var(--t-connection); text-underline-offset: 10px; }
+.mushaf-text .ayah.has-curated.has-ijaz { text-decoration: underline double 3px var(--t-quran); }
 .ayah-panel { position: sticky; bottom: 0; z-index: 3; margin-top: -100px; background: var(--sheet); border: 1px solid var(--accent);
   border-radius: 14px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 24px color-mix(in srgb, var(--ink) 14%, transparent); }
 .ayah-panel-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
