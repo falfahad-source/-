@@ -152,8 +152,10 @@ export default function SearchPage() {
 
       <div className={`layout${answer ? " has-answer" : " no-answer"}${showResults ? " show-results" : ""}`}>
         <aside className="results" aria-label="نتائج البحث">
-          <h2>{search ? "نتائج البحث" : "آيات نموذجية"}</h2>
-          {!search ? (
+          <h2>{search || searching ? "نتائج البحث" : "آيات نموذجية"}</h2>
+          {!search && searching ? (
+            <p className="empty" role="status">جارٍ البحث عن الآيات المتصلة بـ«{query.trim()}»... قد يستغرق البحث بالذكاء الاصطناعي بضع ثوانٍ.</p>
+          ) : !search ? (
             <>
               <p className="empty">ابحث بجزء من آية أو بموضوع، ثم اختر الآية لتظهر طبقاتها: التحليل اللغوي، والتفسير عبر العصور، والمفاهيم، والمعرفة العلمية، والذكاء الاصطناعي في الإعجاز العلمي. أو ابدأ بآية من الآيات النموذجية التي أُعدّت لها خريطة مفاهيم:</p>
               <ol>
